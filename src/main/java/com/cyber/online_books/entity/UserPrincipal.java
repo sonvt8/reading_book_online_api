@@ -1,20 +1,21 @@
 package com.cyber.online_books.entity;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
-public class MyUserDetails implements UserDetails {
+public class UserPrincipal implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-    private List<GrantedAuthority> authorities;
     private User user;
 
-    public MyUserDetails(User user, List< GrantedAuthority > authorities) {
+    public UserPrincipal(User user) {
         this.user = user;
-        this.authorities = authorities;
     }
 
     public User getUser() {
@@ -23,7 +24,15 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection< ? extends GrantedAuthority > getAuthorities() {
-        return authorities;
+        Set<Role> roles = user.getRoleList();
+
+        List<SimpleGrantedAuthority> authories = new ArrayList<>();
+
+        for (Role role : roles) {
+            authories.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
+        return authories;
     }
 
     @Override

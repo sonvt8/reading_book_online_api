@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -62,7 +63,7 @@ public class User implements Serializable {
     @JoinTable(name = "user_role", joinColumns = {
             @JoinColumn(name = "userId", nullable = false, updatable = false)}, inverseJoinColumns = {
             @JoinColumn(name = "roleId", nullable = false, updatable = false)})
-    private Collection< Role > roleList;
+    private Set< Role > roleList;
 
     @Transient
     private String passwordRegister;
