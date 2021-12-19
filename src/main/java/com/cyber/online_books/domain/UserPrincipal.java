@@ -1,5 +1,7 @@
-package com.cyber.online_books.entity;
+package com.cyber.online_books.domain;
 
+import com.cyber.online_books.entity.Role;
+import com.cyber.online_books.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
