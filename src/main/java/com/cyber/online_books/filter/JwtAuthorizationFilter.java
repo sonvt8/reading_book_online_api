@@ -1,6 +1,6 @@
 package com.cyber.online_books.filter;
 
-import com.cyber.online_books.service.JWTTokenProvider;
+import com.cyber.online_books.utils.JWTTokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
