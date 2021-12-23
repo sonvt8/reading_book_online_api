@@ -24,4 +24,6 @@ public interface CategoryService {
      * @return
      */
     Page<Category> findCategoryBySearch(String search, Integer pagenumber, Integer size);
+
+    boolean newCategory(Category category);
 }

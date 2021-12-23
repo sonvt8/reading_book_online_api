@@ -42,4 +42,10 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return categoryRepository.findAllByNameContaining(search, pageable);
     }
+
+    @Override
+    public boolean newCategory(Category category) {
+        category = categoryRepository.save(category);
+        return category.getId() != null;
+    }
 }
