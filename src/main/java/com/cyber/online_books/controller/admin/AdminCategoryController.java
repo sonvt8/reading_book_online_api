@@ -37,6 +37,12 @@ public class AdminCategoryController {
         newCategory.setCreateBy("administrator");
         boolean check = categoryService.newCategory(newCategory);
         return new ResponseEntity<>(newCategory, HttpStatus.OK);
+    }
 
+    @PostMapping("/update/{id}")
+    public ResponseEntity<?> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id){
+        Category updateCategory = categoryService.findCategoryById(id);
+        boolean check = categoryService.updateCategory(id, category);
+        return new ResponseEntity<>(updateCategory, HttpStatus.OK);
     }
 }

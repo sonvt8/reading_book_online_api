@@ -4,6 +4,7 @@ import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.response.CategoryResponse;
 import com.cyber.online_books.service.CategoryService;
+import com.cyber.online_books.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,9 +44,28 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAllByNameContaining(search, pageable);
     }
 
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public Category findCategoryById(Integer id) {
+        return categoryRepository.findById(id).orElse(null);
+    }
+
     @Override
     public boolean newCategory(Category category) {
         category = categoryRepository.save(category);
         return category.getId() != null;
+    }
+
+    @Override
+    public boolean updateCategory(Integer id, Category category) {
+        Category categoryInForm = findCategoryById(id);
+        categoryInForm.setName(category.getName());
+        categoryInForm.setStatus(category.getStatus());
+        categoryInForm.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
+        Category updateCategory = categoryRepository.save(categoryInForm);
+        return updateCategory.getId() != null;
     }
 }
