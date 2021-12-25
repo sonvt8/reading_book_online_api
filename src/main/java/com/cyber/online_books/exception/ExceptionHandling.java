@@ -30,6 +30,10 @@ import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
 
+/**
+ * @author Cyber_Group
+ * @project book_online
+ */
 @RestControllerAdvice
 public class ExceptionHandling implements ErrorController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
