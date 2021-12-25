@@ -61,14 +61,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Integer id) throws CategoryNotFoundException {
-        Category category = categoryRepository.findById(id).orElse(null);
-        if(category == null){
-            throw new CategoryNotFoundException("Not found category by id " + id );
-        } else {
-            categoryRepository.delete(category);
+    public boolean deleteCategory(Integer id) throws CategoryNotFoundException {
+        try {
+            categoryRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
     }
 
 }

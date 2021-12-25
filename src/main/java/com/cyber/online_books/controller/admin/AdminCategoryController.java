@@ -5,6 +5,7 @@ import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
+import com.cyber.online_books.exception.HttpMyException;
 import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.service.CategoryService;
@@ -56,10 +57,13 @@ public class AdminCategoryController extends ExceptionHandling {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException {
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, UserNotLoginException {
         Category updateCategory = categoryService.findCategoryById(id);
         if(updateCategory == null)
             throw new CategoryNotFoundException("Not found Category for update");
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
         updateCategory.setName(category.getName());
         updateCategory.setStatus(category.getStatus());
         updateCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
@@ -67,9 +71,18 @@ public class AdminCategoryController extends ExceptionHandling {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HttpResponse> deleteCategory(@PathVariable("id") Integer id) throws CategoryNotFoundException {
-        categoryService.deleteCategory(id);
-        return response(HttpStatus.OK, "Category deleted successfully");
+    public ResponseEntity<HttpResponse> deleteCategory(@PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, HttpMyException, UserNotLoginException {
+        Category category = categoryService.findCategoryById(id);
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        if(category == null)
+            throw new CategoryNotFoundException("Not found Category for delete");
+        boolean result = categoryService.deleteCategory(id);
+        if(result)
+            return response(HttpStatus.OK, "Category deleted successfully");
+        else
+            throw new HttpMyException("Can not delete this category");
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {

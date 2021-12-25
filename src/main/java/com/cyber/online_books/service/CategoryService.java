@@ -35,6 +35,6 @@ public interface CategoryService {
 
     Category save(Category category);
 
-    void deleteCategory(Integer id) throws CategoryNotFoundException;
+    boolean deleteCategory(Integer id) throws CategoryNotFoundException;
 
 }
