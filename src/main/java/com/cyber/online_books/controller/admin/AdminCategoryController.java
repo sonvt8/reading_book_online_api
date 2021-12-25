@@ -3,12 +3,16 @@ package com.cyber.online_books.controller.admin;
 import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.category.CategoryNotFoundException;
+import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.service.CategoryService;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping(value = "/api/admin/category")
 public class AdminCategoryController extends ExceptionHandling {
+    private final Logger logger = LoggerFactory.getLogger(AdminCategoryController.class);
 
     @Autowired
     private CategoryService categoryService;
@@ -35,26 +40,26 @@ public class AdminCategoryController extends ExceptionHandling {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Category> addCategory(@RequestBody Category category){
+    public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) throws UserNotLoginException {
         Category newCategory = new Category();
         newCategory.setName(category.getName());
         newCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = auth.getPrincipal();
-        String username="";
-        if (principal instanceof UserPrincipal) {
-            username = ((UserPrincipal) principal).getUsername();
+        if (principal == null) {
+            throw new UserNotLoginException();
         }
-        newCategory.setCreateBy("administrator");
+
+        String currentUsername = principal.getName();
+
+        newCategory.setCreateBy(currentUsername);
         return new ResponseEntity<>(categoryService.save(newCategory), HttpStatus.OK);
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id) throws CategoryNotFoundException {
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException {
         Category updateCategory = categoryService.findCategoryById(id);
         if(updateCategory == null)
-            throw new CategoryNotFoundException("Not found Category");
+            throw new CategoryNotFoundException("Not found Category for update");
         updateCategory.setName(category.getName());
         updateCategory.setStatus(category.getStatus());
         updateCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
