@@ -35,14 +35,15 @@ public class AdminCategoryController {
         newCategory.setName(category.getName());
         newCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
         newCategory.setCreateBy("administrator");
-        boolean check = categoryService.newCategory(newCategory);
-        return new ResponseEntity<>(newCategory, HttpStatus.OK);
+        return new ResponseEntity<>(categoryService.save(newCategory), HttpStatus.OK);
     }
 
     @PostMapping("/update/{id}")
     public ResponseEntity<?> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id){
         Category updateCategory = categoryService.findCategoryById(id);
-        boolean check = categoryService.updateCategory(id, category);
-        return new ResponseEntity<>(updateCategory, HttpStatus.OK);
+        updateCategory.setName(category.getName());
+        updateCategory.setStatus(category.getStatus());
+        updateCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
+        return new ResponseEntity<>(categoryService.save(updateCategory), HttpStatus.OK);
     }
 }

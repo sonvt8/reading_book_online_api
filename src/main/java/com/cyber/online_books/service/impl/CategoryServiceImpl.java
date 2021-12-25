@@ -54,18 +54,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean newCategory(Category category) {
-        category = categoryRepository.save(category);
-        return category.getId() != null;
+    public Category save(Category category) {
+        return categoryRepository.save(category);
     }
 
-    @Override
-    public boolean updateCategory(Integer id, Category category) {
-        Category categoryInForm = findCategoryById(id);
-        categoryInForm.setName(category.getName());
-        categoryInForm.setStatus(category.getStatus());
-        categoryInForm.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
-        Category updateCategory = categoryRepository.save(categoryInForm);
-        return updateCategory.getId() != null;
-    }
 }

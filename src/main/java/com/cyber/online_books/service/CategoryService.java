@@ -32,7 +32,6 @@ public interface CategoryService {
      */
     Category findCategoryById(Integer id);
 
-    boolean newCategory(Category category);
+    Category save(Category category);
 
-    boolean updateCategory(Integer id, Category category);
 }
