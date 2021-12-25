@@ -1,6 +1,7 @@
 package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.response.CategoryResponse;
 import com.cyber.online_books.service.CategoryService;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -56,6 +58,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category save(Category category) {
         return categoryRepository.save(category);
+    }
+
+    @Override
+    public void deleteCategory(Integer id) throws CategoryNotFoundException {
+        Category category = categoryRepository.findById(id).orElse(null);
+        if(category == null){
+            throw new CategoryNotFoundException("Not found category by id " + id );
+        } else {
+            categoryRepository.delete(category);
+        }
+
     }
 
 }

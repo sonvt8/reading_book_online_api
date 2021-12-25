@@ -1,6 +1,5 @@
-package com.cyber.online_books.controller;
+package com.cyber.online_books.controller.home;
 
-import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.response.CategoryResponse;
 import com.cyber.online_books.service.CategoryService;
 import com.cyber.online_books.utils.ConstantsStatusUtils;

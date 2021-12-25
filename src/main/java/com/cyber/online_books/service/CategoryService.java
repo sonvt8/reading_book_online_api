@@ -1,6 +1,7 @@
 package com.cyber.online_books.service;
 
 import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.response.CategoryResponse;
 import org.springframework.data.domain.Page;
 
@@ -33,5 +34,7 @@ public interface CategoryService {
     Category findCategoryById(Integer id);
 
     Category save(Category category);
+
+    void deleteCategory(Integer id) throws CategoryNotFoundException;
 
 }
