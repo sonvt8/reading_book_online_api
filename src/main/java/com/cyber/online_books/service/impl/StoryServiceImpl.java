@@ -8,11 +8,15 @@ import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.CloudinaryUploadService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +45,21 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public Story findStoryById(Long id) {
         return storyRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Lấy List Truyện đăng bởi User
+     *
+     * @param id         - id của User đăng
+     * @param pagenumber - biến số trang
+     * @param size       - biến size
+     * @param status     - Trạng Thái Truyện
+     * @return
+     */
+    @Override
+    public Page< StoryUser > findPageStoryByUser(Long id, int pagenumber, Integer size, Integer status) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        return storyRepository.findByUser_IdAndStatusOrderByUpdateDateDesc(id, status, pageable);
     }
 
     @Override

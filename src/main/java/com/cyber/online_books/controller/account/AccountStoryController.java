@@ -1,14 +1,17 @@
 package com.cyber.online_books.controller.account;
 
 import com.cyber.online_books.domain.HttpResponse;
-import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.Story;
+import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.HttpMyException;
-import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
+import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.StoryService;
+import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +25,24 @@ import java.util.Set;
 public class AccountStoryController extends ExceptionHandling {
 
     private final StoryService storyService;
+    private final UserService userService;
 
-    public AccountStoryController(StoryService storyService) {
+    public AccountStoryController(StoryService storyService, UserService userService) {
         this.storyService = storyService;
+        this.userService = userService;
+    }
+
+    @GetMapping(value = "/list")
+    public ResponseEntity< ? > getStoryByAccount(@RequestParam("pagenumber") int pagenumber,
+                                                 @RequestParam("status") int status,
+                                                 Principal principal) throws UserNotLoginException {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        User user = userService.findUserByUsername(principal.getName());
+        Page<StoryUser> pageStory = storyService.findPageStoryByUser(user.getId(), pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT, status);
+        return new ResponseEntity<>(pageStory, HttpStatus.OK);
     }
 
     @PostMapping("/add")
