@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "story")
@@ -74,13 +75,7 @@ public class Story implements Serializable {
     @JoinTable(name = "story_category",
             joinColumns = {@JoinColumn(name = "storyId", nullable = false)},
             inverseJoinColumns = {@JoinColumn(name = "categoryId", nullable = false)})
-    private List< Category > categoryList;
-
-    @Transient
-    private MultipartFile uploadfile;
-
-    @Transient
-    private MultipartFile editfile;
+    private Set< Category > categoryList;
 
     @PrePersist
     public void prePersist() {

@@ -17,6 +17,15 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
      */
     List<CategoryResponse> findAllByStatus(Integer status);
 
+    /**
+     * Lấy danh sách Thể loại theo
+     *
+     * @param status
+     * @param name
+     * @return Category - Thể loại
+     */
+    Category findCategoryByNameAndStatus(String name, Integer status);
+
     Page< Category > findAllByNameContaining(String search, Pageable pageable);
 
 }

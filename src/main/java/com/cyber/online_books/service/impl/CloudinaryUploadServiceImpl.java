@@ -5,12 +5,14 @@ import com.cloudinary.Singleton;
 import com.cloudinary.utils.ObjectUtils;
 import com.cyber.online_books.service.CloudinaryUploadService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Map;
 
+@Service
 public class CloudinaryUploadServiceImpl implements CloudinaryUploadService {
     private Cloudinary cloudinary;
 
