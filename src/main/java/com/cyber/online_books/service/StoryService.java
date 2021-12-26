@@ -11,6 +11,8 @@ import java.security.Principal;
 public interface StoryService {
     Story findStoryById(Long id);
 
+    boolean deleteStory(Long id);
+
     Story addNewStory(String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws UserNotLoginException, NotAnImageFileException, HttpMyException;
 
     Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException;

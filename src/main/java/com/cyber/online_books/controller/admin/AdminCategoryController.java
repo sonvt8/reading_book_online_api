@@ -43,7 +43,9 @@ public class AdminCategoryController extends ExceptionHandling {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) throws UserNotLoginException {
+    public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) throws UserNotLoginException, HttpMyException {
+        categoryService.checkUnique(null, category.getName());
+
         Category newCategory = new Category();
         newCategory.setName(category.getName());
         newCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
@@ -59,8 +61,8 @@ public class AdminCategoryController extends ExceptionHandling {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, UserNotLoginException {
-        Category updateCategory = categoryService.findCategoryById(id);
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, UserNotLoginException, HttpMyException {
+        Category updateCategory = categoryService.checkUnique(id, category.getName());;
         if(updateCategory == null)
             throw new CategoryNotFoundException("Not found Category for update");
         if (principal == null) {

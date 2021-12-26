@@ -1,6 +1,8 @@
 package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.entity.Story;
+import com.cyber.online_books.exception.HttpMyException;
 import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.response.CategoryResponse;
@@ -61,13 +63,32 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean deleteCategory(Integer id) throws CategoryNotFoundException {
+    public boolean deleteCategory(Integer id) {
         try {
             categoryRepository.deleteById(id);
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public Category checkUnique(Integer id, String newCategoryName) throws HttpMyException {
+
+        boolean isCreatingNew = (id == null || id == 0);
+        Category newCategoryByName = categoryRepository.findCategoryByName(newCategoryName);
+
+        if (isCreatingNew) {
+            if (newCategoryByName != null) {
+                throw new HttpMyException("Category already exist");
+            }
+        } else {
+            if (newCategoryByName != null && newCategoryByName.getId() != id) {
+                throw new HttpMyException("Category already exist");
+            }
+        }
+
+        return newCategoryByName;
     }
 
 }

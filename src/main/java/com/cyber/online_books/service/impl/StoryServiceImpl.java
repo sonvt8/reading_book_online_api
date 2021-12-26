@@ -44,6 +44,16 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
+    public boolean deleteStory(Long id) {
+        try {
+            storyRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public Story addNewStory(String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws UserNotLoginException, NotAnImageFileException, HttpMyException {
         checkUnique(null, name);
         if (principal == null) {
@@ -66,7 +76,11 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
-        checkUnique(id, name);
+        Story storyEdit = checkUnique(id, name);
+        if(storyEdit == null){
+            throw new HttpMyException("Not found story for update");
+        }
+
         if (principal == null) {
             throw new UserNotLoginException();
         }
@@ -74,10 +88,6 @@ public class StoryServiceImpl implements StoryService {
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
 
-        Story storyEdit = findStoryById(id);
-        if(storyEdit == null){
-            throw new HttpMyException("Not found story for update");
-        }
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
         storyEdit.setInfomation(infomation);
