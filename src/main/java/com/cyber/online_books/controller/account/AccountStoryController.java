@@ -3,14 +3,12 @@ package com.cyber.online_books.controller.account;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.HttpMyException;
+import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.service.StoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -31,9 +29,21 @@ public class AccountStoryController extends ExceptionHandling {
                            @RequestParam("author") String author,
                            @RequestParam("infomation") String infomation,
                            @RequestParam("category") Set<String> category,
-                           @RequestParam(value="image", required = false) MultipartFile image,
-                           Principal principal) throws HttpMyException, UserNotLoginException {
+                           @RequestParam(value="image") MultipartFile image,
+                           Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story newStory = storyService.addNewStory(name, author, infomation, category.toArray(new String[0]), image, principal);
         return new ResponseEntity<Story>(newStory, HttpStatus.OK);
+    }
+
+    @PostMapping("/update/{id}")
+    public ResponseEntity<Story> updateStory(@RequestParam("name") String name,
+                                          @RequestParam("author") String author,
+                                          @RequestParam("infomation") String infomation,
+                                          @RequestParam("category") Set<String> category,
+                                          @RequestParam(value="image") MultipartFile image,
+                                          @PathVariable(value = "id") Long id,
+                                          Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
+        Story updateStory = storyService.updateAccountStory(id, name, author, infomation, category.toArray(new String[0]), image, principal);
+        return new ResponseEntity<Story>(updateStory, HttpStatus.OK);
     }
 }

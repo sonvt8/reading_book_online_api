@@ -94,9 +94,6 @@ public class Story implements Serializable {
         if (countView == null) {
             countView = 0;
         }
-        if (updateDate == null) {
-            updateDate = DateUtils.getCurrentDate();
-        }
         if (dealStatus == null) {
             dealStatus = 0;
         }
