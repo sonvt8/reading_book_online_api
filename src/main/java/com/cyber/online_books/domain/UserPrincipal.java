@@ -1,11 +1,18 @@
 package com.cyber.online_books.domain;
 
+import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 public class UserPrincipal implements UserDetails {
 
@@ -18,12 +25,23 @@ public class UserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
 
+    public UserPrincipal(User user) {
+        this.user = user;
+    }
+
     public User getUser() {
         return user;
     }
 
     @Override
-    public Collection< ? extends GrantedAuthority > getAuthorities() {
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<Role> roles = user.getRoleList();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
         return authorities;
     }
 
