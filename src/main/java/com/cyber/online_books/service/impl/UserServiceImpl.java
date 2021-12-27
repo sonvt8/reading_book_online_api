@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +35,7 @@ import java.util.*;
 
 @Service
 @Transactional
+@PropertySource(ignoreResourceNotFound = true, value = "classpath:messages.properties")
 @Qualifier("userDetailsService")
 public class UserServiceImpl implements UserService, UserDetailsService {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -42,15 +44,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private LoginAttemptService loginAttemptService;
     private EmailService emailService;
     private BCryptPasswordEncoder passwordEncoder;
-//    @Value("${Cyber.truyenonline.email.from}")
+    @Value("${Cyber.truyenonline.email.from}")
     private String emailForm;
-//    @Value("${Cyber.truyenonline.email.display}")
+    @Value("${Cyber.truyenonline.email.display}")
     private String emailDisplay;
-//    @Value("${Cyber.truyenonline.email.subject}")
+    @Value("${Cyber.truyenonline.email.subject}")
     private String emailSubject;
-//    @Value("${Cyber.truyenonline.email.signature}")
+    @Value("${Cyber.truyenonline.email.signature}")
     private String emailSignature;
-//    @Value("${Cyber.truyenonline.email.url}")
+    @Value("${Cyber.truyenonline.email.url}")
     private String emailUrl;
 
     @Autowired
