@@ -8,6 +8,7 @@ import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.response.StoryAdmin;
 import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.CloudinaryUploadService;
 import com.cyber.online_books.service.StoryService;
@@ -60,6 +61,27 @@ public class StoryServiceImpl implements StoryService {
     public Page< StoryUser > findPageStoryByUser(Long id, int pagenumber, Integer size, Integer status) {
         Pageable pageable = PageRequest.of(pagenumber - 1, size);
         return storyRepository.findByUser_IdAndStatusOrderByUpdateDateDesc(id, status, pageable);
+    }
+
+    @Override
+    public Page< StoryAdmin > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {
+        Pageable pageable = PageRequest.of(pagenumber-1, size);
+        if (type == -1) {
+            if (search.trim().isEmpty()) {
+                return storyRepository.findByOrderByIdDesc(pageable);
+            }
+            return storyRepository.findByNameContainingOrderByIdDesc(search, pageable);
+        } else if (type == 3) {
+            if (search.trim().isEmpty()) {
+                return storyRepository.findByDealStatusOrderByIdDesc(ConstantsStatusUtils.STORY_STATUS_GOING_ON, pageable);
+            }
+            return storyRepository.findByDealStatusAndNameContainingOrderByIdDesc(ConstantsStatusUtils.STORY_STATUS_GOING_ON, search, pageable);
+        } else {
+            if (search.trim().isEmpty()) {
+                return storyRepository.findByStatusOrderByIdDesc(type, pageable);
+            }
+            return storyRepository.findByNameContainingAndStatusOrderByIdDesc(search, type, pageable);
+        }
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ public class AccountStoryController extends ExceptionHandling {
     private final StoryService storyService;
     private final UserService userService;
 
+    @Autowired
     public AccountStoryController(StoryService storyService, UserService userService) {
         this.storyService = storyService;
         this.userService = userService;

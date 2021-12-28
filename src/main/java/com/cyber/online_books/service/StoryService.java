@@ -4,6 +4,7 @@ import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.exception.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
+import com.cyber.online_books.response.StoryAdmin;
 import com.cyber.online_books.response.StoryUser;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,8 @@ public interface StoryService {
      * @return
      */
     Page<StoryUser> findPageStoryByUser(Long id, int pagenumber, Integer size, Integer status);
+
+    Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);
 
