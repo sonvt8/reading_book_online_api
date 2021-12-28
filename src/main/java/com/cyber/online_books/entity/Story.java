@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "story")
@@ -67,20 +68,14 @@ public class Story implements Serializable {
     private Integer status;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userPosted", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_posted", referencedColumnName = "id", nullable = false)
     private User user;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "story_category",
-            joinColumns = {@JoinColumn(name = "storyId", nullable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "categoryId", nullable = false)})
-    private List< Category > categoryList;
-
-    @Transient
-    private MultipartFile uploadfile;
-
-    @Transient
-    private MultipartFile editfile;
+            joinColumns = {@JoinColumn(name = "story_id", nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "category_id", nullable = false)})
+    private Set< Category > categoryList;
 
     @PrePersist
     public void prePersist() {
@@ -98,9 +93,6 @@ public class Story implements Serializable {
         }
         if (countView == null) {
             countView = 0;
-        }
-        if (updateDate == null) {
-            updateDate = DateUtils.getCurrentDate();
         }
         if (dealStatus == null) {
             dealStatus = 0;

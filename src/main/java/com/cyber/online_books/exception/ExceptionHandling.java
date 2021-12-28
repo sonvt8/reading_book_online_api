@@ -2,6 +2,7 @@ package com.cyber.online_books.exception;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.cyber.online_books.domain.*;
+import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.exception.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,10 +93,10 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
-//    @ExceptionHandler(NoHandlerFoundException.class)
-//    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException e) {
-//        return createHttpResponse(BAD_REQUEST, "There is no mapping for this URL");
-//    }
+    @ExceptionHandler(UserNotLoginException.class)
+    public ResponseEntity<HttpResponse> userNotLoginException(UserNotLoginException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
@@ -134,6 +135,18 @@ public class ExceptionHandling implements ErrorController {
             details.add(error.getDefaultMessage());
         }
         return createHttpResponseIfValidFail(BAD_REQUEST, details);
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<HttpResponse> categoryNotFoundException(CategoryNotFoundException exception) {
+        LOGGER.error(exception.getMessage());
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpMyException.class)
+    public ResponseEntity<HttpResponse> categoryNotFoundException(HttpMyException exception) {
+        LOGGER.error(exception.getMessage());
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
