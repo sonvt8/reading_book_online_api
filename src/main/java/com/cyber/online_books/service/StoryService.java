@@ -1,7 +1,7 @@
 package com.cyber.online_books.service;
 
 import com.cyber.online_books.entity.Story;
-import com.cyber.online_books.exception.HttpMyException;
+import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.StoryUser;
@@ -26,7 +26,7 @@ public interface StoryService {
 
     boolean deleteStory(Long id);
 
-    Story addNewStory(String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws UserNotLoginException, NotAnImageFileException, HttpMyException;
+    Story addNewStory(String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws UserNotLoginException, NotAnImageFileException, HttpMyException, HttpMyException;
 
     Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException;
 }

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  * @author Cyber_Group
@@ -39,7 +40,7 @@ import static org.springframework.http.HttpStatus.*;
 public class ExceptionHandling implements ErrorController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     public static final String NOT_FIND_URL = "Xin lỗi. Liên kết bạn tìm không có hoặc đã bị xóa.";
-    private static final String ACCOUNT_LOCKED = "Tài Khoản đã bị khóa. Liên hệ với admin để biết thêm chi tiết";
+    private static final String ACCOUNT_LOCKED = "Tài khoản đã bị khóa. Liên hệ với admin để biết thêm chi tiết";
     private static final String METHOD_IS_NOT_ALLOWED = "This request method is not allowed on this endpoint. Please send a '%s' request";
     private static final String INTERNAL_SERVER_ERROR_MSG = "An error occurred while processing the request";
     private static final String INCORRECT_CREDENTIALS = "Username / password chưa đúng. Vui lòng thử lại";

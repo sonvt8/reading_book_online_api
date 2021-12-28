@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/account/pay")
 public class AccountPayController {
-    @Value("${cyber.truyenonline.email.form}")
+    @Value("${cyber.truyenonline.email.from}")
     private String emailForm;
     @Value("${cyber.truyenonline.email.display}")
     private String emailDisplay;

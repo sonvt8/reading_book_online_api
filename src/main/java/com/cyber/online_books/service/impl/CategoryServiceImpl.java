@@ -1,13 +1,10 @@
 package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Category;
-import com.cyber.online_books.entity.Story;
-import com.cyber.online_books.exception.HttpMyException;
-import com.cyber.online_books.exception.category.CategoryNotFoundException;
+import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.response.CategoryResponse;
 import com.cyber.online_books.service.CategoryService;
-import com.cyber.online_books.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {

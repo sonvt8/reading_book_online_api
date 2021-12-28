@@ -9,10 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.stream;
 
 public class UserPrincipal implements UserDetails {
 
@@ -47,12 +43,12 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return this.user.getUsername();
     }
 
     @Override
@@ -62,7 +58,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getStatus().equals(1);
+        return this.user.isNotLocked();
     }
 
     @Override
