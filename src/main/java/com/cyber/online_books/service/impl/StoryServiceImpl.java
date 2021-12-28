@@ -95,11 +95,11 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
-        Story storyEdit = checkUnique(id, name);
+        Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
             throw new HttpMyException("Not found story for update");
         }
-
+        checkUnique(id, name);
         if (principal == null) {
             throw new UserNotLoginException();
         }
@@ -138,16 +138,16 @@ public class StoryServiceImpl implements StoryService {
         boolean isCreatingNew = (id == null || id == 0);
         Story newStoryByName = storyRepository.findStoryByName(newStoryName);
 
-        if (isCreatingNew) {
-            if (newStoryByName != null) {
+        if(newStoryByName != null){
+            if (isCreatingNew) {
                 throw new HttpMyException("Story already exist");
+            } else {
+                if (newStoryByName.getId() != id) {
+                    throw new HttpMyException("Story already exist");
+                }
             }
-        } else {
-            if (newStoryByName != null && newStoryByName.getId() != id) {
-                throw new HttpMyException("Story already exist");
-            }
+            return newStoryByName;
         }
-
-        return newStoryByName;
+        return null;
     }
 }
