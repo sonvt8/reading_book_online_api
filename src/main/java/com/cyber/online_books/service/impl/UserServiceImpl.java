@@ -30,12 +30,13 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
 @Transactional
-@PropertySource(ignoreResourceNotFound = true, value = "classpath:messages.properties")
+@PropertySource(ignoreResourceNotFound = true, value = "classpath:messages.properties",encoding = "UTF-8")
 @Qualifier("userDetailsService")
 public class UserServiceImpl implements UserService, UserDetailsService {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -132,9 +133,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setCreateDate(new Date());
         user.setNotLocked(true);
         User newUser = userRepository.save(user);
-        if (sendMail(user, password)) {
+        if (sendMail(user, password, "mail/new-user")) {
             return newUser;
         } else {
+            throw new HttpMyException("Có lỗi xảy ra trong quá trình gửi mail đăng ký, vui lòng quay lại sau!");
+        }
+    }
+
+    @Override
+    public void resetPassword(String email) throws HttpMyException, EmailNotFoundException {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
+        }
+        String password = generatePassword();
+        user.setPassword(encodePassword(password));
+        userRepository.save(user);
+        LOGGER.info("New user password: " + password);
+        if (!sendMail(user, password, "mail/forgot-password")) {
             throw new HttpMyException("Có lỗi xảy ra trong quá trình gửi mail đăng ký, vui lòng quay lại sau!");
         }
     }
@@ -189,7 +205,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-    private boolean sendMail(User user, String newPassword) {
+    private boolean sendMail(User user, String newPassword, String template) {
         Mail mail = new Mail();
         mail.setFrom(emailForm);
         mail.setTo(user.getEmail());
@@ -201,6 +217,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         modelMap.put("signature", emailSignature);
         modelMap.put("password", newPassword);
         mail.setModel(modelMap);
-        return emailService.sendSimpleMessage(mail, "mail/new-user");
+        return emailService.sendSimpleMessage(mail, template);
     }
 }

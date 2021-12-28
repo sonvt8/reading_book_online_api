@@ -3,6 +3,8 @@ package com.cyber.online_books.service;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 
+import javax.mail.MessagingException;
+
 public interface UserService {
     /**
      * Tìm kiếm User theo username
@@ -27,4 +29,11 @@ public interface UserService {
      * @return true - nếu đăng ký thành công / false - nếu có lỗi xảy ra
      */
     User registerUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException, HttpMyException;
+
+    /**
+     * Quên mật khẩu
+     *
+     * @param email
+     */
+    void resetPassword(String email) throws HttpMyException, EmailNotFoundException;
 }
