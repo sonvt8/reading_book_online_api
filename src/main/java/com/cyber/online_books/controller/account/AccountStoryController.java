@@ -40,7 +40,7 @@ public class AccountStoryController extends ExceptionHandling {
             throw new UserNotLoginException();
         }
 
-        User user = userService.findUserByUsername(principal.getName());
+        User user = userService.findUserAccount(principal.getName());
         Page<StoryUser> pageStory = storyService.findPageStoryByUser(user.getId(), pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT, status);
         return new ResponseEntity<>(pageStory, HttpStatus.OK);
     }
