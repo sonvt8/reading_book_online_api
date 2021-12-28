@@ -21,7 +21,7 @@ import java.security.Principal;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "api/account/story")
+@RequestMapping(value = "tai-khoan/truyen")
 public class AccountStoryController extends ExceptionHandling {
 
     private final StoryService storyService;
@@ -32,7 +32,7 @@ public class AccountStoryController extends ExceptionHandling {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/danh-sach")
     public ResponseEntity< ? > getStoryByAccount(@RequestParam("pagenumber") int pagenumber,
                                                  @RequestParam("status") int status,
                                                  Principal principal) throws UserNotLoginException {
@@ -45,7 +45,7 @@ public class AccountStoryController extends ExceptionHandling {
         return new ResponseEntity<>(pageStory, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/them-truyen")
     public ResponseEntity<Story> addStory(@RequestParam("name") String name,
                            @RequestParam("author") String author,
                            @RequestParam("infomation") String infomation,
@@ -56,7 +56,7 @@ public class AccountStoryController extends ExceptionHandling {
         return new ResponseEntity<>(newStory, HttpStatus.OK);
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/sua-truyen/{id}")
     public ResponseEntity<Story> updateStory(@RequestParam("name") String name,
                                           @RequestParam("author") String author,
                                           @RequestParam("infomation") String infomation,
@@ -68,7 +68,7 @@ public class AccountStoryController extends ExceptionHandling {
         return new ResponseEntity<>(updateStory, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/xoa-truyen/{id}")
     public ResponseEntity<HttpResponse> deleteStory(@PathVariable("id") Long id, Principal principal) throws HttpMyException, UserNotLoginException {
         Story story = storyService.findStoryById(id);
         if (principal == null) {

@@ -8,6 +8,7 @@ import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.response.CategoryResponse;
 import com.cyber.online_books.service.CategoryService;
 import com.cyber.online_books.utils.WebUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,19 +77,18 @@ public class CategoryServiceImpl implements CategoryService {
     public Category checkUnique(Integer id, String newCategoryName) throws HttpMyException {
 
         boolean isCreatingNew = (id == null || id == 0);
-        Category newCategoryByName = categoryRepository.findCategoryByName(newCategoryName);
 
-        if (isCreatingNew) {
-            if (newCategoryByName != null) {
+        Category newCategoryByName = categoryRepository.findCategoryByName(newCategoryName);
+        if (newCategoryByName != null){
+            if (isCreatingNew)
                 throw new HttpMyException("Category already exist");
-            }
-        } else {
-            if (newCategoryByName != null && newCategoryByName.getId() != id) {
-                throw new HttpMyException("Category already exist");
-            }
+            else
+                if(newCategoryByName.getId() != id)
+                    throw new HttpMyException("Category already exist");
+                return newCategoryByName;
         }
 
-        return newCategoryByName;
+        return null;
     }
 
 }

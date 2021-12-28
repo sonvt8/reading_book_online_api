@@ -40,4 +40,5 @@ public interface CategoryService {
 
     Category checkUnique(Integer id, String newCategoryName) throws HttpMyException;
 
+
 }
