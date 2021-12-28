@@ -10,11 +10,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 public class UserPrincipal implements UserDetails {
 
     private static final long serialVersionUID = 1L;
+    private List< GrantedAuthority > authorities;
     private User user;
+
+    public UserPrincipal(User user, List< GrantedAuthority > authorities) {
+        this.user = user;
+        this.authorities = authorities;
+    }
 
     public UserPrincipal(User user) {
         this.user = user;
@@ -25,16 +34,15 @@ public class UserPrincipal implements UserDetails {
     }
 
     @Override
-    public Collection< ? extends GrantedAuthority > getAuthorities() {
-        Set<Role> roles = user.getRoleList();
-
-        List<SimpleGrantedAuthority> authories = new ArrayList<>();
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<Role> roles = user.getRoleList();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
         for (Role role : roles) {
-            authories.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 
-        return authories;
+        return authorities;
     }
 
     @Override

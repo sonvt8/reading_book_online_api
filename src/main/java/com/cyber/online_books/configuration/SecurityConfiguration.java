@@ -19,6 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static com.cyber.online_books.utils.SecurityConstant.PUBLIC_URLS;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+/**
+ * @author Cyber_Group
+ */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
