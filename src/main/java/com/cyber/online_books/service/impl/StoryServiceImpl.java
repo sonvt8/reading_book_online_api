@@ -140,6 +140,40 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository.save(storyEdit);
     }
 
+    @Override
+    public Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
+        Story storyEdit = storyRepository.findById(id).orElse(null);
+        if(storyEdit == null){
+            throw new HttpMyException("Not found story for update");
+        }
+        checkUnique(id, name);
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        storyEdit.setName(name);
+        storyEdit.setAuthor(author);
+        storyEdit.setInfomation(infomation);
+        storyEdit.setUser(storyEdit.getUser());
+        storyEdit.setUpdateDate(DateUtils.getCurrentDate());
+        storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
+        saveImage(storyEdit, image, principal);
+
+        if(dealStatus !=null){
+            storyEdit.setDealStatus(dealStatus);
+            if(dealStatus == ConstantsStatusUtils.STORY_VIP){
+                if(price != null){
+                    storyEdit.setPrice(price);
+                }
+                if(timeDeal != null){
+                    storyEdit.setTimeDeal(timeDeal);
+                }
+            }
+        }
+
+        return storyRepository.save(storyEdit);
+    }
+
     private void saveImage(Story story, MultipartFile image, Principal principal) throws NotAnImageFileException {
         if(image != null){
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {
