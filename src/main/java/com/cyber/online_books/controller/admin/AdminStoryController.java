@@ -1,5 +1,6 @@
 package com.cyber.online_books.controller.admin;
 
+import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.exception.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
@@ -48,5 +49,25 @@ public class AdminStoryController {
                                           @PathVariable(value = "id") Long id) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story updateStory = storyService.updateAdminStory(id, name, author, infomation, category.toArray(new String[0]), image, price, timeDeal, dealStatus, principal);
         return new ResponseEntity<>(updateStory, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/xoa-truyen/{id}")
+    public ResponseEntity<HttpResponse> deleteStory(@PathVariable("id") Long id, Principal principal) throws HttpMyException, UserNotLoginException {
+        Story story = storyService.findStoryById(id);
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        if(story == null)
+            throw new HttpMyException("Not found Story for delete");
+        boolean result = storyService.deleteStory(id);
+        if(result)
+            return response(HttpStatus.OK, "Story deleted successfully");
+        else
+            throw new HttpMyException("Can not delete this Story");
+    }
+
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
+                message), httpStatus);
     }
 }
