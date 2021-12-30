@@ -4,6 +4,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 
 import javax.mail.MessagingException;
+import java.security.Principal;
 
 public interface UserService {
     /**
@@ -62,6 +63,13 @@ public interface UserService {
      * @param email
      */
     void resetPassword(String email) throws HttpMyException, EmailNotFoundException;
+
+    /**
+     * Cập nhật mật khẩu
+     *
+     * @param newPassword
+     */
+    void updatePassword(String newPassword, Principal principal) throws HttpMyException;
 
     /**
      * Cập Nhật User
