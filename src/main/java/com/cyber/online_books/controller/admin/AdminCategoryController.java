@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping(value = "/api/admin/category")
+@RequestMapping(value = "quan-tri/the-loai")
 public class AdminCategoryController extends ExceptionHandling {
     private final Logger logger = LoggerFactory.getLogger(AdminCategoryController.class);
 
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping ("/list")
+    @GetMapping ("/danh-sach")
     public ResponseEntity< ? > getAllListCategories(@RequestParam(name="keyword") String keyword,
                                             @RequestParam(name="pagenumber") Integer pagenumber) throws Exception {
 
@@ -34,7 +34,7 @@ public class AdminCategoryController extends ExceptionHandling {
                 , pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/them")
     public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) throws UserNotLoginException, HttpMyException {
         categoryService.checkUnique(null, category.getName());
 
@@ -52,11 +52,12 @@ public class AdminCategoryController extends ExceptionHandling {
         return new ResponseEntity<>(categoryService.save(newCategory), HttpStatus.OK);
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/cap-nhat/{id}")
     public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, UserNotLoginException, HttpMyException {
-        Category updateCategory = categoryService.checkUnique(id, category.getName());;
+        Category updateCategory = categoryService.findCategoryById(id);
         if(updateCategory == null)
             throw new CategoryNotFoundException("Not found Category for update");
+        categoryService.checkUnique(id, category.getName());
         if (principal == null) {
             throw new UserNotLoginException();
         }
@@ -66,7 +67,7 @@ public class AdminCategoryController extends ExceptionHandling {
         return new ResponseEntity<>(categoryService.save(updateCategory), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/xoa/{id}")
     public ResponseEntity<HttpResponse> deleteCategory(@PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, HttpMyException, UserNotLoginException {
         Category category = categoryService.findCategoryById(id);
         if (principal == null) {

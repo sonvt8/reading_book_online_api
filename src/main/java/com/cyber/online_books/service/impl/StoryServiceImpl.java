@@ -8,6 +8,7 @@ import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.response.StoryAdmin;
 import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.CloudinaryUploadService;
 import com.cyber.online_books.service.StoryService;
@@ -63,6 +64,27 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
+    public Page< StoryAdmin > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {
+        Pageable pageable = PageRequest.of(pagenumber-1, size);
+        if (type == -1) {
+            if (search.trim().isEmpty()) {
+                return storyRepository.findByOrderByIdDesc(pageable);
+            }
+            return storyRepository.findByNameContainingOrderByIdDesc(search, pageable);
+        } else if (type == 3) {
+            if (search.trim().isEmpty()) {
+                return storyRepository.findByDealStatusOrderByIdDesc(ConstantsStatusUtils.STORY_STATUS_GOING_ON, pageable);
+            }
+            return storyRepository.findByDealStatusAndNameContainingOrderByIdDesc(ConstantsStatusUtils.STORY_STATUS_GOING_ON, search, pageable);
+        } else {
+            if (search.trim().isEmpty()) {
+                return storyRepository.findByStatusOrderByIdDesc(type, pageable);
+            }
+            return storyRepository.findByNameContainingAndStatusOrderByIdDesc(search, type, pageable);
+        }
+    }
+
+    @Override
     public boolean deleteStory(Long id) {
         try {
             storyRepository.deleteById(id);
@@ -95,11 +117,11 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
-        Story storyEdit = checkUnique(id, name);
+        Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
             throw new HttpMyException("Not found story for update");
         }
-
+        checkUnique(id, name);
         if (principal == null) {
             throw new UserNotLoginException();
         }
@@ -114,6 +136,40 @@ public class StoryServiceImpl implements StoryService {
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
         storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(storyEdit, image, principal);
+
+        return storyRepository.save(storyEdit);
+    }
+
+    @Override
+    public Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
+        Story storyEdit = storyRepository.findById(id).orElse(null);
+        if(storyEdit == null){
+            throw new HttpMyException("Not found story for update");
+        }
+        checkUnique(id, name);
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        storyEdit.setName(name);
+        storyEdit.setAuthor(author);
+        storyEdit.setInfomation(infomation);
+        storyEdit.setUser(storyEdit.getUser());
+        storyEdit.setUpdateDate(DateUtils.getCurrentDate());
+        storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
+        saveImage(storyEdit, image, principal);
+
+        if(dealStatus !=null){
+            storyEdit.setDealStatus(dealStatus);
+            if(dealStatus == ConstantsStatusUtils.STORY_VIP){
+                if(price != null){
+                    storyEdit.setPrice(price);
+                }
+                if(timeDeal != null){
+                    storyEdit.setTimeDeal(timeDeal);
+                }
+            }
+        }
 
         return storyRepository.save(storyEdit);
     }
@@ -138,16 +194,16 @@ public class StoryServiceImpl implements StoryService {
         boolean isCreatingNew = (id == null || id == 0);
         Story newStoryByName = storyRepository.findStoryByName(newStoryName);
 
-        if (isCreatingNew) {
-            if (newStoryByName != null) {
+        if(newStoryByName != null){
+            if (isCreatingNew) {
                 throw new HttpMyException("Story already exist");
+            } else {
+                if (newStoryByName.getId() != id) {
+                    throw new HttpMyException("Story already exist");
+                }
             }
-        } else {
-            if (newStoryByName != null && newStoryByName.getId() != id) {
-                throw new HttpMyException("Story already exist");
-            }
+            return newStoryByName;
         }
-
-        return newStoryByName;
+        return null;
     }
 }

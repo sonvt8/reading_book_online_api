@@ -30,4 +30,5 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     Page< Category > findAllByNameContaining(String search, Pageable pageable);
 
+
 }
