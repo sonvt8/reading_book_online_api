@@ -4,7 +4,7 @@ import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
-import com.cyber.online_books.exception.HttpMyException;
+import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.StoryUser;

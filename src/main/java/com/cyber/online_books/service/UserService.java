@@ -4,6 +4,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 
 import javax.mail.MessagingException;
+import java.security.Principal;
 
 public interface UserService {
     /**
@@ -23,6 +24,32 @@ public interface UserService {
     User findUserEmail(String email);
 
     /**
+     * Tìm user theo Id
+     *
+     * @param id
+     * @return User - nếu tồn tại / null- nếu không tồn tại user
+     */
+    User findUserById(Long id);
+
+    /**
+     * Kiểm tra DisplayName đã tồn tại chưa
+     *
+     * @param userId
+     * @param newNick
+     * @return boolean
+     */
+    boolean checkUserDisplayNameExits(Long userId, String newNick);
+
+    /**
+     * Cập nhật ngoại hiệu
+     *
+     * @param userId
+     * @param money
+     * @param newNick
+     */
+    void updateDisplayName(Long userId, Double money, String newNick) throws Exception;
+
+    /**
      * Đăng ký người dùng mới
      *
      * @param user
@@ -36,4 +63,26 @@ public interface UserService {
      * @param email
      */
     void resetPassword(String email) throws HttpMyException, EmailNotFoundException;
+
+    /**
+     * Cập nhật mật khẩu
+     *
+     * @param newPassword
+     */
+    void updatePassword(String newPassword, Principal principal) throws HttpMyException;
+
+    /**
+     * Cập Nhật User
+     *
+     * @param user
+     * @return User
+     */
+    User updateUser(User user);
+
+    /**
+     * Xoá User
+     *
+     * @param user
+     */
+    void deleteUser(User user);
 }

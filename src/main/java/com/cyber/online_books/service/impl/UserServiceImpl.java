@@ -22,16 +22,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -114,6 +116,64 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     /**
+     * Tìm user theo Id
+     *
+     * @param id
+     * @return User - nếu tồn tại / null- nếu không tồn tại user
+     */
+    @Override
+    public User findUserById(Long id) {
+        return userRepository
+                .findById(id)
+                .orElse(null);
+    }
+
+    /**
+     * Kiểm tra DisplayName đã tồn tại chưa
+     *
+     * @param userId
+     * @param newNick
+     * @return boolean
+     */
+    @Override
+    public boolean checkUserDisplayNameExits(Long userId, String newNick) {
+        return userRepository.existsByIdNotAndDisplayName(userId, newNick);
+    }
+
+    /**
+     * Cập nhật ngoại hiệu
+     *
+     * @param userId
+     * @param money
+     * @param newNick
+     */
+    @Override
+    public void updateDisplayName(Long userId, Double money, String newNick) throws Exception {
+        User user = userRepository.findById(userId).get();
+        if (user.getGold() < money)
+            throw new HttpMyException("Số dư của bạn không đủ để thanh toán!");
+        user.setDisplayName(newNick);
+        user.setGold(user.getGold() - money);
+        userRepository.save(user);
+    }
+
+    /**
+     * Cập Nhật User
+     *
+     * @param user
+     * @return User
+     */
+    @Override
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(User deleteUser) {
+        userRepository.delete(deleteUser);
+    }
+
+    /**
      * Đăng ký người dùng mới
      *
      * @param user
@@ -153,6 +213,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (!sendMail(user, password, "mail/forgot-password")) {
             throw new HttpMyException("Có lỗi xảy ra trong quá trình gửi mail đăng ký, vui lòng quay lại sau!");
         }
+    }
+
+    @Override
+    public void updatePassword(String newPassword, Principal principal) throws HttpMyException {
+        String currentUsername = principal.getName();
+        User currentUser = userRepository.findUserByUsername(currentUsername);
+        if (currentUser == null) {
+            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        }
+        currentUser.setPassword(encodePassword(newPassword));
+        userRepository.save(currentUser);
+        LOGGER.info("New user password: " + newPassword);
     }
 
     private String generateUserId() {
