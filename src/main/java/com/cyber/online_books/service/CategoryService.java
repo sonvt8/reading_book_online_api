@@ -18,6 +18,16 @@ public interface CategoryService {
     List<CategoryResponse> getListCategoryOfMenu(Integer status);
 
     /**
+     * Tìm Category theo Id và status
+     *
+     * @param id
+     * @param status
+     * @return CategorySummary - nếu tồn tại
+     * @throws Exception - nếu không tồn tại category có id và status
+     */
+    CategoryResponse getCategoryByID(Integer id, Integer status) throws Exception;
+
+    /**
      * Tìm Category theo search
      *
      * @param search

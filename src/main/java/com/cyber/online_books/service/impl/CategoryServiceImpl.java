@@ -1,7 +1,9 @@
 package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.exception.domain.HttpMyException;
+import com.cyber.online_books.exception.domain.NotFoundException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.response.CategoryResponse;
 import com.cyber.online_books.service.CategoryService;
@@ -35,6 +37,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List< CategoryResponse > getListCategoryOfMenu(Integer status) {
         return categoryRepository.findAllByStatus(status);
+    }
+
+    /**
+     * Tìm Category theo Id và status
+     *
+     * @param id
+     * @param status
+     * @return category - nếu tồn tại
+     * @throws NotFoundException - nếu không tồn tại category có id và status
+     */
+    @Override
+    public CategoryResponse getCategoryByID(Integer id, Integer status) throws NotFoundException {
+        return categoryRepository
+                .findByIdAndStatus(id, status)
+                .orElseThrow(NotFoundException::new);
     }
 
     @Override

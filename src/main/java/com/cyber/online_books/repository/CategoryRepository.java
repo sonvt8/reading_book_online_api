@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     /**
@@ -16,6 +17,15 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
      * @return List<CategoryResponse> - danh sách thể loại
      */
     List<CategoryResponse> findAllByStatus(Integer status);
+
+    /**
+     * Tìm category theo id và status
+     *
+     * @param id
+     * @param status
+     * @return Optional<CategorySummary>
+     */
+    Optional< CategoryResponse > findByIdAndStatus(Integer id, Integer status);
 
     /**
      * Lấy danh sách Thể loại theo

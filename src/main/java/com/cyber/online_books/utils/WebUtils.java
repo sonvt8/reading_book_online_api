@@ -15,4 +15,19 @@ public class WebUtils {
             return " ";
         }
     }
+
+    /**
+     * Kiểm tra string có phải Integer number
+     *
+     * @param number
+     * @return true - nếu sai / false - nếu đúng
+     */
+    public static boolean checkIntNumber(String number) {
+        try {
+            Integer.parseInt(number);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 }

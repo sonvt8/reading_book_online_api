@@ -5,14 +5,30 @@ import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.StoryAdmin;
+import com.cyber.online_books.response.StoryUpdate;
 import com.cyber.online_books.response.StoryUser;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.List;
 
 public interface StoryService {
     Story findStoryById(Long id);
+
+    /**
+     * Lấy List Truyện Mới Cập Nhật theo Category
+     *
+     * @param cID
+     * @param page
+     * @param size
+     * @param chapterStatus
+     * @param storyStatus
+     * @return Page<StoryUpdate>
+     */
+    Page<StoryUpdate> findStoryNewUpdateByCategoryId(Integer cID,
+                                                     int page, int size,
+                                                     List< Integer > storyStatus, List< Integer > chapterStatus);
 
     /**
      * Lấy List Truyện đăng bởi User

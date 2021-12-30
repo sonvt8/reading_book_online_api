@@ -9,6 +9,7 @@ import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.repository.UserRepository;
 import com.cyber.online_books.response.StoryAdmin;
+import com.cyber.online_books.response.StoryUpdate;
 import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.CloudinaryUploadService;
 import com.cyber.online_books.service.StoryService;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +48,25 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public Story findStoryById(Long id) {
         return storyRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Lấy List Truyện Mới Cập Nhật theo Category
+     *
+     * @param cID
+     * @param page
+     * @param size
+     * @param storyStatus
+     * @param chapterStatus
+     * @return Page<StoryUpdate>
+     */
+    @Override
+    public Page< StoryUpdate > findStoryNewUpdateByCategoryId(Integer cID,
+                                                              int page, int size,
+                                                              List< Integer > storyStatus, List< Integer > chapterStatus) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .findStoryNewByCategory(cID, storyStatus, chapterStatus, pageable);
     }
 
     /**

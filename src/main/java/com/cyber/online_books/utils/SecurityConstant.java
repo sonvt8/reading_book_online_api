@@ -15,7 +15,8 @@ public class SecurityConstant {
             "/thanh-vien/dang-nhap",
             "/thanh-vien/dang-ky",
             "/thanh-vien/quen-mat-khau",
-            "/member/image/**"
+            "/member/image/**",
+            "/the-loai/**"
     };
     //public static final String[] PUBLIC_URLS = { "**" };
 }
