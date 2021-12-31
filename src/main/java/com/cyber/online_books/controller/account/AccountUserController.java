@@ -2,6 +2,7 @@ package com.cyber.online_books.controller.account;
 
 
 import com.cyber.online_books.domain.HttpResponse;
+import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.service.UserService;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,11 +29,21 @@ public class AccountUserController {
     @Autowired
     private UserService userService;
 
+    @PostMapping(value = "/doi_ngoai_hieu")
+    @Transactional
+    public ResponseEntity<User> changeNick(@RequestParam(value = "newNick") String newNick,
+                                           Principal principal) throws HttpMyException {
+        User user = userService.updateDisplayName(principal,newNick);
+        return new ResponseEntity<>(user, OK);
+    }
+
     @PostMapping(value = "/doi_mat_khau")
-    private ResponseEntity<HttpResponse> changePassword(@RequestParam("new-pass")String newPassword, Principal principal) throws HttpMyException {
+    public ResponseEntity<HttpResponse> changePassword(@RequestParam("new-pass")String newPassword, Principal principal) throws HttpMyException {
         userService.updatePassword(newPassword,principal);
         return response(OK, "Đã cập nhật thành công mật khẩu mới");
     }
+
+
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),

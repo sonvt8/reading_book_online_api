@@ -43,11 +43,9 @@ public interface UserService {
     /**
      * Cập nhật ngoại hiệu
      *
-     * @param userId
-     * @param money
      * @param newNick
      */
-    void updateDisplayName(Long userId, Double money, String newNick) throws Exception;
+    User updateDisplayName(Principal principal, String newNick) throws HttpMyException;
 
     /**
      * Đăng ký người dùng mới

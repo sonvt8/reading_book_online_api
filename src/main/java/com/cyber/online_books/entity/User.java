@@ -78,12 +78,6 @@ public class User implements Serializable {
             @JoinColumn(name = "roleId", nullable = false, updatable = false)})
     private Collection< Role > roleList;
 
-    @Transient
-    private String passwordRegister;
-
-    @Transient
-    private String passwordRegisterConfirm;
-
     @PrePersist
     public void prePersist() {
         if (createDate == null) {
