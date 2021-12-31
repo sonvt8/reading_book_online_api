@@ -50,8 +50,6 @@ public class AccountUserController {
         return response(OK, "Đã cập nhật thành công mật khẩu mới");
     }
 
-
-
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
                 message), httpStatus);

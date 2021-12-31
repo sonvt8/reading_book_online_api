@@ -148,10 +148,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      */
     @Override
     public User updateDisplayName(Principal principal, String newNick) throws HttpMyException {
-        String currentUsername = principal.getName();
-        User currentUser = userRepository.findUserByUsername(currentUsername);
-        if (currentUser == null)
-            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        User currentUser = validatePricipal(principal);
         if (newNick.equalsIgnoreCase(currentUser.getDisplayName()))
             throw new HttpMyException("Ngoại hiệu này bạn đang sử dụng");
         if (userRepository.existsByIdNotAndDisplayName(currentUser.getId(), newNick))
@@ -239,11 +236,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      */
     @Override
     public void updatePassword(String newPassword, Principal principal) throws HttpMyException {
-        String currentUsername = principal.getName();
-        User currentUser = userRepository.findUserByUsername(currentUsername);
-        if (currentUser == null) {
-            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
-        }
+        User currentUser = validatePricipal(principal);
         currentUser.setPassword(encodePassword(newPassword));
         userRepository.save(currentUser);
         LOGGER.info("New user password: " + newPassword);
@@ -271,6 +264,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
         }
+    }
+
+    private User validatePricipal(Principal principal) throws HttpMyException{
+        String currentUsername = principal.getName();
+        User currentUser = userRepository.findUserByUsername(currentUsername);
+        if (currentUser == null) {
+            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        }
+        return currentUser;
     }
 
     private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
