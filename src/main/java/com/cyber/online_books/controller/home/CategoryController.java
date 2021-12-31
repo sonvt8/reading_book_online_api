@@ -41,9 +41,8 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(listCategories);
     }
 
-    @GetMapping("/{cid}/{cmetaTitle}")
+    @GetMapping("/{cid}")
     public ResponseEntity<?> getStoriesByCategoryId(@PathVariable("cid") String cid,
-                                                    @PathVariable("cmetaTitle") String cmetaTitle,
                                                     @RequestParam(name="pagenumber") Integer pagenumber) throws Exception {
 
         CategoryResponse categoryResponse = checkCategoryID(cid);
