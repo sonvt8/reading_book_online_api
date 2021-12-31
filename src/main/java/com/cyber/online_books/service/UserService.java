@@ -48,6 +48,13 @@ public interface UserService {
     User updateDisplayName(Principal principal, String newNick) throws HttpMyException;
 
     /**
+     * Cập nhật thông báo
+     *
+     * @param newMess
+     */
+    User updateNotification(Principal principal, String newMess) throws HttpMyException;
+
+    /**
      * Đăng ký người dùng mới
      *
      * @param user

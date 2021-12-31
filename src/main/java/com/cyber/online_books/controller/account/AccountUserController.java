@@ -50,6 +50,12 @@ public class AccountUserController {
         return response(OK, "Đã cập nhật thành công mật khẩu mới");
     }
 
+    @PostMapping(value = "/doi_thong_bao")
+    public ResponseEntity<User> changeNotification(@RequestParam("notification")String newMess, Principal principal) throws HttpMyException {
+        User user = userService.updateNotification(principal,newMess.trim());
+        return new ResponseEntity<>(user, OK);
+    }
+
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
                 message), httpStatus);

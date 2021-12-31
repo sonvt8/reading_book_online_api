@@ -23,10 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.*;
@@ -145,6 +143,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * Cập nhật ngoại hiệu
      *
      * @param newNick
+     * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     @Override
     public User updateDisplayName(Principal principal, String newNick) throws HttpMyException {
@@ -162,6 +161,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         currentUser.setDisplayName(newNick);
         currentUser.setGold(currentUser.getGold() - money);
+        userRepository.save(currentUser);
+        return currentUser;
+    }
+
+    /**
+     * Cập nhật thông báo
+     *
+     * @param newMess
+     * @return User - nếu tồn tại / null- nếu không tồn tại user
+     */
+    @Override
+    public User updateNotification(Principal principal, String newMess) throws HttpMyException {
+        User currentUser = validatePricipal(principal);
+        currentUser.setNotification(newMess);
         userRepository.save(currentUser);
         return currentUser;
     }
