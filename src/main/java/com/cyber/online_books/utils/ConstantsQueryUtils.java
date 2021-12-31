@@ -3,7 +3,7 @@ package com.cyber.online_books.utils;
 public class ConstantsQueryUtils {
 
     public static final String STORY_NEW_UPDATE_BY_CATEGORY = "SELECT s.id, s.name, s.images, s.author, s.update_date,"
-            + " c.id as chapterId, c.chapter_number,"
+            + " c.id as chapter_id, c.chapter_number,"
             + " u.display_name, u.username, s.deal_status"
             + " FROM Story s LEFT JOIN (SELECT c.* FROM Chapter c INNER JOIN"
             + " (SELECT MAX(c.id) AS maxChapterID FROM Story s"
@@ -31,4 +31,58 @@ public class ConstantsQueryUtils {
             + " WHERE  sc.category_id = :categoryId AND s.status IN :storyStatus"
             + " GROUP BY s.id"
             + " ORDER BY s.update_date DESC";
+
+    public static final String STORY_TOP_VIEW_BY_CATEGORY = "SELECT s.id, s.name, s.images, s.infomation, s.deal_status, s.author,"
+            + " COALESCE(d.countTopView,0) AS cnt, ca.id as category_id, ca.name as categoryName FROM Story s"
+            + " LEFT JOIN (SELECT c.story_id, COUNT(c.story_id) AS countTopView FROM Chapter c"
+            + " LEFT JOIN `history` f ON  c.id = f.chapter_id"
+            + " LEFT JOIN Story st on c.story_id = st.id"
+            + " WHERE st.status IN :storyStatus"
+            + " AND f.date_view BETWEEN :startDate AND :endDate"
+            + " AND f.status = :historyStatus"
+            + " GROUP BY c.story_id) d ON s.id = d.story_id"
+            + " LEFT JOIN `story_category` sc on s.id = sc.story_id"
+            + " LEFT JOIN Category ca on sc.category_id = ca.id"
+            + " WHERE  s.status IN :storyStatus AND sc.category_id = :categoryID"
+            + " GROUP BY s.id"
+            + " ORDER BY cnt DESC, s.count_view DESC";
+
+    public static final String COUNT_STORY_TOP_VIEW_BY_CATEGORY = "SELECT COUNT(*) FROM (SELECT s.id, COALESCE(d.count_view,0) AS cnt FROM Story s"
+            + " LEFT JOIN (SELECT c.story_id, COUNT(c.story_id) AS countTopView FROM Chapter c"
+            + " LEFT JOIN `history` f ON  c.id = f.chapter_id"
+            + " LEFT JOIN Story st on c.story_id = st.id"
+            + " WHERE st.status IN :storyStatus"
+            + " AND f.date_view BETWEEN :startDate AND :endDate"
+            + " AND f.status = :historyStatus"
+            + " GROUP BY c.story_id) d ON s.id = d.story_id"
+            + " LEFT JOIN `story_category` sc on s.id = sc.story_id"
+            + " LEFT JOIN Category ca on sc.category_id = ca.id"
+            + " WHERE  s.status IN :storyStatus AND sc.category_id = :categoryID"
+            + " GROUP BY s.id"
+            + " ORDER BY cnt DESC, s.count_view DESC) rs";
+
+    public static final String STORY_TOP_VOTE_BY_CATEGORY = "SELECT s.id, s.name, s.images, s.infomation, s.deal_status, s.author,"
+            + " COALESCE(d.countVote,0) AS cnt, ca.id as category_id, ca.name as categoryName FROM Story s"
+            + " LEFT JOIN (SELECT p.story_id, COALESCE(SUM(p.vote), 0) AS countVote FROM Pay p"
+            + " WHERE p.create_date BETWEEN :startDate AND :endDate "
+            + " AND p.type = :payType "
+            + " AND p.status = :payStatus"
+            + " GROUP BY p.story_id) d ON s.id = d.story_id"
+            + " LEFT JOIN `story_category` sc on s.id = sc.story_id"
+            + " LEFT JOIN Category ca on sc.category_id = ca.id"
+            + " WHERE  s.status IN :storyStatus AND sc.category_id = :categoryID"
+            + " GROUP BY s.id"
+            + " ORDER BY cnt DESC, s.status, s.count_appoint DESC";
+
+    public static final String COUNT_STORY_TOP_VOTE_BY_CATEGORY = "SELECT COUNT(*) FROM (SELECT s.id, COALESCE(d.countVote,0) AS cnt FROM Story s"
+            + " LEFT JOIN (SELECT p.story_id, COALESCE(SUM(p.vote), 0) AS countVote FROM Pay p"
+            + " WHERE p.create_date BETWEEN :startDate AND :endDate "
+            + " AND p.type = :payType "
+            + " AND p.status = :payStatus"
+            + " GROUP BY p.story_id) d ON s.id = d.story_id"
+            + " LEFT JOIN `story_category` sc on s.id = sc.story_id"
+            + " LEFT JOIN Category ca on sc.category_id = ca.id"
+            + " WHERE  s.status IN :storyStatus AND sc.category_id = :categoryID"
+            + " GROUP BY s.id"
+            + " ORDER BY cnt DESC, s.status, s.count_appoint DESC) rs";
 }

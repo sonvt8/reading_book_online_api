@@ -5,12 +5,14 @@ import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.StoryAdmin;
+import com.cyber.online_books.response.StoryTop;
 import com.cyber.online_books.response.StoryUpdate;
 import com.cyber.online_books.response.StoryUser;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 public interface StoryService {
@@ -40,6 +42,41 @@ public interface StoryService {
      * @return
      */
     Page<StoryUser> findPageStoryByUser(Long id, int pagenumber, Integer size, Integer status);
+
+    /**
+     * Lấy List Truyện Top View theo Category
+     *
+     * @param categoryId
+     * @param historyStatus
+     * @param listStatus
+     * @param startDate
+     * @param endDate
+     * @param page
+     * @param size
+     * @return Page<StoryTop>
+     */
+    Page<StoryTop> findStoryTopViewByCategoryId(Integer categoryId, Integer historyStatus,
+                                                List< Integer > listStatus,
+                                                Date startDate, Date endDate,
+                                                int page, int size);
+
+    /**
+     * Lấy Danh sách Truyện Top  Đề Cử Theo Category
+     *
+     * @param categoryID
+     * @param storyStatus
+     * @param payType
+     * @param payStatus
+     * @param startDate
+     * @param endDate
+     * @param page
+     * @param size
+     * @return Page<StoryTop>
+     */
+    Page< StoryTop > findStoryTopVoteByCategoryId(Integer categoryID, List< Integer > storyStatus,
+                                                  Integer payType, Integer payStatus,
+                                                  Date startDate, Date endDate,
+                                                  int page, int size);
 
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
