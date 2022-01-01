@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class InformationResponse {
 
-    List< CategoryResponse > listCategoryOfMenu;
-    Information information;
+    private List< CategoryResponse > listCategoryOfMenu;
+    private Information information;
 }

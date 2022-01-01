@@ -87,6 +87,42 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
                                            @Param("startDate") Date startDate, @Param("endDate") Date endDate,
                                            Pageable pageable);
 
+    /**
+     * Lấy Danh sách Truyện Top
+     *
+     * @param startDate
+     * @param endDate
+     * @param listStatus
+     * @param historyStatus
+     * @param pageable
+     * @return Page<TopStory>
+     */
+    @Query(value = ConstantsQueryUtils.STORY_TOP_VIEW_BY_STATUS,
+            countQuery = ConstantsQueryUtils.COUNT_STORY_TOP_VIEW_BY_STATUS,
+            nativeQuery = true)
+    Page< StoryTop > findStoryTopViewByStatus(@Param("storyStatus") List< Integer > listStatus,
+                                              @Param("startDate") Date startDate,
+                                              @Param("endDate") Date endDate,
+                                              @Param("historyStatus") Integer historyStatus,
+                                              Pageable pageable);
+
+    /**
+     * Lấy Danh sách Truyện Vip mới cập nhật
+     *
+     * @param listChapterStatus - danh sách trạng thái chapter
+     * @param pageable          - biến page
+     * @param listStoryStatus   - danh sách trạng thái truyện
+     * @param sDealStatus       - trạng thái truyện trả tiền
+     * @return Page<StoryUpdate>
+     */
+    @Query(value = ConstantsQueryUtils.VIP_STORY_NEW_UPDATE,
+            countQuery = ConstantsQueryUtils.COUNT_VIP_STORY_NEW_UPDATE,
+            nativeQuery = true)
+    Page< StoryUpdate > findVipStoryNew(@Param("chapterStatus") List< Integer > listChapterStatus,
+                                        @Param("storyStatus") List< Integer > listStoryStatus,
+                                        @Param("storyDealStatus") Integer sDealStatus,
+                                        Pageable pageable);
+
     Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
 
     Page< StoryAdmin > findByNameContainingOrderByIdDesc(String search, Pageable pageable);

@@ -78,6 +78,34 @@ public interface StoryService {
                                                   Date startDate, Date endDate,
                                                   int page, int size);
 
+    /**
+     * Lấy danh sách truyên top view trong khoảng theo status
+     *
+     * @param listStatus    - Danh sách trạng thái Story
+     * @param startDate     - Ngày Bắt đầu
+     * @param endDate       - Ngày kết thúc
+     * @param historyStatus - Status history
+     * @param page          - số trang
+     * @param size          - độ dài trang
+     * @return
+     */
+    Page< StoryTop > findStoryTopViewByStatuss(List< Integer > listStatus,
+                                               Date startDate, Date endDate, Integer historyStatus,
+                                               int page, int size);
+
+    /**
+     * Lấy Danh sách Truyện Vip mới cập nhật
+     *
+     * @param listChapterStatus - danh sách trạng thái chapter
+     * @param pagenumber        - biến số trang
+     * @param size              - biến size
+     * @param listStoryStatus   - danh sách trạng thái truyện
+     * @param sDealStatus       - trạng thái truyện trả tiền
+     * @return Page<StoryUpdate>
+     */
+    Page< StoryUpdate > findStoryVipUpdateByStatus(List< Integer > listChapterStatus, List< Integer > listStoryStatus,
+                                                   Integer sDealStatus, int pagenumber, Integer size);
+
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);
