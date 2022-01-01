@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.cyber.online_books.utils.SecurityConstant.PUBLIC_URLS;
+import static com.cyber.online_books.utils.SecurityConstant.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 /**
@@ -56,6 +56,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable().cors().and()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
                 .and().authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
+                .and().authorizeRequests().antMatchers(ROLE_USER_LINK).access("hasAnyRole('ROLE_USER')")
+                .and().authorizeRequests().antMatchers(ROLE_CONANDMOD_LINK).access("hasAnyRole('ROLE_CONVERTER', 'ROLE_SMOD')")
+                .and().authorizeRequests().antMatchers(ROLE_ADMIN_MOD_LINK).access("hasAnyRole('ROLE_ADMIN', 'ROLE_SMOD')")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)

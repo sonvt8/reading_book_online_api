@@ -93,6 +93,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     /**
+     * Lấy toàn bộ User
+     *
+     * @return List<User>
+     */
+    @Override
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
+    /**
      * Tìm kiếm User theo username
      *
      * @param userName

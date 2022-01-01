@@ -3,10 +3,18 @@ package com.cyber.online_books.service;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 
-import javax.mail.MessagingException;
 import java.security.Principal;
+import java.util.List;
 
 public interface UserService {
+
+    /**
+     * Lấy toàn bộ User
+     *
+     * @return List<User>
+     */
+    List<User> getUsers();
+
     /**
      * Tìm kiếm User theo username
      *
