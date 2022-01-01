@@ -35,14 +35,15 @@ public class VipStoryController {
 
     @GetMapping(value = "")
     public ResponseEntity<CatalogResponse> getVipStory(@RequestParam(name="pagenumber") Integer pagenumber) {
-        //Lấy ngày bắt đầu của tuần
-        Date firstDayOfWeek = DateUtils.getFirstDayOfWeek();
+        //Lấy ngày bắt đầu của tháng
+        Date firstDayOfMonth = DateUtils.getFirstDayOfMonth();
 
-        //Lấy ngày kết thúc của tuần
-        Date lastDayOfWeek = DateUtils.getLastDayOfWeek();
-        //Lấy Top View Truyện Vip Trong Tuần
-        List<StoryTop> topStoryWeek = storyService.
-                findStoryTopViewByStatuss(ConstantsListUtils.LIST_STORY_DISPLAY, firstDayOfWeek, lastDayOfWeek,
+        //Lấy ngày kết thúc của tháng
+        Date lastDayOfMonth = DateUtils.getLastDayOfMonth();
+
+        //Lấy Top View Truyện Vip Trong Tháng
+        List<StoryTop> topStoryMonth = storyService.
+                findStoryTopViewByStatuss(ConstantsListUtils.LIST_STORY_DISPLAY, firstDayOfMonth, lastDayOfMonth,
                         ConstantsStatusUtils.HISTORY_VIEW, ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.PAGE_SIZE_TOP_VIEW_DEFAULT)
                 .get()
                 .collect(Collectors.toList());
@@ -52,8 +53,8 @@ public class VipStoryController {
                 ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.PAGE_SIZE_DEFAULT);
 
         CatalogResponse catalogResponse = new CatalogResponse();
-        catalogResponse.setTopStoryWeek(topStoryWeek);
-        catalogResponse.setTopVipStoryPage(topVipStoryPage);
+        catalogResponse.setTopStoryMonth(topStoryMonth);
+        catalogResponse.setListStoryPage(topVipStoryPage);
 
         return new ResponseEntity<>(catalogResponse, HttpStatus.OK);
     }

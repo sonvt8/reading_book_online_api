@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class CatalogResponse {
-    private List<StoryTop> topStoryWeek;
-    private Page<StoryUpdate> listNewStoryPage;
-    private Page<StoryUpdate> topVipStoryPage;
+    private List<StoryTop> topStoryMonth;
+    private Page<StoryUpdate> listStoryPage;
 }
