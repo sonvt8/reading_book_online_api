@@ -9,11 +9,13 @@ import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -21,17 +23,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/home")
-public class HomeController {
+@RequestMapping(value = "/danh-muc/moi-cap-nhat")
+public class NewStoryController {
     private final StoryService storyService;
 
     @Autowired
-    public HomeController(StoryService storyService) {
+    public NewStoryController(StoryService storyService) {
         this.storyService = storyService;
     }
 
     @GetMapping(value = "")
-    public ResponseEntity<HomeResponse> homePage() {
+    public ResponseEntity<HomeResponse> getNewStory(@RequestParam(name="pagenumber") Integer pagenumber) {
         //Lấy ngày bắt đầu của tuần
         Date firstDayOfWeek = DateUtils.getFirstDayOfWeek();
 
@@ -44,30 +46,14 @@ public class HomeController {
                 .get()
                 .collect(Collectors.toList());
 
-        // Lấy Danh Sách Truyện Vip Mới Cập Nhật
-        List<StoryUpdate> topVipStory = storyService.findStoryVipUpdateByStatus(ConstantsListUtils.LIST_CHAPTER_DISPLAY, ConstantsListUtils.LIST_STORY_DISPLAY, ConstantsStatusUtils.CATEGORY_ACTIVED,
-                ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.PAGE_SIZE_DEFAULT)
-                .get()
-                .collect(Collectors.toList());
-
         // Lấy Danh Sách Truyện Mới Cập Nhật
-        List< StoryUpdate > listNewStory = storyService
+        Page< StoryUpdate > listNewStoryPage = storyService
                 .findStoryUpdateByStatus(ConstantsListUtils.LIST_CHAPTER_DISPLAY, ConstantsListUtils.LIST_STORY_DISPLAY,
-                        ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.PAGE_SIZE_HOME)
-                .getContent();
-
-        Date startDate = DateUtils.getFirstDayOfMonth();
-        Date endDate = DateUtils.getLastDayOfMonth();
-        // Lấy Danh Sách Truyện Top View trong tháng
-        List< StoryTop > topStory = storyService
-                .getTopStoryAppoind(ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.RANK_SIZE, startDate, endDate)
-                .getContent();
+                        pagenumber, ConstantsUtils.PAGE_SIZE_HOME);
 
         HomeResponse homeResponse = new HomeResponse();
         homeResponse.setTopStoryWeek(topStoryWeek);
-        homeResponse.setTopVipStory(topVipStory);
-        homeResponse.setListNewStory(listNewStory);
-        homeResponse.setTopStory(topStory);
+        homeResponse.setListNewStoryPage(listNewStoryPage);
 
         return new ResponseEntity<>(homeResponse, HttpStatus.OK);
     }

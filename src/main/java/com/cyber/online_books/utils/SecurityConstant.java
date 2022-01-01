@@ -18,7 +18,8 @@ public class SecurityConstant {
             "/member/image/**",
             "/the-loai/**",
             "/thong-tin",
-            "/home"
+            "/home",
+            "/danh-muc/**"
     };
     //public static final String[] PUBLIC_URLS = { "**" };
 }

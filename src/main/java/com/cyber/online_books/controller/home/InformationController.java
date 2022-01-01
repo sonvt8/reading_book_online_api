@@ -1,4 +1,4 @@
-package com.cyber.online_books.controller;
+package com.cyber.online_books.controller.home;
 
 import com.cyber.online_books.response.InformationResponse;
 import com.cyber.online_books.service.CategoryService;
