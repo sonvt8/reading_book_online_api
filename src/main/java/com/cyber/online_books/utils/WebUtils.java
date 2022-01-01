@@ -17,6 +17,21 @@ public class WebUtils {
     }
 
     /**
+     * Kiểm tra string có phải Long number
+     *
+     * @param number
+     * @return true - nếu không phải / false - nếu đúng
+     */
+    public static boolean checkLongNumber(String number) {
+        try {
+            Long.parseLong(number);
+        } catch (Exception e) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Kiểm tra string có phải Integer number
      *
      * @param number
