@@ -106,6 +106,28 @@ public interface StoryService {
     Page< StoryUpdate > findStoryVipUpdateByStatus(List< Integer > listChapterStatus, List< Integer > listStoryStatus,
                                                    Integer sDealStatus, int pagenumber, Integer size);
 
+    /**
+     * Lấy Page Truyện theo Status
+     *
+     * @param listChapterStatus -  danh sách trạng thái chapter
+     * @param listStoryStatus   - danh sách trạng thái Story
+     * @param page              - số trang
+     * @param size              - độ dài trang
+     * @return Page<StoryUpdate>
+     */
+    Page< StoryUpdate > findStoryUpdateByStatus(List< Integer > listChapterStatus,
+                                                List< Integer > listStoryStatus,
+                                                int page, int size);
+
+    /**
+     * Lấy List Truyện Top Đề cử Trong Khoảng
+     *
+     * @param page
+     * @param size
+     * @return Page<TopStory>
+     */
+    public Page< StoryTop > getTopStoryAppoind(int page, int size, Date startDate, Date endDate);
+
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);

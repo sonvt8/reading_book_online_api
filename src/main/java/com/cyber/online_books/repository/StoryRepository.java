@@ -123,6 +123,41 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
                                         @Param("storyDealStatus") Integer sDealStatus,
                                         Pageable pageable);
 
+    /**
+     * Lấy Danh sách Truyện Mới Cập Nhật Theo Status
+     *
+     * @param listChapterStatus - Danh sách trạng thái chapter
+     * @param listStoryStatus   - danh sách trạng thái Story
+     * @param pageable          - biến phân trang
+     * @return Page<NewStory>
+     */
+    @Query(value = ConstantsQueryUtils.STORY_NEW_UPDATE_BY_STATUS,
+            countQuery = ConstantsQueryUtils.COUNT_STORY_NEW_UPDATE_BY_STATUS,
+            nativeQuery = true)
+    Page< StoryUpdate > getPageStoryComplete(@Param("chapterStatus") List< Integer > listChapterStatus,
+                                             @Param("storyStatus") List< Integer > listStoryStatus,
+                                             Pageable pageable);
+
+    /**
+     * Lấy Danh sách Truyện Top Đề Cử
+     *
+     * @param listStatus
+     * @param startDate
+     * @param endDate
+     * @param payType
+     * @param payStatus
+     * @param pageable
+     * @return
+     */
+    @Query(value = ConstantsQueryUtils.STORY_TOP_APPOIND,
+            countQuery = ConstantsQueryUtils.COUNT_STORY_TOP_APPOIND,
+            nativeQuery = true)
+    Page< StoryTop > findTopStoryAppoind(@Param("storyStatus") List< Integer > listStatus,
+                                         @Param("startDate") Date startDate,
+                                         @Param("endDate") Date endDate,
+                                         @Param("payType") Integer payType, @Param("payStatus") Integer payStatus,
+                                         Pageable pageable);
+
     Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
 
     Page< StoryAdmin > findByNameContainingOrderByIdDesc(String search, Pageable pageable);

@@ -14,6 +14,8 @@ import com.cyber.online_books.response.StoryUpdate;
 import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.CloudinaryUploadService;
 import com.cyber.online_books.service.StoryService;
+import com.cyber.online_books.utils.ConstantsListUtils;
+import com.cyber.online_books.utils.ConstantsPayTypeUtils;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,6 +168,40 @@ public class StoryServiceImpl implements StoryService {
     public Page< StoryUpdate > findStoryVipUpdateByStatus(List< Integer > listChapterStatus, List< Integer > listStoryStatus, Integer sDealStatus, int pagenumber, Integer size) {
         Pageable pageable = PageRequest.of(pagenumber - 1, size);
         return storyRepository.findVipStoryNew(listChapterStatus, listStoryStatus, sDealStatus, pageable);
+    }
+
+    /**
+     * Lấy Page Truyện theo Status
+     *
+     * @param listChapterStatus -  danh sách trạng thái chapter
+     * @param listStoryStatus   - danh sách trạng thái Story
+     * @param page              - số trang
+     * @param size              - độ dài trang
+     * @return Page<StoryUpdate>
+     */
+    @Override
+    public Page< StoryUpdate > findStoryUpdateByStatus(List< Integer > listChapterStatus,
+                                                       List< Integer > listStoryStatus,
+                                                       int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .getPageStoryComplete(listChapterStatus, listStoryStatus, pageable);
+    }
+
+    /**
+     * Lấy List Truyện Top Đề cử Trong Khoảng
+     *
+     * @param page
+     * @param size
+     * @param startDate
+     * @param endDate
+     * @return Page<TopStory>
+     */
+    @Override
+    public Page< StoryTop > getTopStoryAppoind(int page, int size, Date startDate, Date endDate) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .findTopStoryAppoind(ConstantsListUtils.LIST_STORY_DISPLAY, startDate, endDate, ConstantsPayTypeUtils.PAY_APPOINT_TYPE, ConstantsStatusUtils.PAY_COMPLETED, pageable);
     }
 
     @Override

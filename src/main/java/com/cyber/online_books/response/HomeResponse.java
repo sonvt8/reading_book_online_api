@@ -8,4 +8,6 @@ import java.util.List;
 public class HomeResponse {
     private List<StoryTop> topStoryWeek;
     private List<StoryUpdate> topVipStory;
+    private List< StoryUpdate > listNewStory;
+    private List< StoryTop > topStory;
 }

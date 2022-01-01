@@ -50,9 +50,24 @@ public class HomeController {
                 .get()
                 .collect(Collectors.toList());
 
+        // Lấy Danh Sách Truyện Mới Cập Nhật
+        List< StoryUpdate > listNewStory = storyService
+                .findStoryUpdateByStatus(ConstantsListUtils.LIST_CHAPTER_DISPLAY, ConstantsListUtils.LIST_STORY_DISPLAY,
+                        ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.PAGE_SIZE_HOME)
+                .getContent();
+
+        Date startDate = DateUtils.getFirstDayOfMonth();
+        Date endDate = DateUtils.getLastDayOfMonth();
+        // Lấy Danh Sách Truyện Top View trong tháng
+        List< StoryTop > topStory = storyService
+                .getTopStoryAppoind(ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.RANK_SIZE, startDate, endDate)
+                .getContent();
+
         HomeResponse homeResponse = new HomeResponse();
         homeResponse.setTopStoryWeek(topStoryWeek);
         homeResponse.setTopVipStory(topVipStory);
+        homeResponse.setListNewStory(listNewStory);
+        homeResponse.setTopStory(topStory);
 
         return new ResponseEntity<>(homeResponse, HttpStatus.OK);
     }
