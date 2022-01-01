@@ -2,6 +2,7 @@ package com.cyber.online_books.controller.admin;
 
 import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.Story;
+import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
@@ -19,7 +20,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("quan-tri/truyen")
-public class AdminStoryController {
+public class AdminStoryController extends ExceptionHandling {
 
     private final StoryService storyService;
     private final UserService userService;

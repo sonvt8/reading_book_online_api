@@ -1,6 +1,7 @@
 package com.cyber.online_books.controller.home;
 
 import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.NotFoundException;
 import com.cyber.online_books.response.CategoryResponse;
 import com.cyber.online_books.response.StoryByCategoryId;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/the-loai")
-public class CategoryController {
+public class CategoryController extends ExceptionHandling {
 
     private final CategoryService categoryService;
     private final StoryService storyService;
