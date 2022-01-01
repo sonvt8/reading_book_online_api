@@ -37,7 +37,7 @@ public class HomeController {
 
         //Lấy ngày kết thúc của tuần
         Date lastDayOfWeek = DateUtils.getLastDayOfWeek();
-        //Lấy Top View Truyện Vip Trong Tuần
+        //Lấy Top View Truyện Trong Tuần
         List<StoryTop> topStoryWeek = storyService.
                 findStoryTopViewByStatuss(ConstantsListUtils.LIST_STORY_DISPLAY, firstDayOfWeek, lastDayOfWeek,
                         ConstantsStatusUtils.HISTORY_VIEW, ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.PAGE_SIZE_TOP_VIEW_DEFAULT)

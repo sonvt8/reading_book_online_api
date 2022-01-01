@@ -6,10 +6,8 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 @Data
-public class HomeResponse {
+public class CatalogResponse {
     private List<StoryTop> topStoryWeek;
-    private List<StoryUpdate> topVipStory;
-    private List< StoryUpdate > listNewStory;
-    private List< StoryTop > topStory;
-
+    private Page<StoryUpdate> listNewStoryPage;
+    private Page<StoryUpdate> topVipStoryPage;
 }
