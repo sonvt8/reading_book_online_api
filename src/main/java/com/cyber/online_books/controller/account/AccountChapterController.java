@@ -2,11 +2,16 @@ package com.cyber.online_books.controller.account;
 
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
+import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
+import com.cyber.online_books.response.ChapterOfStory;
 import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsListUtils;
 import com.cyber.online_books.utils.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +26,7 @@ public class AccountChapterController {
     private final UserService userService;
     private final ChapterService chapterService;
 
+    @Autowired
     public AccountChapterController(StoryService storyService, UserService userService, ChapterService chapterService) {
         this.storyService = storyService;
         this.userService = userService;
@@ -37,7 +43,7 @@ public class AccountChapterController {
         User user = userService.findUserAccount(principal.getName());
 
         if (user == null) {
-            throw new HttpMyException("Tài khoản không tồn tại");
+            throw new UserNotFoundException("Tài khoản không tồn tại");
         }
 
         if (storyId == null || WebUtils.checkLongNumber(storyId)) {
@@ -47,4 +53,5 @@ public class AccountChapterController {
                 .findByStoryIdAndUserId(Long.parseLong(storyId), user.getId(), type, pagenumber),
                 HttpStatus.OK);
     }
+
 }
