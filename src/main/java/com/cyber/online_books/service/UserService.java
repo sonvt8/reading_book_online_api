@@ -90,7 +90,7 @@ public interface UserService {
      * @param user
      * @return User
      */
-    User updateUser(User user);
+    User updateUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException;
 
     /**
      * Xoá User

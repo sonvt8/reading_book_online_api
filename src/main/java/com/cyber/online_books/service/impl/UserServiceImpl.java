@@ -196,8 +196,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return User
      */
     @Override
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public User updateUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException{
+        User editedUser = validateNewUsernameAndEmail(user.getUsername(), null, null);
+        editedUser.setStatus(user.getStatus());
+        editedUser.setRoleList(user.getRoleList());
+        return editedUser;
     }
 
     @Override
