@@ -1,10 +1,13 @@
 package com.cyber.online_books.service.impl;
 
+import com.cyber.online_books.entity.Chapter;
+import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.repository.ChapterRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.response.ChapterOfStory;
 import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.utils.ConstantsUtils;
+import com.cyber.online_books.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,20 @@ public class ChapterServiceImpl implements ChapterService {
     public ChapterServiceImpl(ChapterRepository chapterRepository, StoryRepository storyRepository) {
         this.chapterRepository = chapterRepository;
         this.storyRepository = storyRepository;
+    }
+
+    @Override
+    public Chapter saveNewChapter(Chapter chapter, Long id) {
+        chapter.setWordCount(WebUtils.countWords(chapter.getContent()));
+        chapter.setContent(chapter.getContent().replaceAll("\n", "<br />"));
+        chapter.setName(chapter.getName());
+        Chapter newChapter = chapterRepository.save(chapter);
+        if (newChapter.getId() != null) {
+            Story story = storyRepository.findById(id).get();
+            story.setUpdateDate(newChapter.getCreateDate());
+            storyRepository.save(story);
+        }
+        return newChapter;
     }
 
     /**

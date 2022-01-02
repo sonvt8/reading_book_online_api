@@ -1,5 +1,8 @@
 package com.cyber.online_books.controller.account;
 
+import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.entity.Chapter;
+import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
@@ -9,6 +12,8 @@ import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsListUtils;
+import com.cyber.online_books.utils.ConstantsStatusUtils;
+import com.cyber.online_books.utils.DateUtils;
 import com.cyber.online_books.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,6 +57,35 @@ public class AccountChapterController {
         return new ResponseEntity<>(chapterService
                 .findByStoryIdAndUserId(Long.parseLong(storyId), user.getId(), type, pagenumber),
                 HttpStatus.OK);
+    }
+
+    @PostMapping("/them/{id}")
+    public ResponseEntity<Chapter> addChapter(@RequestBody Chapter chapter, @PathVariable("id") Long id, Principal principal) throws UserNotLoginException, HttpMyException {
+
+        Story story = storyService.findStoryById(id);
+        if(story == null)
+            throw new HttpMyException("truyện không tồn tại");
+        chapter.setStory(story);
+
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+
+        chapter.setUser(userService.findUserAccount(currentUsername));
+
+        if (story.getStatus().equals(ConstantsStatusUtils.STORY_STATUS_HIDDEN)) {
+            throw new HttpMyException("Truyện đã bị khóa không thể đăng thêm chương");
+        } else {
+            if (story.getDealStatus().equals(1)) {
+                chapter.setStatus(ConstantsStatusUtils.CHAPTER_VIP_ACTIVED);
+                chapter.setPrice(story.getPrice());
+                chapter.setDealine(DateUtils.getDateDeal(story.getTimeDeal()));
+                return new ResponseEntity<>(chapterService.saveNewChapter(chapter, id), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(chapterService.saveNewChapter(chapter, id), HttpStatus.OK);
     }
 
 }

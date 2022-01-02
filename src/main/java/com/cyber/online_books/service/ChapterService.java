@@ -1,11 +1,14 @@
 package com.cyber.online_books.service;
 
+import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.response.ChapterOfStory;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ChapterService {
+
+    Chapter saveNewChapter(Chapter chapter, Long id);
 
     /**
      * Tìm Kiếm Chapter theo
