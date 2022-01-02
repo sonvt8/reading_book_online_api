@@ -12,7 +12,7 @@ public interface StoryUpdate {
 
     String getAuthor();
 
-    @Value("#{@myComponent.getBetewwen(target.update_date)}")
+    @Value("#{@myComponent.getBetewwen(target.updateDate)}")
     String getTimeUpdate();
 
     Long getChapterId();
@@ -21,7 +21,7 @@ public interface StoryUpdate {
 
     Integer getChapterNumber();
 
-    @Value("#{@myComponent.getDisplayName(target.username, target.display_name)}")
+    @Value("#{@myComponent.getDisplayName(target.username, target.displayName)}")
     String getDisplayName();
 
     Integer getDealStatus();
