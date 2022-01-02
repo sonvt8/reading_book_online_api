@@ -3,10 +3,18 @@ package com.cyber.online_books.service;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 
-import javax.mail.MessagingException;
 import java.security.Principal;
+import java.util.List;
 
 public interface UserService {
+
+    /**
+     * Lấy toàn bộ User
+     *
+     * @return List<User>
+     */
+    List<User> getUsers();
+
     /**
      * Tìm kiếm User theo username
      *
@@ -43,11 +51,16 @@ public interface UserService {
     /**
      * Cập nhật ngoại hiệu
      *
-     * @param userId
-     * @param money
      * @param newNick
      */
-    void updateDisplayName(Long userId, Double money, String newNick) throws Exception;
+    User updateDisplayName(Principal principal, String newNick) throws HttpMyException;
+
+    /**
+     * Cập nhật thông báo
+     *
+     * @param newMess
+     */
+    User updateNotification(Principal principal, String newMess) throws HttpMyException;
 
     /**
      * Đăng ký người dùng mới
@@ -77,7 +90,7 @@ public interface UserService {
      * @param user
      * @return User
      */
-    User updateUser(User user);
+    User updateUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException;
 
     /**
      * Xoá User

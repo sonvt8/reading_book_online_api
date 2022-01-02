@@ -14,6 +14,7 @@ import com.cyber.online_books.utils.ConstantsRoleUtils;
 import static com.cyber.online_books.utils.UserImplContant.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+import com.cyber.online_books.utils.ConstantsUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,10 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.*;
@@ -94,6 +93,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     /**
+     * Lấy toàn bộ User
+     *
+     * @return List<User>
+     */
+    @Override
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
+    /**
      * Tìm kiếm User theo username
      *
      * @param userName
@@ -143,18 +152,41 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     /**
      * Cập nhật ngoại hiệu
      *
-     * @param userId
-     * @param money
      * @param newNick
+     * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     @Override
-    public void updateDisplayName(Long userId, Double money, String newNick) throws Exception {
-        User user = userRepository.findById(userId).get();
-        if (user.getGold() < money)
-            throw new HttpMyException("Số dư của bạn không đủ để thanh toán!");
-        user.setDisplayName(newNick);
-        user.setGold(user.getGold() - money);
-        userRepository.save(user);
+    public User updateDisplayName(Principal principal, String newNick) throws HttpMyException {
+        User currentUser = validatePricipal(principal);
+        if (newNick.equalsIgnoreCase(currentUser.getDisplayName()))
+            throw new HttpMyException("Ngoại hiệu này bạn đang sử dụng");
+        if (userRepository.existsByIdNotAndDisplayName(currentUser.getId(), newNick))
+            throw new HttpMyException("Ngoại hiệu đã tồn tại!");
+        Double money = Double.valueOf(0);
+        if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
+            //Không trừ đậu nếu chưa có ngoại hiệu
+            money = ConstantsUtils.PRICE_UPDATE_NICK;
+            if (currentUser.getGold() < money)
+                throw new HttpMyException("Số dư của bạn không đủ để thanh toán!");
+        }
+        currentUser.setDisplayName(newNick);
+        currentUser.setGold(currentUser.getGold() - money);
+        userRepository.save(currentUser);
+        return currentUser;
+    }
+
+    /**
+     * Cập nhật thông báo
+     *
+     * @param newMess
+     * @return User - nếu tồn tại / null- nếu không tồn tại user
+     */
+    @Override
+    public User updateNotification(Principal principal, String newMess) throws HttpMyException {
+        User currentUser = validatePricipal(principal);
+        currentUser.setNotification(newMess);
+        userRepository.save(currentUser);
+        return currentUser;
     }
 
     /**
@@ -164,8 +196,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return User
      */
     @Override
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public User updateUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException{
+        User editedUser = validateNewUsernameAndEmail(user.getUsername(), null, null);
+        editedUser.setStatus(user.getStatus());
+        editedUser.setRoleList(user.getRoleList());
+        return editedUser;
     }
 
     @Override
@@ -200,6 +235,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
+    /**
+     * Quên mật khẩu
+     *
+     * @param email
+     */
     @Override
     public void resetPassword(String email) throws HttpMyException, EmailNotFoundException {
         User user = userRepository.findUserByEmail(email);
@@ -215,13 +255,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
+    /**
+     * Cập nhật mật khẩu
+     *
+     * @param newPassword
+     */
     @Override
     public void updatePassword(String newPassword, Principal principal) throws HttpMyException {
-        String currentUsername = principal.getName();
-        User currentUser = userRepository.findUserByUsername(currentUsername);
-        if (currentUser == null) {
-            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
-        }
+        User currentUser = validatePricipal(principal);
         currentUser.setPassword(encodePassword(newPassword));
         userRepository.save(currentUser);
         LOGGER.info("New user password: " + newPassword);
@@ -249,6 +290,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
         }
+    }
+
+    private User validatePricipal(Principal principal) throws HttpMyException{
+        String currentUsername = principal.getName();
+        User currentUser = userRepository.findUserByUsername(currentUsername);
+        if (currentUser == null) {
+            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        }
+        return currentUser;
     }
 
     private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {

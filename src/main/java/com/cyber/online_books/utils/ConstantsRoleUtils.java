@@ -2,7 +2,7 @@ package com.cyber.online_books.utils;
 
 /**
  * @author Cyber_Group
- * @project bookonline
+ * @project book_online
  */
 public class ConstantsRoleUtils {
     
