@@ -245,6 +245,10 @@ public class StoryServiceImpl implements StoryService {
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
 
+        if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
         Story story = new Story();
         story.setName(name);
         story.setAuthor(author);
@@ -260,7 +264,7 @@ public class StoryServiceImpl implements StoryService {
     public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
-            throw new HttpMyException("Not found story for update");
+            throw new HttpMyException("không tìm thấy truyện");
         }
         checkUnique(id, name);
         if (principal == null) {
@@ -269,6 +273,10 @@ public class StoryServiceImpl implements StoryService {
 
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
+
+        if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
 
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
@@ -285,11 +293,18 @@ public class StoryServiceImpl implements StoryService {
     public Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
-            throw new HttpMyException("Not found story for update");
+            throw new HttpMyException("không tìm thấy truyện");
         }
         checkUnique(id, name);
         if (principal == null) {
             throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+        User user = userRepository.findUserByUsername(currentUsername);
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
         }
 
         storyEdit.setName(name);
@@ -318,7 +333,7 @@ public class StoryServiceImpl implements StoryService {
     private void saveImage(Story story, MultipartFile image, Principal principal) throws NotAnImageFileException {
         if(image != null){
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {
-                throw new NotAnImageFileException(image.getOriginalFilename() + " is not an image file");
+                throw new NotAnImageFileException(image.getOriginalFilename() + " không phải là file hình");
             }
             if(story.getImages() != null)
                 story.setImages(story.getImages());
@@ -337,10 +352,10 @@ public class StoryServiceImpl implements StoryService {
 
         if(newStoryByName != null){
             if (isCreatingNew) {
-                throw new HttpMyException("Story already exist");
+                throw new HttpMyException("truyện này đã tồn tại");
             } else {
                 if (newStoryByName.getId() != id) {
-                    throw new HttpMyException("Story already exist");
+                    throw new HttpMyException("truyện này đã tồn tại");
                 }
             }
             return newStoryByName;

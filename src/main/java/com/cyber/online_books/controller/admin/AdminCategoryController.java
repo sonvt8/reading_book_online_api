@@ -2,11 +2,15 @@ package com.cyber.online_books.controller.admin;
 
 import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.Category;
+import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.exception.domain.HttpMyException;
+import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.service.CategoryService;
+import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.WebUtils;
 import org.slf4j.Logger;
@@ -23,19 +27,41 @@ import java.security.Principal;
 public class AdminCategoryController extends ExceptionHandling {
     private final Logger logger = LoggerFactory.getLogger(AdminCategoryController.class);
 
+    private final CategoryService categoryService;
+    private final UserService userService;
+
     @Autowired
-    private CategoryService categoryService;
+    public AdminCategoryController(CategoryService categoryService, UserService userService) {
+        this.categoryService = categoryService;
+        this.userService = userService;
+    }
 
     @GetMapping ("/danh-sach")
     public ResponseEntity< ? > getAllListCategories(@RequestParam(name="keyword") String keyword,
-                                            @RequestParam(name="pagenumber") Integer pagenumber) throws Exception {
+                                            @RequestParam(name="pagenumber") Integer pagenumber, Principal principal) throws Exception {
+
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
 
         return new ResponseEntity<>(categoryService.findCategoryBySearch(keyword
                 , pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
     }
 
     @PostMapping("/them")
-    public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) throws UserNotLoginException, HttpMyException {
+    public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) throws UserNotLoginException, HttpMyException, UserNotFoundException {
         categoryService.checkUnique(null, category.getName());
 
         Category newCategory = new Category();
@@ -48,19 +74,40 @@ public class AdminCategoryController extends ExceptionHandling {
 
         String currentUsername = principal.getName();
 
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
         newCategory.setCreateBy(currentUsername);
         return new ResponseEntity<>(categoryService.save(newCategory), HttpStatus.OK);
     }
 
     @PostMapping("/cap-nhat/{id}")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, UserNotLoginException, HttpMyException {
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, UserNotLoginException, HttpMyException, UserNotFoundException {
         Category updateCategory = categoryService.findCategoryById(id);
         if(updateCategory == null)
-            throw new CategoryNotFoundException("Not found Category for update");
+            throw new CategoryNotFoundException("không tìm thấy thể loại");
         categoryService.checkUnique(id, category.getName());
         if (principal == null) {
             throw new UserNotLoginException();
         }
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
         updateCategory.setName(category.getName());
         updateCategory.setStatus(category.getStatus());
         updateCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
@@ -68,18 +115,29 @@ public class AdminCategoryController extends ExceptionHandling {
     }
 
     @DeleteMapping("/xoa/{id}")
-    public ResponseEntity<HttpResponse> deleteCategory(@PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, HttpMyException, UserNotLoginException {
+    public ResponseEntity<HttpResponse> deleteCategory(@PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, HttpMyException, UserNotLoginException, UserNotFoundException {
         Category category = categoryService.findCategoryById(id);
         if (principal == null) {
             throw new UserNotLoginException();
         }
+
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
         if(category == null)
-            throw new CategoryNotFoundException("Not found Category for delete");
+            throw new CategoryNotFoundException("không tìm thấy thể loại");
         boolean result = categoryService.deleteCategory(id);
         if(result)
-            return response(HttpStatus.OK, "Category deleted successfully");
+            return response(HttpStatus.OK, "thể loại đã xóa thành công");
         else
-            throw new HttpMyException("Can not delete this category");
+            throw new HttpMyException("không thể xóa thể loại này");
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {

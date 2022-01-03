@@ -2,12 +2,14 @@ package com.cyber.online_books.controller.admin;
 
 import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.Story;
+import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +35,19 @@ public class AdminStoryController extends ExceptionHandling {
 
     @PostMapping(value = "/danh-sach")
     public ResponseEntity< ? > loadStoryAdmin(@RequestParam("pagenumber") Integer pagenumber, @RequestParam("search") String search,
-                                              @RequestParam("type") Integer type) {
+                                              @RequestParam("type") Integer type, Principal principal) throws UserNotLoginException, HttpMyException {
+
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
         return new ResponseEntity<>(storyService.findStoryInAdmin(pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT, type, search), HttpStatus.OK);
     }
 
@@ -59,12 +73,12 @@ public class AdminStoryController extends ExceptionHandling {
             throw new UserNotLoginException();
         }
         if(story == null)
-            throw new HttpMyException("Not found Story for delete");
+            throw new HttpMyException("không tìm thấy truyện");
         boolean result = storyService.deleteStory(id);
         if(result)
-            return response(HttpStatus.OK, "Story deleted successfully");
+            return response(HttpStatus.OK, "truyện đã xóa thành công");
         else
-            throw new HttpMyException("Can not delete this Story");
+            throw new HttpMyException("không thể xóa truyện này");
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {

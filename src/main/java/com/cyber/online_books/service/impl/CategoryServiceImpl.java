@@ -95,10 +95,10 @@ public class CategoryServiceImpl implements CategoryService {
         Category newCategoryByName = categoryRepository.findCategoryByName(newCategoryName);
         if (newCategoryByName != null){
             if (isCreatingNew)
-                throw new HttpMyException("Category already exist");
+                throw new HttpMyException("thể loại này đã tồn tại");
             else
                 if(newCategoryByName.getId() != id)
-                    throw new HttpMyException("Category already exist");
+                    throw new HttpMyException("thể loại này đã tồn tại");
                 return newCategoryByName;
         }
 

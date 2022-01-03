@@ -10,6 +10,7 @@ import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,12 +38,16 @@ public class AccountStoryController extends ExceptionHandling {
     @GetMapping(value = "/danh-sach")
     public ResponseEntity< ? > getStoryByAccount(@RequestParam("pagenumber") int pagenumber,
                                                  @RequestParam("status") int status,
-                                                 Principal principal) throws UserNotLoginException {
+                                                 Principal principal) throws UserNotLoginException, HttpMyException {
         if (principal == null) {
             throw new UserNotLoginException();
         }
 
         User user = userService.findUserAccount(principal.getName());
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
         Page<StoryUser> pageStory = storyService.findPageStoryByUser(user.getId(), pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT, status);
         return new ResponseEntity<>(pageStory, HttpStatus.OK);
     }
@@ -76,6 +81,14 @@ public class AccountStoryController extends ExceptionHandling {
         if (principal == null) {
             throw new UserNotLoginException();
         }
+
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
         if(story == null)
             throw new HttpMyException("Not found Story for delete");
         boolean result = storyService.deleteStory(id);
