@@ -10,6 +10,15 @@ public interface ChapterService {
 
     Chapter saveNewChapter(Chapter chapter, Long id);
 
+    Chapter updateChapter(Chapter chapter, Long id);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    Chapter findChapterById(Long id);
+
     /**
      * Tìm Kiếm Chapter theo
      * @param storyId

@@ -42,6 +42,28 @@ public class ChapterServiceImpl implements ChapterService {
         return newChapter;
     }
 
+    @Override
+    public Chapter updateChapter(Chapter chapter, Long id) {
+        try {
+            Chapter editChapter = chapterRepository.findById(id).get();
+            editChapter.setWordCount(WebUtils.countWords(chapter.getContent()));
+            editChapter.setSerial(chapter.getSerial());
+            editChapter.setStatus(chapter.getStatus());
+            editChapter.setName(chapter.getName());
+            editChapter.setChapterNumber(chapter.getChapterNumber());
+            editChapter.setContent(chapter.getContent());
+            chapterRepository.save(editChapter);
+            return editChapter;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Chapter findChapterById(Long id) {
+        return chapterRepository.findById(id).orElse(null);
+    }
+
     /**
      * Tìm Kiếm Chapter theo
      *

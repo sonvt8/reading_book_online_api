@@ -99,4 +99,42 @@ public class AccountChapterController {
         return new ResponseEntity<>(chapterService.saveNewChapter(chapter, id), HttpStatus.OK);
     }
 
+    @PostMapping("/sua-chuong/{id}")
+    public ResponseEntity<Chapter> updateChapter(@RequestBody Chapter chapter, @PathVariable("id") Long id, Principal principal) throws UserNotLoginException, HttpMyException, UserNotFoundException {
+
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
+        Chapter chapterEdit = chapterService.findChapterById(id);
+        if (chapterEdit == null){
+            throw new HttpMyException("chương không tồn tại");
+        }
+        if (!chapterEdit.getUser().getId().equals(user.getId())){
+            throw new HttpMyException("Bạn không có quyền sửa chương không do bạn đăng!");
+        }
+
+        if (chapterEdit.getStory().getStatus().equals(ConstantsStatusUtils.STORY_STATUS_HIDDEN)){
+            throw new HttpMyException("Bạn không có quyền sửa Chapter thuộc Truyện bị khóa!");
+        }
+        if (chapterEdit.getStatus().equals(ConstantsStatusUtils.CHAPTER_DENIED) && chapterEdit.getStatus().equals(chapter.getStatus())){
+            throw new HttpMyException("Bạn không có quyền Cập Nhật Trạng Thái Chapter bị khóa!");
+        }
+        chapter.setContent(chapter.getContent().replaceAll("\n", "<br />"));
+
+        return new ResponseEntity<>(chapterService.updateChapter(chapter, id), HttpStatus.OK);
+    }
+
 }
