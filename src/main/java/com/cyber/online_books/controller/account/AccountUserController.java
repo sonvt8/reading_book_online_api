@@ -4,6 +4,8 @@ package com.cyber.online_books.controller.account;
 import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
+import com.cyber.online_books.exception.domain.NotAnImageFileException;
+import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.PayService;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsPayTypeUtils;
@@ -16,9 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
@@ -26,13 +27,15 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Controller
 @PropertySource(value = "classpath:messages.properties", encoding = "UTF-8")
-@RequestMapping(value = "/tai-khoan")
+@RequestMapping(value = "/tai_khoan")
 public class AccountUserController {
     private final static Logger logger = LoggerFactory.getLogger(AccountUserController.class);
     @Autowired
     private UserService userService;
     @Autowired
     private PayService payService;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @PostMapping(value = "/doi_ngoai_hieu")
     @Transactional
@@ -53,6 +56,13 @@ public class AccountUserController {
     @PostMapping(value = "/doi_thong_bao")
     public ResponseEntity<User> changeNotification(@RequestParam("notification")String newMess, Principal principal) throws HttpMyException {
         User user = userService.updateNotification(principal,newMess.trim());
+        return new ResponseEntity<>(user, OK);
+    }
+
+    @PostMapping("/anh_dai_dien")
+    @ResponseBody
+    public ResponseEntity<User> changeAvatar(@RequestParam(value = "profileImage", required = false) MultipartFile profileImage, Principal principal) throws HttpMyException, NotAnImageFileException {
+        User user = userService.updateAvatar(principal,profileImage);
         return new ResponseEntity<>(user, OK);
     }
 

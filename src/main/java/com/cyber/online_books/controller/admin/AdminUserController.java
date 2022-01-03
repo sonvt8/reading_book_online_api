@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.OK;
  */
 @Controller
 @PropertySource(value = "classpath:messages.properties", encoding = "UTF-8")
-@RequestMapping(value = "/quan-tri/nguoi_dung")
+@RequestMapping(value = "/quan_tri/nguoi_dung")
 public class AdminUserController {
     @Autowired
     private UserService userService;

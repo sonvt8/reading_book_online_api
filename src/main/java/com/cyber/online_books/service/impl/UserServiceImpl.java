@@ -7,6 +7,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.EmailService;
 import com.cyber.online_books.service.LoginAttemptService;
 import com.cyber.online_books.service.UserService;
@@ -30,6 +31,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
@@ -45,6 +48,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private RoleRepository roleRepository;
     private LoginAttemptService loginAttemptService;
     private EmailService emailService;
+    private CloudinaryService cloudinaryService;
     private BCryptPasswordEncoder passwordEncoder;
     @Value("${Cyber.truyenonline.email.from}")
     private String emailForm;
@@ -59,10 +63,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, LoginAttemptService loginAttemptService
-            ,EmailService emailService, BCryptPasswordEncoder passwordEncoder) {
+            ,EmailService emailService, CloudinaryService cloudinaryService,BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.loginAttemptService = loginAttemptService;
+        this.cloudinaryService = cloudinaryService;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -185,6 +190,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User updateNotification(Principal principal, String newMess) throws HttpMyException {
         User currentUser = validatePricipal(principal);
         currentUser.setNotification(newMess);
+        userRepository.save(currentUser);
+        return currentUser;
+    }
+
+    @Override
+    public User updateAvatar(Principal principal, MultipartFile sourceFile) throws HttpMyException, NotAnImageFileException {
+        if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(sourceFile.getContentType())) {
+            throw new NotAnImageFileException(sourceFile.getOriginalFilename() + " is not an image file");
+        }
+        User currentUser = validatePricipal(principal);
+        String url = cloudinaryService.upload(sourceFile, currentUser.getUsername());
+        currentUser.setAvatar(url);
         userRepository.save(currentUser);
         return currentUser;
     }

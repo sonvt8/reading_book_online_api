@@ -2,7 +2,10 @@ package com.cyber.online_books.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public interface CloudinaryUploadService {
+import java.io.IOException;
+import java.util.Map;
+
+public interface CloudinaryService {
 
     /**
      * Upload file lên Cloudinary
@@ -13,4 +16,13 @@ public interface CloudinaryUploadService {
      * @throws java.io.IOException trả về null
      */
     String upload(MultipartFile sourceFile, String fileName);
+
+    /**
+     * Delete file lên Cloudinary
+     *
+     * @param publicId Id của ảnh trên Cloudinary
+     * @return JSON Response chi tiết thông tin ảnh trên Cloudinary
+     * @throws java.io.IOException trả về null
+     */
+    Map delete(String publicId) throws IOException;
 }
