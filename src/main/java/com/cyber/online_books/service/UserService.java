@@ -104,7 +104,7 @@ public interface UserService {
     /**
      * Xoá User
      *
-     * @param user
+     * @param id
      */
-    void deleteUser(User user);
+    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException;
 }

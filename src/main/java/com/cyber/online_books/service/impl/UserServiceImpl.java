@@ -35,6 +35,7 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
 
@@ -221,8 +222,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(User deleteUser) {
-        userRepository.delete(deleteUser);
+    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException {
+        User currentUser = validatePricipal(principal);
+        User deletedUser = findUserById(id);
+        if(currentUser.getId() == id){
+            throw new HttpMyException("Không thể delete tài khoản hiện tại của bạn");
+        }
+        if (deletedUser == null) {
+            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        }
+        cloudinaryService.delete(deletedUser.getUsername());
+        userRepository.delete(deletedUser);
     }
 
     /**
