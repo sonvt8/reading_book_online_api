@@ -64,6 +64,16 @@ public class ChapterServiceImpl implements ChapterService {
         return chapterRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public boolean deleteChapter(Long id) {
+        try {
+            chapterRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /**
      * Tìm Kiếm Chapter theo
      *

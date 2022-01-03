@@ -90,12 +90,12 @@ public class AccountStoryController extends ExceptionHandling {
         }
 
         if(story == null)
-            throw new HttpMyException("Not found Story for delete");
+            throw new HttpMyException("không tìm thấy truyện");
         boolean result = storyService.deleteStory(id);
         if(result)
-            return response(HttpStatus.OK, "Story deleted successfully");
+            return response(HttpStatus.OK, "truyện xóa thành công");
         else
-            throw new HttpMyException("Can not delete this Story");
+            throw new HttpMyException("không thể xóa truyện này");
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {

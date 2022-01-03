@@ -19,6 +19,8 @@ public interface ChapterService {
      */
     Chapter findChapterById(Long id);
 
+    boolean deleteChapter(Long id);
+
     /**
      * Tìm Kiếm Chapter theo
      * @param storyId

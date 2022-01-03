@@ -1,5 +1,6 @@
 package com.cyber.online_books.controller.account;
 
+import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.entity.Story;
@@ -135,6 +136,34 @@ public class AccountChapterController {
         chapter.setContent(chapter.getContent().replaceAll("\n", "<br />"));
 
         return new ResponseEntity<>(chapterService.updateChapter(chapter, id), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/xoa-chuong/{id}")
+    public ResponseEntity<HttpResponse> deleteChapter(@PathVariable("id") Long id, Principal principal) throws HttpMyException, UserNotLoginException {
+        Chapter chapter = chapterService.findChapterById(id);
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
+        if(chapter == null)
+            throw new HttpMyException("không tìm thấy chương để xóa");
+        boolean result = chapterService.deleteChapter(id);
+        if(result)
+            return response(HttpStatus.OK, "chương xóa thành công");
+        else
+            throw new HttpMyException("không thể xóa chương này");
+    }
+
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
+                message), httpStatus);
     }
 
 }
