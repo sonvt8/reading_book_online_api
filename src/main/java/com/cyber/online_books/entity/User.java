@@ -76,7 +76,7 @@ public class User implements Serializable {
     @Column(name = "isNotLocked")
     private boolean isNotLocked;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "user_role", joinColumns = {
             @JoinColumn(name = "userId", nullable = false, updatable = false)}, inverseJoinColumns = {
             @JoinColumn(name = "roleId", nullable = false, updatable = false)})

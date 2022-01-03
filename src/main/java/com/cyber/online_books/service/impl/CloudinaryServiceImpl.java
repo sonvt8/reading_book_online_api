@@ -3,7 +3,7 @@ package com.cyber.online_books.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Singleton;
 import com.cloudinary.utils.ObjectUtils;
-import com.cyber.online_books.service.CloudinaryUploadService;
+import com.cyber.online_books.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class CloudinaryUploadServiceImpl implements CloudinaryUploadService {
+public class CloudinaryServiceImpl implements CloudinaryService {
     private Cloudinary cloudinary;
 
     @Value("${cloudinary.cloudname}")
@@ -45,5 +45,11 @@ public class CloudinaryUploadServiceImpl implements CloudinaryUploadService {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    @Override
+    public Map delete(String publicId) throws IOException {
+        Map result = cloudinary.uploader().destroy("truyenonline/" + publicId, ObjectUtils.emptyMap());
+        return result;
     }
 }

@@ -2,7 +2,9 @@ package com.cyber.online_books.service;
 
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -63,6 +65,13 @@ public interface UserService {
     User updateNotification(Principal principal, String newMess) throws HttpMyException;
 
     /**
+     * Cập nhật thông báo
+     *
+     * @param sourceFile
+     */
+    User updateAvatar(Principal principal, MultipartFile sourceFile) throws HttpMyException, NotAnImageFileException;
+
+    /**
      * Đăng ký người dùng mới
      *
      * @param user
@@ -95,7 +104,7 @@ public interface UserService {
     /**
      * Xoá User
      *
-     * @param user
+     * @param id
      */
-    void deleteUser(User user);
+    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException;
 }

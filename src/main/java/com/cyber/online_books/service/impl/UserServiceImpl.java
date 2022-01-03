@@ -7,6 +7,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.EmailService;
 import com.cyber.online_books.service.LoginAttemptService;
 import com.cyber.online_books.service.UserService;
@@ -30,8 +31,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
 
@@ -45,6 +49,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private RoleRepository roleRepository;
     private LoginAttemptService loginAttemptService;
     private EmailService emailService;
+    private CloudinaryService cloudinaryService;
     private BCryptPasswordEncoder passwordEncoder;
     @Value("${Cyber.truyenonline.email.from}")
     private String emailForm;
@@ -59,10 +64,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, LoginAttemptService loginAttemptService
-            ,EmailService emailService, BCryptPasswordEncoder passwordEncoder) {
+            ,EmailService emailService, CloudinaryService cloudinaryService,BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.loginAttemptService = loginAttemptService;
+        this.cloudinaryService = cloudinaryService;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -189,6 +195,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return currentUser;
     }
 
+    @Override
+    public User updateAvatar(Principal principal, MultipartFile sourceFile) throws HttpMyException, NotAnImageFileException {
+        if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(sourceFile.getContentType())) {
+            throw new NotAnImageFileException(sourceFile.getOriginalFilename() + " is not an image file");
+        }
+        User currentUser = validatePricipal(principal);
+        String url = cloudinaryService.upload(sourceFile, currentUser.getUsername());
+        currentUser.setAvatar(url);
+        userRepository.save(currentUser);
+        return currentUser;
+    }
+
     /**
      * Cập Nhật User
      *
@@ -204,8 +222,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(User deleteUser) {
-        userRepository.delete(deleteUser);
+    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException {
+        User currentUser = validatePricipal(principal);
+        User deletedUser = findUserById(id);
+        if(currentUser.getId() == id){
+            throw new HttpMyException("Không thể delete tài khoản hiện tại của bạn");
+        }
+        if (deletedUser == null) {
+            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        }
+        cloudinaryService.delete(deletedUser.getUsername());
+        userRepository.delete(deletedUser);
     }
 
     /**

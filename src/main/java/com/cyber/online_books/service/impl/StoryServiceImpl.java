@@ -12,7 +12,7 @@ import com.cyber.online_books.response.StoryAdmin;
 import com.cyber.online_books.response.StoryTop;
 import com.cyber.online_books.response.StoryUpdate;
 import com.cyber.online_books.response.StoryUser;
-import com.cyber.online_books.service.CloudinaryUploadService;
+import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.utils.ConstantsListUtils;
 import com.cyber.online_books.utils.ConstantsPayTypeUtils;
@@ -37,14 +37,14 @@ public class StoryServiceImpl implements StoryService {
 
     private final StoryRepository storyRepository;
     private final CategoryRepository categoryRepository;
-    private final CloudinaryUploadService cloudinaryUploadService;
+    private final CloudinaryService cloudinaryService;
     private final UserRepository userRepository;
 
     @Autowired
-    public StoryServiceImpl(StoryRepository storyRepository, CategoryRepository categoryRepository, CloudinaryUploadService cloudinaryUploadService, UserRepository userRepository) {
+    public StoryServiceImpl(StoryRepository storyRepository, CategoryRepository categoryRepository, CloudinaryService cloudinaryService, UserRepository userRepository) {
         this.storyRepository = storyRepository;
         this.categoryRepository = categoryRepository;
-        this.cloudinaryUploadService = cloudinaryUploadService;
+        this.cloudinaryService = cloudinaryService;
         this.userRepository = userRepository;
     }
 
@@ -323,7 +323,7 @@ public class StoryServiceImpl implements StoryService {
             if(story.getImages() != null)
                 story.setImages(story.getImages());
             else{
-                String url = cloudinaryUploadService.upload(image, principal.getName() + "-" + System.nanoTime());
+                String url = cloudinaryService.upload(image, principal.getName() + "-" + System.nanoTime());
                 story.setImages(url);
             }
 

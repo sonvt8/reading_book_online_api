@@ -19,7 +19,7 @@ import static com.cyber.online_books.utils.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping(path= {"/thanh-vien"})
+@RequestMapping(path= {"/thanh_vien"})
 public class MemberUserController extends ExceptionHandling {
     public static final String EMAIL_SENT = "Mật khẩu mới đã được gửi đến email: ";
     private AuthenticationManager authenticationManager;
@@ -33,13 +33,13 @@ public class MemberUserController extends ExceptionHandling {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @PostMapping("/dang-ky")
+    @PostMapping("/dang_ky")
     public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, UsernameExistException, EmailExistException, HttpMyException {
         User newUser = userService.registerUser(user);
         return new ResponseEntity<>(newUser, OK);
     }
 
-    @PostMapping("/dang-nhap")
+    @PostMapping("/dang_nhap")
     public ResponseEntity<User> login(@RequestBody User user) {
         authenticate(user.getUsername(), user.getPassword());
         User loginUser = userService.findUserAccount(user.getUsername());
@@ -48,7 +48,7 @@ public class MemberUserController extends ExceptionHandling {
         return new ResponseEntity<>(loginUser, jwtHeader, OK);
     }
 
-    @PostMapping("/quen-mat-khau")
+    @PostMapping("/quen_mat_khau")
     @ResponseBody
     public ResponseEntity<HttpResponse> resetPassword(@RequestParam("email") String email) throws HttpMyException, EmailNotFoundException {
         userService.resetPassword(email);
