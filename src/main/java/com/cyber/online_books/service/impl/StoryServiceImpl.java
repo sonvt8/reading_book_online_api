@@ -12,12 +12,10 @@ import com.cyber.online_books.repository.UserRepository;
 import com.cyber.online_books.response.*;
 import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.StoryService;
-import com.cyber.online_books.utils.ConstantsListUtils;
-import com.cyber.online_books.utils.ConstantsPayTypeUtils;
-import com.cyber.online_books.utils.ConstantsStatusUtils;
-import com.cyber.online_books.utils.DateUtils;
+import com.cyber.online_books.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -227,6 +225,21 @@ public class StoryServiceImpl implements StoryService {
     public List< StorySlide > findStoryOfConverter(Long userId, List< Integer > listStoryDisplay) {
         return storyRepository
                 .findTop5ByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStoryDisplay);
+    }
+
+    @Override
+    public Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
+                                                 int pagenumber, int type, Integer size) {
+        Page< StoryMember > storyMembers;
+        if (type == 1) {
+            Pageable pageable = PageRequest.of(pagenumber - 1, ConstantsUtils.PAGE_SIZE_CHAPTER_OF_STORY);
+            storyMembers = storyRepository.findByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStatus, pageable);
+        } else {
+            List< StoryMember > storyMemberList = storyRepository
+                    .findAllByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStatus);
+            storyMembers = new PageImpl<>(storyMemberList);
+        }
+        return storyMembers;
     }
 
 

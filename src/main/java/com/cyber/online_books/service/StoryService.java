@@ -144,6 +144,19 @@ public interface StoryService {
      */
     List< StorySlide > findStoryOfConverter(Long userId, List< Integer > listStoryDisplay);
 
+    /**
+     * Lấy danh sách truyện đã đăng của User
+     *
+     * @param userId
+     * @param pagenumber
+     * @param type
+     * @param size
+     * @param listStatus
+     * @return
+     */
+    Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
+                                          int pagenumber, int type, Integer size);
+
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);

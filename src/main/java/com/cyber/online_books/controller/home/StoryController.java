@@ -4,10 +4,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
-import com.cyber.online_books.response.ChapterOfStory;
-import com.cyber.online_books.response.StorySlide;
-import com.cyber.online_books.response.StorySummary;
-import com.cyber.online_books.response.StoryUser;
+import com.cyber.online_books.response.*;
 import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
@@ -64,6 +61,16 @@ public class StoryController extends ExceptionHandling {
         List<StorySlide> list = storyService
                 .findStoryOfConverter(userId, ConstantsListUtils.LIST_STORY_DISPLAY);
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/storyOfMember")
+    public ResponseEntity< ? > loadStoryOfMember(@RequestParam("userId") Long userId,
+                                                 @RequestParam("pagenumber") int pagenumber,
+                                                 @RequestParam("type") int type) {
+        Page<StoryMember> storyMembers = storyService
+                .findStoryByUserId(userId, ConstantsListUtils.LIST_STORY_DISPLAY,
+                        pagenumber, type, ConstantsUtils.PAGE_SIZE_DEFAULT);
+        return new ResponseEntity<>(storyMembers, HttpStatus.OK);
     }
 
 }
