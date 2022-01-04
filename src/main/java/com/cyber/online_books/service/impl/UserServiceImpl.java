@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -324,6 +325,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User currentUser = userRepository.findUserByUsername(currentUsername);
         if (currentUser == null) {
             throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        }
+        if (currentUser.getStatus() != 1){
+            throw new DisabledException("Tài khoản đã bị đóng hoặc chưa được kích hoạt");
         }
         return currentUser;
     }
