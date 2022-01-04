@@ -55,21 +55,21 @@ public interface UserService {
      *
      * @param newNick
      */
-    User updateDisplayName(Principal principal, String newNick) throws HttpMyException;
+    User updateDisplayName(Principal principal, String newNick) throws HttpMyException, UserNotFoundException;
 
     /**
      * Cập nhật thông báo
      *
      * @param newMess
      */
-    User updateNotification(Principal principal, String newMess) throws HttpMyException;
+    User updateNotification(Principal principal, String newMess) throws UserNotFoundException;
 
     /**
      * Cập nhật thông báo
      *
      * @param sourceFile
      */
-    User updateAvatar(Principal principal, MultipartFile sourceFile) throws HttpMyException, NotAnImageFileException;
+    User updateAvatar(Principal principal, MultipartFile sourceFile) throws UserNotFoundException, NotAnImageFileException;
 
     /**
      * Đăng ký người dùng mới
@@ -91,7 +91,7 @@ public interface UserService {
      *
      * @param newPassword
      */
-    void updatePassword(String newPassword, Principal principal) throws HttpMyException;
+    void updatePassword(String newPassword, Principal principal) throws UserNotFoundException;
 
     /**
      * Cập Nhật User
@@ -102,9 +102,17 @@ public interface UserService {
     User updateUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException;
 
     /**
+     * Nạp đậu cho User
+     *
+     * @param money
+     * @param id
+     */
+    void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException;
+
+    /**
      * Xoá User
      *
      * @param id
      */
-    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException;
+    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException;
 }

@@ -7,10 +7,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
-import com.cyber.online_books.service.CloudinaryService;
-import com.cyber.online_books.service.EmailService;
-import com.cyber.online_books.service.LoginAttemptService;
-import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.service.*;
 import com.cyber.online_books.utils.ConstantsRoleUtils;
 import static com.cyber.online_books.utils.UserImplContant.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -24,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -51,6 +50,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private LoginAttemptService loginAttemptService;
     private EmailService emailService;
     private CloudinaryService cloudinaryService;
+    private PayService payService;
     private BCryptPasswordEncoder passwordEncoder;
     @Value("${Cyber.truyenonline.email.from}")
     private String emailForm;
@@ -64,13 +64,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private String emailUrl;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, LoginAttemptService loginAttemptService
-            ,EmailService emailService, CloudinaryService cloudinaryService,BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           LoginAttemptService loginAttemptService,
+                           EmailService emailService,
+                           CloudinaryService cloudinaryService,
+                           PayService payService,
+                           BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.loginAttemptService = loginAttemptService;
         this.cloudinaryService = cloudinaryService;
         this.emailService = emailService;
+        this.payService = payService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -78,8 +84,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(userName);
         if (user == null) {
-            LOGGER.error(NO_USER_FOUND_BY_USERNAME + userName);
-            throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + userName);
+            LOGGER.error(NO_USER_FOUND_BY_USERNAME);
+            throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME);
         } else {
             validateLoginAttempt(user);
             user.setLastLoginDateDisplay(user.getLastLoginDate());
@@ -163,7 +169,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     @Override
-    public User updateDisplayName(Principal principal, String newNick) throws HttpMyException {
+    public User updateDisplayName(Principal principal, String newNick) throws HttpMyException, UserNotFoundException {
         User currentUser = validatePricipal(principal);
         if (newNick.equalsIgnoreCase(currentUser.getDisplayName()))
             throw new HttpMyException("Ngoại hiệu này bạn đang sử dụng");
@@ -189,7 +195,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     @Override
-    public User updateNotification(Principal principal, String newMess) throws HttpMyException {
+    public User updateNotification(Principal principal, String newMess) throws UserNotFoundException {
         User currentUser = validatePricipal(principal);
         currentUser.setNotification(newMess);
         userRepository.save(currentUser);
@@ -197,7 +203,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User updateAvatar(Principal principal, MultipartFile sourceFile) throws HttpMyException, NotAnImageFileException {
+    public User updateAvatar(Principal principal, MultipartFile sourceFile) throws UserNotFoundException, NotAnImageFileException {
         if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(sourceFile.getContentType())) {
             throw new NotAnImageFileException(sourceFile.getOriginalFilename() + " is not an image file");
         }
@@ -223,7 +229,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException {
+    public void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException {
+        User currentUser = validatePricipal(principal);
+        User receivedUser = findUserById(id);
+        if(receivedUser == null) {
+            throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
+        }
+        try {
+            payService.savePayChange(currentUser, money, receivedUser);
+        } catch (Exception e) {
+            throw new HttpMyException("Chưa thể nạp đậu! Vui lòng thực hiện lại sau");
+        }
+    }
+
+    @Override
+    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException {
         User currentUser = validatePricipal(principal);
         User deletedUser = findUserById(id);
         if(currentUser.getId() == id){
@@ -289,7 +309,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @param newPassword
      */
     @Override
-    public void updatePassword(String newPassword, Principal principal) throws HttpMyException {
+    public void updatePassword(String newPassword, Principal principal) throws UserNotFoundException {
         User currentUser = validatePricipal(principal);
         currentUser.setPassword(encodePassword(newPassword));
         userRepository.save(currentUser);
@@ -320,11 +340,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-    private User validatePricipal(Principal principal) throws HttpMyException{
+    private User validatePricipal(Principal principal) throws UserNotFoundException {
         String currentUsername = principal.getName();
-        User currentUser = userRepository.findUserByUsername(currentUsername);
-        if (currentUser == null) {
-            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        User currentUser = findUserAccount(currentUsername);
+        if(currentUser == null) {
+            throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
         }
         if (currentUser.getStatus() != 1){
             throw new DisabledException("Tài khoản đã bị đóng hoặc chưa được kích hoạt");
@@ -338,7 +358,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if(StringUtils.isNotBlank(currentUsername)) {
             User currentUser = findUserAccount(currentUsername);
             if(currentUser == null) {
-                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
             }
             if(userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
                 throw new UsernameExistException(USERNAME_ALREADY_EXISTS);

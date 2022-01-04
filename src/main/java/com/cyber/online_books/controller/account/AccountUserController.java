@@ -5,6 +5,7 @@ import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
+import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.PayService;
 import com.cyber.online_books.service.UserService;
@@ -34,13 +35,11 @@ public class AccountUserController {
     private UserService userService;
     @Autowired
     private PayService payService;
-    @Autowired
-    private CloudinaryService cloudinaryService;
 
     @PostMapping(value = "/doi_ngoai_hieu")
     @Transactional
     public ResponseEntity<User> changeNick(@RequestParam(value = "newNick") String newNick,
-                                           Principal principal) throws HttpMyException {
+                                           Principal principal) throws HttpMyException, UserNotFoundException {
         User user = userService.updateDisplayName(principal,newNick);
         payService.savePay(null, null, user, null, 0,
                 ConstantsUtils.PRICE_UPDATE_NICK, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
@@ -48,20 +47,20 @@ public class AccountUserController {
     }
 
     @PostMapping(value = "/doi_mat_khau")
-    public ResponseEntity<HttpResponse> changePassword(@RequestParam("new-pass")String newPassword, Principal principal) throws HttpMyException {
+    public ResponseEntity<HttpResponse> changePassword(@RequestParam("new-pass")String newPassword, Principal principal) throws UserNotFoundException {
         userService.updatePassword(newPassword,principal);
         return response(OK, "Đã cập nhật thành công mật khẩu mới");
     }
 
     @PostMapping(value = "/doi_thong_bao")
-    public ResponseEntity<User> changeNotification(@RequestParam("notification")String newMess, Principal principal) throws HttpMyException {
+    public ResponseEntity<User> changeNotification(@RequestParam("notification")String newMess, Principal principal) throws UserNotFoundException {
         User user = userService.updateNotification(principal,newMess.trim());
         return new ResponseEntity<>(user, OK);
     }
 
     @PostMapping("/anh_dai_dien")
     @ResponseBody
-    public ResponseEntity<User> changeAvatar(@RequestParam(value = "profileImage", required = false) MultipartFile profileImage, Principal principal) throws HttpMyException, NotAnImageFileException {
+    public ResponseEntity<User> changeAvatar(@RequestParam(value = "profileImage", required = false) MultipartFile profileImage, Principal principal) throws NotAnImageFileException, UserNotFoundException {
         User user = userService.updateAvatar(principal,profileImage);
         return new ResponseEntity<>(user, OK);
     }

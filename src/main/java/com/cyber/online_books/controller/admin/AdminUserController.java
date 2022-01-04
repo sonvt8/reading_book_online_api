@@ -43,8 +43,15 @@ public class AdminUserController {
         return new ResponseEntity<>(editedUser, OK);
     }
 
+    @PostMapping("/nap_dau")
+    public ResponseEntity<HttpResponse> submitPayDraw(@RequestParam("money") String money,
+                                              @RequestParam("reId") Long reId, Principal principal) throws UserNotFoundException, HttpMyException {
+        userService.topUp(Double.valueOf(money),reId, principal);
+        return response(OK, "User đã tăng số đậu tương ứng");
+    }
+
     @GetMapping("/xoa/{id}")
-    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long userId, Principal principal) throws HttpMyException, IOException {
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long userId, Principal principal) throws HttpMyException, IOException, UserNotFoundException {
         userService.deleteUser(principal, userId);
         return response(OK, "User đã được xoá");
     }

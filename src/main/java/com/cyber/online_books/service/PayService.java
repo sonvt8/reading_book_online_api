@@ -23,4 +23,13 @@ public interface PayService {
     boolean savePay(Story story, Chapter chapter,
                     User userSend, User userReceived, Integer vote,
                     Double money, Integer payType);
+
+    /**
+     * Thực Hiện Giao Dịch Nạp Tiền cho User
+     *
+     * @param userSend     - Người Nạp
+     * @param money        - Số đậu nạp
+     * @param userReceived - Người nhận
+     */
+    void savePayChange(User userSend, Double money, User userReceived);
 }
