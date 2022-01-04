@@ -165,6 +165,15 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
      */
     Optional<StorySummary> findByIdAndStatusIn(Long storyId, List< Integer > listStoryStatus);
 
+    /**
+     * Lấy Danh sách Top 5 truyện mới đăng theo user và status
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return List<StorySlide>
+     */
+    List< StorySlide > findTop5ByUser_IdAndStatusInOrderByCreateDateDesc(Long userId, List< Integer > listStoryDisplay);
+
     Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
 
     Page< StoryAdmin > findByNameContainingOrderByIdDesc(String search, Pageable pageable);

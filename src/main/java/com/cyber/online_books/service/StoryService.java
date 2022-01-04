@@ -135,6 +135,15 @@ public interface StoryService {
      */
     StorySummary findStoryByStoryIdAndStatus(Long storyId, List< Integer > listStoryStatus) throws Exception;
 
+    /**
+     * Lấy Danh sách truyện mới đăng của Converter
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return List<StorySlide>
+     */
+    List< StorySlide > findStoryOfConverter(Long userId, List< Integer > listStoryDisplay);
+
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);

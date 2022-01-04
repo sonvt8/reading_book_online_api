@@ -216,6 +216,19 @@ public class StoryServiceImpl implements StoryService {
                 .orElseThrow(NotFoundException::new);
     }
 
+    /**
+     * Lấy Danh sách truyện mới đăng của Converter
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return List<StorySlide>
+     */
+    @Override
+    public List< StorySlide > findStoryOfConverter(Long userId, List< Integer > listStoryDisplay) {
+        return storyRepository
+                .findTop5ByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStoryDisplay);
+    }
+
 
     @Override
     public Page< StoryAdmin > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {

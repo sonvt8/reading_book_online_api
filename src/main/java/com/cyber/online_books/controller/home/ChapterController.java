@@ -30,12 +30,4 @@ public class ChapterController extends ExceptionHandling {
         this.chapterService = chapterService;
     }
 
-    @GetMapping(value = "/chapterOfStory")
-    public ResponseEntity< ? > loadChapterOfStory(@RequestParam("storyId") Long storyId,
-                                                  @RequestParam("pagenumber") Integer pagenumber,
-                                                  @RequestParam("type") Integer type) {
-        Page<ChapterOfStory> chapterOfStoryPage = chapterService
-                .getListChapterOfStory(storyId, pagenumber, ConstantsListUtils.LIST_CHAPTER_DISPLAY, type);
-        return new ResponseEntity<>(chapterOfStoryPage, HttpStatus.OK);
-    }
 }

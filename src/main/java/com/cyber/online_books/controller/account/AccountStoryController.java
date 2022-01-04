@@ -6,6 +6,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
+import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.StoryService;
@@ -38,12 +39,16 @@ public class AccountStoryController extends ExceptionHandling {
     @GetMapping(value = "/danh-sach")
     public ResponseEntity< ? > getStoryByAccount(@RequestParam("pagenumber") int pagenumber,
                                                  @RequestParam("status") int status,
-                                                 Principal principal) throws UserNotLoginException, HttpMyException {
+                                                 Principal principal) throws UserNotLoginException, HttpMyException, UserNotFoundException {
         if (principal == null) {
             throw new UserNotLoginException();
         }
 
         User user = userService.findUserAccount(principal.getName());
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
 
         if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
             throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");

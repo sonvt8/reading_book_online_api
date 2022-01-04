@@ -1,17 +1,27 @@
 package com.cyber.online_books.controller.home;
 
+import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
+import com.cyber.online_books.exception.domain.UserNotFoundException;
+import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.ChapterOfStory;
+import com.cyber.online_books.response.StorySlide;
 import com.cyber.online_books.response.StorySummary;
+import com.cyber.online_books.response.StoryUser;
 import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsListUtils;
+import com.cyber.online_books.utils.ConstantsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/truyen")
@@ -47,4 +57,13 @@ public class StoryController extends ExceptionHandling {
                 .getListChapterOfStory(storyId, pagenumber, ConstantsListUtils.LIST_CHAPTER_DISPLAY, type);
         return new ResponseEntity<>(chapterOfStoryPage, HttpStatus.OK);
     }
+
+    //Lấy Top 5 Truyện mới đăng của Converter
+    @GetMapping(value = "/storyOfConverter")
+    public ResponseEntity< ? > loadStoryOfConverter(@RequestParam("userId") Long userId) {
+        List<StorySlide> list = storyService
+                .findStoryOfConverter(userId, ConstantsListUtils.LIST_STORY_DISPLAY);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
 }
