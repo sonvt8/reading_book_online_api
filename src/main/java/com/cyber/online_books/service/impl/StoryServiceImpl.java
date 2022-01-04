@@ -4,14 +4,12 @@ import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
+import com.cyber.online_books.exception.domain.NotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.repository.UserRepository;
-import com.cyber.online_books.response.StoryAdmin;
-import com.cyber.online_books.response.StoryTop;
-import com.cyber.online_books.response.StoryUpdate;
-import com.cyber.online_books.response.StoryUser;
+import com.cyber.online_books.response.*;
 import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.utils.ConstantsListUtils;
@@ -203,6 +201,21 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository
                 .findTopStoryAppoind(ConstantsListUtils.LIST_STORY_DISPLAY, startDate, endDate, ConstantsPayTypeUtils.PAY_APPOINT_TYPE, ConstantsStatusUtils.PAY_COMPLETED, pageable);
     }
+
+    /**
+     * Tìm Truyện Theo StoryID và ListStatus
+     *
+     * @param storyId
+     * @param listStoryStatus
+     * @return StorySummar - nếu tồn tại truyện thỏa mãn điều kiện
+     */
+    @Override
+    public StorySummary findStoryByStoryIdAndStatus(Long storyId, List< Integer > listStoryStatus) throws Exception {
+        return storyRepository
+                .findByIdAndStatusIn(storyId, listStoryStatus)
+                .orElseThrow(NotFoundException::new);
+    }
+
 
     @Override
     public Page< StoryAdmin > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {

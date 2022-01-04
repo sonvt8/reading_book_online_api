@@ -1,9 +1,8 @@
 package com.cyber.online_books.controller.home;
 
-import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.NotFoundException;
-import com.cyber.online_books.response.CategoryResponse;
+import com.cyber.online_books.response.CategorySummary;
 import com.cyber.online_books.response.StoryByCategoryId;
 import com.cyber.online_books.response.StoryTop;
 import com.cyber.online_books.response.StoryUpdate;
@@ -38,7 +37,7 @@ public class CategoryController extends ExceptionHandling {
 
     @GetMapping("/danh-sach")
     public ResponseEntity<?> getAllCategories(){
-        List<CategoryResponse> listCategories = categoryService.getListCategoryOfMenu(ConstantsStatusUtils.CATEGORY_ACTIVED);
+        List<CategorySummary> listCategories = categoryService.getListCategoryOfMenu(ConstantsStatusUtils.CATEGORY_ACTIVED);
 
         return ResponseEntity.status(HttpStatus.OK).body(listCategories);
     }
@@ -49,7 +48,7 @@ public class CategoryController extends ExceptionHandling {
 
         StoryByCategoryId story = new StoryByCategoryId();
 
-        CategoryResponse categoryResponse = checkCategoryID(cid);
+        CategorySummary categoryResponse = checkCategoryID(cid);
         Page<StoryUpdate> pageStory = storyService
                 .findStoryNewUpdateByCategoryId(categoryResponse.getId(),
                         pagenumber,
@@ -96,7 +95,7 @@ public class CategoryController extends ExceptionHandling {
         return ResponseEntity.status(HttpStatus.OK).body(story);
     }
 
-    private CategoryResponse checkCategoryID(String cid) throws Exception {
+    private CategorySummary checkCategoryID(String cid) throws Exception {
 
         // Kiểm tra cid != null
         // Kiểm tra cid có phải kiểu int

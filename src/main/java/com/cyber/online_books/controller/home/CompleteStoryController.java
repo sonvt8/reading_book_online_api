@@ -1,5 +1,6 @@
 package com.cyber.online_books.controller.home;
 
+import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.response.CatalogResponse;
 import com.cyber.online_books.response.StoryTop;
 import com.cyber.online_books.response.StoryUpdate;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/danh-muc/hoan-thanh")
-public class CompleteStoryController {
+public class CompleteStoryController extends ExceptionHandling {
 
     private final StoryService storyService;
 

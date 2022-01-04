@@ -1,5 +1,6 @@
 package com.cyber.online_books.controller.home;
 
+import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.response.CatalogResponse;
 import com.cyber.online_books.response.HomeResponse;
 import com.cyber.online_books.response.StoryTop;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/danh-muc/truyen-vip")
-public class VipStoryController {
+public class VipStoryController extends ExceptionHandling {
 
     private final StoryService storyService;
 

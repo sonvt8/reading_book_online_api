@@ -1,10 +1,7 @@
 package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.Story;
-import com.cyber.online_books.response.StoryAdmin;
-import com.cyber.online_books.response.StoryTop;
-import com.cyber.online_books.response.StoryUpdate;
-import com.cyber.online_books.response.StoryUser;
+import com.cyber.online_books.response.*;
 import com.cyber.online_books.utils.ConstantsQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface StoryRepository extends JpaRepository<Story, Long > {
     Story findStoryByName(String name);
@@ -157,6 +155,15 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
                                          @Param("endDate") Date endDate,
                                          @Param("payType") Integer payType, @Param("payStatus") Integer payStatus,
                                          Pageable pageable);
+
+    /**
+     * Tìm truyện theo id và status thỏa mãn
+     *
+     * @param storyId
+     * @param listStoryStatus
+     * @return Optional<StorySummary>
+     */
+    Optional<StorySummary> findByIdAndStatusIn(Long storyId, List< Integer > listStoryStatus);
 
     Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
 

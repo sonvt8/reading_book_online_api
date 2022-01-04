@@ -5,6 +5,7 @@ import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
+import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
@@ -23,7 +24,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/tai-khoan/chuong")
-public class AccountChapterController {
+public class AccountChapterController extends ExceptionHandling {
 
     private final StoryService storyService;
     private final UserService userService;

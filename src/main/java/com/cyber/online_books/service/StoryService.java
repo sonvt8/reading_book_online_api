@@ -4,10 +4,7 @@ import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
-import com.cyber.online_books.response.StoryAdmin;
-import com.cyber.online_books.response.StoryTop;
-import com.cyber.online_books.response.StoryUpdate;
-import com.cyber.online_books.response.StoryUser;
+import com.cyber.online_books.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -127,6 +124,16 @@ public interface StoryService {
      * @return Page<TopStory>
      */
     public Page< StoryTop > getTopStoryAppoind(int page, int size, Date startDate, Date endDate);
+
+    /**
+     * Tìm Truyện Theo StoryID và ListStatus
+     *
+     * @param storyId
+     * @param listStoryStatus
+     * @return StorySummar - nếu tồn tại truyện thỏa mãn điều kiện
+     * @throws Exception - nếu không tồn tại truyện thỏa mãn điều kiện
+     */
+    StorySummary findStoryByStoryIdAndStatus(Long storyId, List< Integer > listStoryStatus) throws Exception;
 
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 

@@ -1,7 +1,7 @@
 package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.Category;
-import com.cyber.online_books.response.CategoryResponse;
+import com.cyber.online_books.response.CategorySummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +16,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
      * @param status
      * @return List<CategoryResponse> - danh sách thể loại
      */
-    List<CategoryResponse> findAllByStatus(Integer status);
+    List<CategorySummary> findAllByStatus(Integer status);
 
     /**
      * Tìm category theo id và status
@@ -25,7 +25,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
      * @param status
      * @return Optional<CategorySummary>
      */
-    Optional< CategoryResponse > findByIdAndStatus(Integer id, Integer status);
+    Optional<CategorySummary> findByIdAndStatus(Integer id, Integer status);
 
     /**
      * Lấy danh sách Thể loại theo

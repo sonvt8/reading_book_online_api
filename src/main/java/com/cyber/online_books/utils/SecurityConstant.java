@@ -20,7 +20,8 @@ public class SecurityConstant {
             "/thong-tin",
             "/home",
             "/danh-muc/**",
-            "/chuong/**"
+            "/chuong/**",
+            "/truyen/**"
     };
     //public static final String[] PUBLIC_URLS = { "**" };
     public static final String[] ROLE_USER_LINK = {"/tai_khoan",

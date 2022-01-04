@@ -5,6 +5,7 @@ import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.repository.ChapterRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.response.ChapterOfStory;
+import com.cyber.online_books.response.ChapterSummary;
 import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.WebUtils;
@@ -120,5 +121,29 @@ public class ChapterServiceImpl implements ChapterService {
             chapterOfStoryPage = new PageImpl<>(chapterOfStoryList);
         }
         return chapterOfStoryPage;
+    }
+
+    /**
+     * Lấy Chapter ID Chương Đầu
+     *
+     * @param storyId
+     * @param listStatus
+     * @return Long
+     */
+    @Override
+    public ChapterSummary findChapterHeadOfStory(Long storyId, List< Integer > listStatus) {
+        return chapterRepository.findChapterHead(storyId, listStatus).orElse(null);
+    }
+
+    /**
+     * Tìm Chapter Mới Nhất Của Truyện
+     *
+     * @param storyId
+     * @param listStatus
+     * @return ChapterSummary - nếu tìm thấy Chapter / null - nếu không tìm thấy
+     */
+    @Override
+    public ChapterSummary findChapterNewOfStory(Long storyId, List< Integer > listStatus) {
+        return chapterRepository.findChapterNew(storyId, listStatus).orElse(null);
     }
 }

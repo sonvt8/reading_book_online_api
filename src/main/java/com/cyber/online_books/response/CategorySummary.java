@@ -1,6 +1,6 @@
 package com.cyber.online_books.response;
 
-public interface CategoryResponse {
+public interface CategorySummary {
     Integer getId();
 
     String getName();

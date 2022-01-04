@@ -1,14 +1,11 @@
 package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Category;
-import com.cyber.online_books.exception.category.CategoryNotFoundException;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotFoundException;
 import com.cyber.online_books.repository.CategoryRepository;
-import com.cyber.online_books.response.CategoryResponse;
+import com.cyber.online_books.response.CategorySummary;
 import com.cyber.online_books.service.CategoryService;
-import com.cyber.online_books.utils.WebUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return List<Category> - danh sách thể loại
      */
     @Override
-    public List< CategoryResponse > getListCategoryOfMenu(Integer status) {
+    public List<CategorySummary> getListCategoryOfMenu(Integer status) {
         return categoryRepository.findAllByStatus(status);
     }
 
@@ -48,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @throws NotFoundException - nếu không tồn tại category có id và status
      */
     @Override
-    public CategoryResponse getCategoryByID(Integer id, Integer status) throws NotFoundException {
+    public CategorySummary getCategoryByID(Integer id, Integer status) throws NotFoundException {
         return categoryRepository
                 .findByIdAndStatus(id, status)
                 .orElseThrow(NotFoundException::new);

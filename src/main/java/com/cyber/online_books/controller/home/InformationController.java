@@ -1,5 +1,6 @@
 package com.cyber.online_books.controller.home;
 
+import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.response.InformationResponse;
 import com.cyber.online_books.service.CategoryService;
 import com.cyber.online_books.service.InformationService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/thong-tin")
-public class InformationController {
+public class InformationController extends ExceptionHandling {
 
     private final Logger logger = LoggerFactory.getLogger(InformationController.class);
     private final CategoryService categoryService;
