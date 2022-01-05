@@ -13,6 +13,7 @@ import static com.cyber.online_books.utils.UserImplContant.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.cyber.online_books.utils.ConstantsUtils;
+import com.cyber.online_books.utils.WebUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -309,8 +310,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @param newPassword
      */
     @Override
-    public void updatePassword(String newPassword, Principal principal) throws UserNotFoundException {
+    public void updatePassword(String oldPassword, String newPassword, Principal principal) throws UserNotFoundException, HttpMyException {
         User currentUser = validatePricipal(principal);
+        if (oldPassword != null && !WebUtils.equalsPassword(oldPassword, currentUser.getPassword())) {
+            throw new HttpMyException("Mật khẩu đăng nhập cũ không chính xác");
+        }
         currentUser.setPassword(encodePassword(newPassword));
         userRepository.save(currentUser);
         LOGGER.info("New user password: " + newPassword);

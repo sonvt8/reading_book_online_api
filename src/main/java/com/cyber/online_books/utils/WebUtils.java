@@ -1,5 +1,7 @@
 package com.cyber.online_books.utils;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 
@@ -14,5 +16,10 @@ public class WebUtils {
         } catch (Exception e) {
             return " ";
         }
+    }
+
+    public static boolean equalsPassword(String rawPassword, String encodedPassword) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
 }

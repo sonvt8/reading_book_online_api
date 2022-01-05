@@ -45,10 +45,12 @@ public class AccountUserController {
                 ConstantsUtils.PRICE_UPDATE_NICK, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
         return new ResponseEntity<>(user, OK);
     }
-
+1
     @PostMapping(value = "/doi_mat_khau")
-    public ResponseEntity<HttpResponse> changePassword(@RequestParam("new-pass")String newPassword, Principal principal) throws UserNotFoundException {
-        userService.updatePassword(newPassword,principal);
+    public ResponseEntity<HttpResponse> changePassword(@RequestParam("old-pass")String oldPassword,
+                                                       @RequestParam("new-pass")String newPassword,
+                                                       Principal principal) throws UserNotFoundException, HttpMyException {
+        userService.updatePassword(oldPassword, newPassword,principal);
         return response(OK, "Đã cập nhật thành công mật khẩu mới");
     }
 

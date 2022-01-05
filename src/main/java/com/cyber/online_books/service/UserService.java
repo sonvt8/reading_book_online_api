@@ -91,7 +91,7 @@ public interface UserService {
      *
      * @param newPassword
      */
-    void updatePassword(String newPassword, Principal principal) throws UserNotFoundException;
+    void updatePassword(String oldPassword,String newPassword, Principal principal) throws UserNotFoundException, HttpMyException;
 
     /**
      * Cập Nhật User
