@@ -1,6 +1,8 @@
 package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -29,4 +31,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return true - nếu tồn tại user/ false - nếu không tồn tại user
      */
     boolean existsByIdNotAndDisplayName(Long userId, String newNick);
+
+    /**
+     * Lấy danh sách toàn bộ user theo phương thức paging
+     *
+     * @param pageable
+     * @return Users - danh sách toàn bộ user/ null - nếu không có user nào
+     */
+    Page<User> findAll(Pageable pageable);
 }

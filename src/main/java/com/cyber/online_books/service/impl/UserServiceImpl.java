@@ -2,6 +2,7 @@ package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.Mail;
+import com.cyber.online_books.entity.PageInfo;
 import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
@@ -22,8 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -112,8 +114,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return List<User>
      */
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public Map<String, Object> getUsers(int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page< User > users = userRepository.findAll(paging);
+        PageInfo myPage = new PageInfo(users.getNumber(), users.getTotalElements(), users.getTotalPages(), users.getSize());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", users);
+        response.put("page", myPage);
+        return response;
     }
 
     /**

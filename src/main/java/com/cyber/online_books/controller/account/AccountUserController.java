@@ -45,7 +45,7 @@ public class AccountUserController {
                 ConstantsUtils.PRICE_UPDATE_NICK, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
         return new ResponseEntity<>(user, OK);
     }
-1
+
     @PostMapping(value = "/doi_mat_khau")
     public ResponseEntity<HttpResponse> changePassword(@RequestParam("old-pass")String oldPassword,
                                                        @RequestParam("new-pass")String newPassword,

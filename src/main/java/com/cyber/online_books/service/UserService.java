@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
@@ -15,7 +15,7 @@ public interface UserService {
      *
      * @return List<User>
      */
-    List<User> getUsers();
+    Map getUsers(int page, int size);
 
     /**
      * Tìm kiếm User theo username

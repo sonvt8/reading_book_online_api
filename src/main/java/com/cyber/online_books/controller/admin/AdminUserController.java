@@ -7,6 +7,7 @@ import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UsernameExistException;
 import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -32,8 +34,8 @@ public class AdminUserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getUsers();
+    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page) {
+        Map users = userService.getUsers(page, ConstantsUtils.PAGE_SIZE_DEFAULT);
         return new ResponseEntity<>(users, OK);
     }
 
