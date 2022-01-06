@@ -1,7 +1,9 @@
 package com.cyber.online_books.component;
 
+import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.response.ChapterSummary;
 import com.cyber.online_books.service.ChapterService;
+import com.cyber.online_books.service.HistoryService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.utils.ConstantsListUtils;
 import com.cyber.online_books.utils.DateUtils;
@@ -20,6 +22,8 @@ public class MyComponent {
     private StoryService storyService;
     @Autowired
     private ChapterService chapterService;
+    @Autowired
+    private HistoryService historyService;
 
     public String getDisplayName(String username, String displayName) {
         return (displayName != null && !displayName.isEmpty()) ? displayName : username;
@@ -41,6 +45,13 @@ public class MyComponent {
     public ChapterSummary getNewChapter(Long storyId) {
         return chapterService
                 .findChapterNewOfStory(storyId, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
+    }
+
+    public Long getChapterReading(Long storyId, Long userId) {
+        Chapter chapter = historyService.findChapterReadByUser(userId, storyId);
+        if (chapter != null)
+            return chapter.getId();
+        return null;
     }
 
 }
