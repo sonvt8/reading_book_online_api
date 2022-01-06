@@ -63,4 +63,17 @@ public interface ChapterService {
      */
     ChapterSummary findChapterNewOfStory(Long storyId,
                                          List< Integer > listStatus);
+
+    /**
+     * Tìm Chapter Theo Story ID và Chapter ID
+     *
+     * @param storyId
+     * @param listStatusStory
+     * @param chapterId
+     * @param listStatusChapter
+     * @return Chapter
+     * @throws Exception
+     */
+    Chapter findChapterByStoryIdAndChapterID(Long storyId, List< Integer > listStatusStory,
+                                             Long chapterId, List< Integer > listStatusChapter) throws Exception;
 }

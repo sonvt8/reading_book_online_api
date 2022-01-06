@@ -69,4 +69,16 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long > {
             nativeQuery = true)
     Optional< ChapterSummary > findChapterNew(@Param("storyId") Long storyId,
                                               @Param("chapterStatus") List< Integer > chapterStatus);
+
+    /**
+     * Lấy Chapter theo
+     *
+     * @param storyId
+     * @param listStatusStory
+     * @param chapterId
+     * @param listStatusChapter
+     * @return Optional<Chapter>
+     */
+    Optional< Chapter > findByStory_IdAndStory_StatusInAndIdAndStatusIn(Long storyId, List< Integer > listStatusStory,
+                                                                        Long chapterId, List< Integer > listStatusChapter);
 }

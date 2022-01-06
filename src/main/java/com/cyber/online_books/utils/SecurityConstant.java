@@ -12,9 +12,9 @@ public class SecurityConstant {
     public static final String ACCESS_DENIED_MESSAGE = "Bạn không đủ quyền truy cập đường dẫn này";
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
     public static final String[] PUBLIC_URLS = {
-            "/thanh-vien/dang-nhap",
-            "/thanh-vien/dang-ky",
-            "/thanh-vien/quen-mat-khau",
+            "/thanh_vien/dang_nhap",
+            "/thanh_vien/dang_ky",
+            "/thanh_vien/quen_mat_khau",
             "/member/image/**",
             "/the-loai/**",
             "/thong-tin",

@@ -2,6 +2,7 @@ package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.entity.Story;
+import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.repository.ChapterRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.response.ChapterOfStory;
@@ -145,5 +146,23 @@ public class ChapterServiceImpl implements ChapterService {
     @Override
     public ChapterSummary findChapterNewOfStory(Long storyId, List< Integer > listStatus) {
         return chapterRepository.findChapterNew(storyId, listStatus).orElse(null);
+    }
+
+    /**
+     * Tìm Chapter Theo Story ID và Chapter ID
+     *
+     * @param storyId
+     * @param listStatusStory
+     * @param chapterId
+     * @param listStatusChapter
+     * @return Chapter
+     * @throws Exception
+     */
+    @Override
+    public Chapter findChapterByStoryIdAndChapterID(Long storyId, List< Integer > listStatusStory, Long chapterId, List< Integer > listStatusChapter) throws Exception {
+        return chapterRepository
+                .findByStory_IdAndStory_StatusInAndIdAndStatusIn(storyId, listStatusStory,
+                        chapterId, listStatusChapter)
+                .orElseThrow(() -> new HttpMyException("Chương không tồn tại hoặc đã bị xóa!"));
     }
 }
