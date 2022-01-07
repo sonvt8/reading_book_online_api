@@ -2,10 +2,13 @@ package com.cyber.online_books.service;
 
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.projections.TopConverter;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -15,7 +18,7 @@ public interface UserService {
      *
      * @return List<User>
      */
-    Map getUsers(int page, int size);
+    Page< User > getUsers(int page, int size);
 
     /**
      * Tìm kiếm User theo username
@@ -40,6 +43,13 @@ public interface UserService {
      * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     User findUserById(Long id);
+
+    /**
+     * @param page
+     * @param size
+     * @return
+     */
+    List<TopConverter> findTopConverter(int page, int size);
 
     /**
      * Kiểm tra DisplayName đã tồn tại chưa

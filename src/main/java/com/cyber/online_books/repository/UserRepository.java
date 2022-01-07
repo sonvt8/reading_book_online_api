@@ -1,9 +1,15 @@
 package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.User;
+import com.cyber.online_books.projections.TopConverter;
+import com.cyber.online_books.utils.ConstantsQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -39,4 +45,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Users - danh sách toàn bộ user/ null - nếu không có user nào
      */
     Page<User> findAll(Pageable pageable);
+
+    @Query(value = ConstantsQueryUtils.TOP_CONVERTER,
+            countQuery = ConstantsQueryUtils.COUNT_TOP_CONVERTER,
+            nativeQuery = true)
+    Page<TopConverter> getTopConverter(@Param("chapterStatus") List< Integer > listChapterStatus,
+                                       @Param("storyStatus") List< Integer > listStoryStatus,
+                                       @Param("userStatus") Integer uStatus, @Param("roleList") List< Integer > listRole, Pageable pageable);
 }

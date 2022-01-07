@@ -6,15 +6,15 @@ import com.cyber.online_books.entity.PageInfo;
 import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.projections.TopConverter;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
 import com.cyber.online_books.service.*;
-import com.cyber.online_books.utils.ConstantsRoleUtils;
+import com.cyber.online_books.utils.*;
+
 import static com.cyber.online_books.utils.UserImplContant.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import com.cyber.online_books.utils.ConstantsUtils;
-import com.cyber.online_books.utils.WebUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -114,15 +114,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return List<User>
      */
     @Override
-    public Map<String, Object> getUsers(int page, int size) {
+    public Page< User > getUsers(int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         Page< User > users = userRepository.findAll(paging);
-        PageInfo myPage = new PageInfo(users.getNumber(), users.getTotalElements(), users.getTotalPages(), users.getSize());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("users", users);
-        response.put("page", myPage);
-        return response;
+        return users;
     }
 
     /**
@@ -158,6 +153,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository
                 .findById(id)
                 .orElse(null);
+    }
+
+    @Override
+    public List<TopConverter> findTopConverter(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page< TopConverter > result = userRepository
+                .getTopConverter(ConstantsListUtils.LIST_CHAPTER_DISPLAY,
+                        ConstantsListUtils.LIST_STORY_DISPLAY,
+                        ConstantsStatusUtils.USER_ACTIVED, ConstantsListUtils.LIST_ROLE_CON, pageable);
+        return result.getContent();
     }
 
     /**

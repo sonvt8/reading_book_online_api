@@ -10,6 +10,7 @@ import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,8 +35,8 @@ public class AdminUserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page) {
-        Map users = userService.getUsers(page, ConstantsUtils.PAGE_SIZE_DEFAULT);
+    public ResponseEntity<Page<User>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page) {
+        Page< User > users = userService.getUsers(page, ConstantsUtils.PAGE_SIZE_DEFAULT);
         return new ResponseEntity<>(users, OK);
     }
 
