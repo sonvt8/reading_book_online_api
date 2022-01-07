@@ -4,18 +4,18 @@ import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
+import com.cyber.online_books.exception.domain.NotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.repository.CategoryRepository;
 import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.repository.UserRepository;
-import com.cyber.online_books.response.StoryAdmin;
-import com.cyber.online_books.response.StoryUser;
+import com.cyber.online_books.response.*;
 import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.StoryService;
-import com.cyber.online_books.utils.ConstantsStatusUtils;
-import com.cyber.online_books.utils.DateUtils;
+import com.cyber.online_books.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +51,25 @@ public class StoryServiceImpl implements StoryService {
     }
 
     /**
+     * Lấy List Truyện Mới Cập Nhật theo Category
+     *
+     * @param cID
+     * @param page
+     * @param size
+     * @param storyStatus
+     * @param chapterStatus
+     * @return Page<StoryUpdate>
+     */
+    @Override
+    public Page< StoryUpdate > findStoryNewUpdateByCategoryId(Integer cID,
+                                                              int page, int size,
+                                                              List< Integer > storyStatus, List< Integer > chapterStatus) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .findStoryNewByCategory(cID, storyStatus, chapterStatus, pageable);
+    }
+
+    /**
      * Lấy List Truyện đăng bởi User
      *
      * @param id         - id của User đăng
@@ -62,6 +83,165 @@ public class StoryServiceImpl implements StoryService {
         Pageable pageable = PageRequest.of(pagenumber - 1, size);
         return storyRepository.findByUser_IdAndStatusOrderByUpdateDateDesc(id, status, pageable);
     }
+
+    /**
+     * Lấy List Truyện Top View theo Category
+     *
+     * @param categoryId
+     * @param historyStatus
+     * @param listStatus
+     * @param startDate
+     * @param endDate
+     * @param page
+     * @param size
+     * @return Page<StoryTop>
+     */
+    @Override
+    public Page< StoryTop > findStoryTopViewByCategoryId(Integer categoryId, Integer historyStatus,
+                                                         List< Integer > listStatus,
+                                                         Date startDate, Date endDate,
+                                                         int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .findTopViewByCategory(categoryId, historyStatus,
+                        listStatus, startDate, endDate, pageable);
+    }
+
+    /**
+     * Lấy Danh sách Truyện Top  Đề Cử Theo Category
+     *
+     * @param categoryID
+     * @param storyStatus
+     * @param payType
+     * @param payStatus
+     * @param startDate
+     * @param endDate
+     * @param page
+     * @param size
+     * @return Page<StoryTop>
+     */
+    @Override
+    public Page< StoryTop > findStoryTopVoteByCategoryId(Integer categoryID,
+                                                         List< Integer > storyStatus,
+                                                         Integer payType, Integer payStatus,
+                                                         Date startDate, Date endDate,
+                                                         int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .findTopVoteByCategory(categoryID, storyStatus, payType, payStatus, startDate, endDate, pageable);
+    }
+
+    /**
+     * Lấy danh sách truyên top view trong khoảng theo status
+     *
+     * @param listStatus    - Danh sách trạng thái Story
+     * @param startDate     - Ngày Bắt đầu
+     * @param endDate       - Ngày kết thúc
+     * @param historyStatus - Status history
+     * @param page          - số trang
+     * @param size          - độ dài trang
+     * @return
+     */
+    @Override
+    public Page< StoryTop > findStoryTopViewByStatuss(List< Integer > listStatus,
+                                                      Date startDate, Date endDate,
+                                                      Integer historyStatus, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository.findStoryTopViewByStatus(listStatus, startDate, endDate, historyStatus, pageable);
+    }
+
+    /**
+     * Lấy Danh sách Truyện Vip mới cập nhật
+     *
+     * @param listChapterStatus - danh sách trạng thái chapter
+     * @param listStoryStatus   - danh sách trạng thái truyện
+     * @param sDealStatus       - trạng thái truyện trả tiền
+     * @param pagenumber        - biến số trang
+     * @param size              - biến size
+     * @return Page<StoryUpdate>
+     */
+    @Override
+    public Page< StoryUpdate > findStoryVipUpdateByStatus(List< Integer > listChapterStatus, List< Integer > listStoryStatus, Integer sDealStatus, int pagenumber, Integer size) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        return storyRepository.findVipStoryNew(listChapterStatus, listStoryStatus, sDealStatus, pageable);
+    }
+
+    /**
+     * Lấy Page Truyện theo Status
+     *
+     * @param listChapterStatus -  danh sách trạng thái chapter
+     * @param listStoryStatus   - danh sách trạng thái Story
+     * @param page              - số trang
+     * @param size              - độ dài trang
+     * @return Page<StoryUpdate>
+     */
+    @Override
+    public Page< StoryUpdate > findStoryUpdateByStatus(List< Integer > listChapterStatus,
+                                                       List< Integer > listStoryStatus,
+                                                       int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .getPageStoryComplete(listChapterStatus, listStoryStatus, pageable);
+    }
+
+    /**
+     * Lấy List Truyện Top Đề cử Trong Khoảng
+     *
+     * @param page
+     * @param size
+     * @param startDate
+     * @param endDate
+     * @return Page<TopStory>
+     */
+    @Override
+    public Page< StoryTop > getTopStoryAppoind(int page, int size, Date startDate, Date endDate) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return storyRepository
+                .findTopStoryAppoind(ConstantsListUtils.LIST_STORY_DISPLAY, startDate, endDate, ConstantsPayTypeUtils.PAY_APPOINT_TYPE, ConstantsStatusUtils.PAY_COMPLETED, pageable);
+    }
+
+    /**
+     * Tìm Truyện Theo StoryID và ListStatus
+     *
+     * @param storyId
+     * @param listStoryStatus
+     * @return StorySummar - nếu tồn tại truyện thỏa mãn điều kiện
+     */
+    @Override
+    public StorySummary findStoryByStoryIdAndStatus(Long storyId, List< Integer > listStoryStatus) throws Exception {
+        return storyRepository
+                .findByIdAndStatusIn(storyId, listStoryStatus)
+                .orElseThrow(NotFoundException::new);
+    }
+
+    /**
+     * Lấy Danh sách truyện mới đăng của Converter
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return List<StorySlide>
+     */
+    @Override
+    public List< StorySlide > findStoryOfConverter(Long userId, List< Integer > listStoryDisplay) {
+        return storyRepository
+                .findTop5ByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStoryDisplay);
+    }
+
+    @Override
+    public Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
+                                                 int pagenumber, int type, Integer size) {
+        Page< StoryMember > storyMembers;
+        if (type == 1) {
+            Pageable pageable = PageRequest.of(pagenumber - 1, ConstantsUtils.PAGE_SIZE_CHAPTER_OF_STORY);
+            storyMembers = storyRepository.findByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStatus, pageable);
+        } else {
+            List< StoryMember > storyMemberList = storyRepository
+                    .findAllByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStatus);
+            storyMembers = new PageImpl<>(storyMemberList);
+        }
+        return storyMembers;
+    }
+
 
     @Override
     public Page< StoryAdmin > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {
@@ -104,6 +284,10 @@ public class StoryServiceImpl implements StoryService {
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
 
+        if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
         Story story = new Story();
         story.setName(name);
         story.setAuthor(author);
@@ -119,7 +303,7 @@ public class StoryServiceImpl implements StoryService {
     public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
-            throw new HttpMyException("Not found story for update");
+            throw new HttpMyException("không tìm thấy truyện");
         }
         checkUnique(id, name);
         if (principal == null) {
@@ -128,6 +312,10 @@ public class StoryServiceImpl implements StoryService {
 
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
+
+        if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
 
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
@@ -144,11 +332,18 @@ public class StoryServiceImpl implements StoryService {
     public Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
-            throw new HttpMyException("Not found story for update");
+            throw new HttpMyException("không tìm thấy truyện");
         }
         checkUnique(id, name);
         if (principal == null) {
             throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+        User user = userRepository.findUserByUsername(currentUsername);
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
         }
 
         storyEdit.setName(name);
@@ -177,7 +372,7 @@ public class StoryServiceImpl implements StoryService {
     private void saveImage(Story story, MultipartFile image, Principal principal) throws NotAnImageFileException {
         if(image != null){
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {
-                throw new NotAnImageFileException(image.getOriginalFilename() + " is not an image file");
+                throw new NotAnImageFileException(image.getOriginalFilename() + " không phải là file hình");
             }
             if(story.getImages() != null)
                 story.setImages(story.getImages());
@@ -196,10 +391,10 @@ public class StoryServiceImpl implements StoryService {
 
         if(newStoryByName != null){
             if (isCreatingNew) {
-                throw new HttpMyException("Story already exist");
+                throw new HttpMyException("truyện này đã tồn tại");
             } else {
                 if (newStoryByName.getId() != id) {
-                    throw new HttpMyException("Story already exist");
+                    throw new HttpMyException("truyện này đã tồn tại");
                 }
             }
             return newStoryByName;

@@ -68,13 +68,13 @@ public class Story implements Serializable {
     private Integer status;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_posted", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "userPosted", referencedColumnName = "id", nullable = false)
     private User user;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "story_category",
-            joinColumns = {@JoinColumn(name = "story_id", nullable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "category_id", nullable = false)})
+            joinColumns = {@JoinColumn(name = "storyId", nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "categoryId", nullable = false)})
     private Set< Category > categoryList;
 
     @PrePersist

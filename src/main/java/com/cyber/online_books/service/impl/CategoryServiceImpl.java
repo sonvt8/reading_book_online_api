@@ -2,11 +2,10 @@ package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.exception.domain.HttpMyException;
+import com.cyber.online_books.exception.domain.NotFoundException;
 import com.cyber.online_books.repository.CategoryRepository;
-import com.cyber.online_books.response.CategoryResponse;
+import com.cyber.online_books.response.CategorySummary;
 import com.cyber.online_books.service.CategoryService;
-import com.cyber.online_books.utils.WebUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,8 +32,23 @@ public class CategoryServiceImpl implements CategoryService {
      * @return List<Category> - danh sách thể loại
      */
     @Override
-    public List< CategoryResponse > getListCategoryOfMenu(Integer status) {
+    public List<CategorySummary> getListCategoryOfMenu(Integer status) {
         return categoryRepository.findAllByStatus(status);
+    }
+
+    /**
+     * Tìm Category theo Id và status
+     *
+     * @param id
+     * @param status
+     * @return category - nếu tồn tại
+     * @throws NotFoundException - nếu không tồn tại category có id và status
+     */
+    @Override
+    public CategorySummary getCategoryByID(Integer id, Integer status) throws NotFoundException {
+        return categoryRepository
+                .findByIdAndStatus(id, status)
+                .orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -78,10 +92,10 @@ public class CategoryServiceImpl implements CategoryService {
         Category newCategoryByName = categoryRepository.findCategoryByName(newCategoryName);
         if (newCategoryByName != null){
             if (isCreatingNew)
-                throw new HttpMyException("Category already exist");
+                throw new HttpMyException("thể loại này đã tồn tại");
             else
                 if(newCategoryByName.getId() != id)
-                    throw new HttpMyException("Category already exist");
+                    throw new HttpMyException("thể loại này đã tồn tại");
                 return newCategoryByName;
         }
 
