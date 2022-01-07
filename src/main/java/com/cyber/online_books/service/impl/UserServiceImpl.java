@@ -1,5 +1,6 @@
 package com.cyber.online_books.service.impl;
 
+import com.cyber.online_books.component.MyComponent;
 import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.Mail;
 import com.cyber.online_books.entity.PageInfo;
@@ -82,6 +83,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.payService = payService;
         this.passwordEncoder = passwordEncoder;
     }
+
+    @Autowired
+    private MyComponent myComponent;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
@@ -267,8 +271,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (deletedUser == null) {
             throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
         }
-        cloudinaryService.delete(deletedUser.getUsername());
-        userRepository.delete(deletedUser);
+        boolean checkAdminLogin = myComponent.hasRole(currentUser, ConstantsUtils.ROLE_ADMIN);
+        boolean checkAdminUser = myComponent.hasRole(deletedUser, ConstantsUtils.ROLE_ADMIN);
+        boolean checkModLogin = myComponent.hasRole(currentUser, ConstantsUtils.ROLE_SMOD);
+        boolean checkModnUser = myComponent.hasRole(deletedUser, ConstantsUtils.ROLE_SMOD);
+        if ((checkAdminLogin == true && checkAdminUser == false) || (checkModLogin == true && checkModnUser == false && checkAdminUser == false)) {
+            //Admin can not delete other Admins, Mod cannot delete Admin and other Mods
+            try {
+                cloudinaryService.delete(deletedUser.getUsername());
+                userRepository.delete(deletedUser);
+            } catch (Exception e) {
+                throw new HttpMyException("Không Thể Xóa Người Dùng Này");
+            }
+        } else
+            throw new HttpMyException("Bạn không đủ quyền xóa người dùng này");
     }
 
     /**

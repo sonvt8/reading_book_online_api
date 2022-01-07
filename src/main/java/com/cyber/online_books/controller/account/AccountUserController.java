@@ -62,7 +62,10 @@ public class AccountUserController {
 
     @PostMapping("/anh_dai_dien")
     @ResponseBody
-    public ResponseEntity<User> changeAvatar(@RequestParam(value = "profileImage", required = false) MultipartFile profileImage, Principal principal) throws NotAnImageFileException, UserNotFoundException {
+    public ResponseEntity<User> changeAvatar(@RequestParam(value = "profileImage", required = false) MultipartFile profileImage, Principal principal) throws HttpMyException, NotAnImageFileException, UserNotFoundException {
+        if (profileImage.getSize() > (20 * 1024 * 1024)) {
+            throw new HttpMyException("Kích thước ảnh upload tối đa là 20 Megabybtes!");
+        }
         User user = userService.updateAvatar(principal,profileImage);
         return new ResponseEntity<>(user, OK);
     }
