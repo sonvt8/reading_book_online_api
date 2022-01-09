@@ -77,15 +77,4 @@ public class StoryController extends ExceptionHandling {
         return new ResponseEntity<>(storyMembers, HttpStatus.OK);
     }
 
-    @GetMapping("/{sID}/chuong-{chID}")
-    public ResponseEntity< ? > chapterPage(@PathVariable("sID") Long sid,
-                                           @PathVariable("chID") Long chid) throws Exception {
-
-        //Lấy Chapter Theo sID và chID
-        Chapter chapter = chapterService.findChapterByStoryIdAndChapterID(sid, ConstantsListUtils.LIST_STORY_DISPLAY,
-                chid, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
-
-        return new ResponseEntity<>(chapter, HttpStatus.OK);
-    }
-
 }

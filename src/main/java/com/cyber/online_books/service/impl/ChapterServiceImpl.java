@@ -8,6 +8,7 @@ import com.cyber.online_books.repository.StoryRepository;
 import com.cyber.online_books.response.ChapterOfStory;
 import com.cyber.online_books.response.ChapterSummary;
 import com.cyber.online_books.service.ChapterService;
+import com.cyber.online_books.utils.ConstantsListUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
+
+import static java.lang.Long.valueOf;
 
 @Service
 @Transactional
@@ -164,5 +168,50 @@ public class ChapterServiceImpl implements ChapterService {
                 .findByStory_IdAndStory_StatusInAndIdAndStatusIn(storyId, listStatusStory,
                         chapterId, listStatusChapter)
                 .orElseThrow(() -> new HttpMyException("Chương không tồn tại hoặc đã bị xóa!"));
+    }
+
+    /**
+     * Cập Nhật Lượt Xem Của Chapter
+     *
+     * @param chapter
+     * @throws Exception
+     */
+    @Override
+    public void updateViewChapter(Chapter chapter) throws Exception {
+        Chapter updateChapter = findChapterByStoryIdAndChapterID(chapter.getStory().getId(), ConstantsListUtils.LIST_STORY_DISPLAY,
+                chapter.getId(), ConstantsListUtils.LIST_CHAPTER_DISPLAY);
+        updateChapter.setCountView(updateChapter.getCountView() + 1);
+        Story story = updateChapter.getStory();
+        story.setCountView(story.getCountView() + 1);
+        updateChapter.setStory(story);
+        chapterRepository.save(updateChapter);
+    }
+
+    /**
+     * Lấy Chapter ID Trước
+     *
+     * @param serial
+     * @param storyId
+     * @return Long
+     */
+    @Override
+    public Long findPreviousChapterID(Float serial, Long storyId) {
+        Optional< Long > previousID = chapterRepository
+                .findPreviousChapter(serial, storyId, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
+        return previousID.orElseGet(() -> valueOf(0));
+    }
+
+    /**
+     * Lấy Chapter ID Tiếp Theo
+     *
+     * @param serial
+     * @param storyId
+     * @return Long
+     */
+    @Override
+    public Long findNextChapterID(Float serial, Long storyId) {
+        Optional< Long > nextId = chapterRepository
+                .findNextChapter(serial, storyId, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
+        return nextId.orElseGet(() -> valueOf(0));
     }
 }

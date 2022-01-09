@@ -76,4 +76,30 @@ public interface ChapterService {
      */
     Chapter findChapterByStoryIdAndChapterID(Long storyId, List< Integer > listStatusStory,
                                              Long chapterId, List< Integer > listStatusChapter) throws Exception;
+
+    /**
+     * Cập Nhật Lượt Xem Của Chapter
+     *
+     * @param chapter
+     * @throws Exception
+     */
+    void updateViewChapter(Chapter chapter) throws Exception;
+
+    /**
+     * Lấy Chapter ID Trước
+     *
+     * @param serial
+     * @param storyId
+     * @return Long
+     */
+    Long findPreviousChapterID(Float serial, Long storyId);
+
+    /**
+     * Lấy Chapter ID Tiếp Theo
+     *
+     * @param serial
+     * @param storyId
+     * @return Long
+     */
+    Long findNextChapterID(Float serial, Long storyId);
 }

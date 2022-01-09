@@ -81,4 +81,32 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long > {
      */
     Optional< Chapter > findByStory_IdAndStory_StatusInAndIdAndStatusIn(Long storyId, List< Integer > listStatusStory,
                                                                         Long chapterId, List< Integer > listStatusChapter);
+
+    /**
+     * Lấy Chapter ID Trước
+     *
+     * @param serial
+     * @param storyId
+     * @param listStatus
+     * @return Optional<Long>
+     */
+    @Query(value = ConstantsQueryUtils.PREVIOUS_CHAPTER,
+            nativeQuery = true)
+    Optional< Long > findPreviousChapter(@Param("chapterSerial") float serial,
+                                         @Param("storyId") Long storyId,
+                                         @Param("chapterStatus") List< Integer > listStatus);
+
+    /**
+     * Lấy Chapter ID Tiếp Theo
+     *
+     * @param serial
+     * @param storyId
+     * @param listStatus
+     * @return Optional<Long>
+     */
+    @Query(value = ConstantsQueryUtils.NEXT_CHAPTER,
+            nativeQuery = true)
+    Optional< Long > findNextChapter(@Param("chapterSerial") float serial,
+                                     @Param("storyId") Long storyId,
+                                     @Param("chapterStatus") List< Integer > listStatus);
 }

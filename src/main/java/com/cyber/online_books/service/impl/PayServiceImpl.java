@@ -9,11 +9,14 @@ import com.cyber.online_books.repository.PayRepository;
 import com.cyber.online_books.repository.UserRepository;
 import com.cyber.online_books.service.PayService;
 import com.cyber.online_books.utils.ConstantsPayTypeUtils;
+import com.cyber.online_books.utils.ConstantsStatusUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * @author Cyber_Group
@@ -79,6 +82,22 @@ public class PayServiceImpl implements PayService {
         userReceived = userRepository.findById(userReceived.getId()).get();
         userReceived.setGold(userReceived.getGold() + money);
         userRepository.save(userReceived);
+    }
+
+    /**
+     * Kiểm tra User đã thanh toán Chapter Vip trong khoảng
+     *
+     * @param chapterId
+     * @param userId
+     * @param startDate
+     * @param endDate
+     * @return true - nếu đã thanh toán trong khoảng /false - nếu chưa thanh toán / hoặc thanh toán ngoài khoảng
+     */
+    @Override
+    public boolean checkDealChapterVip(Long chapterId, Long userId, Date startDate, Date endDate) {
+        return payRepository
+                .existsByChapter_IdAndUserSend_IdAndCreateDateBetweenAndTypeAndStatus(chapterId, userId,
+                        startDate, endDate, ConstantsPayTypeUtils.PAY_CHAPTER_VIP_TYPE, ConstantsStatusUtils.PAY_COMPLETED);
     }
 
     private void savePay(Pay pay) {

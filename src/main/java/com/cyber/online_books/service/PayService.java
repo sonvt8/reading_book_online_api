@@ -4,6 +4,8 @@ import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 
+import java.util.Date;
+
 /**
  * @author Cyber_Group
  */
@@ -32,4 +34,15 @@ public interface PayService {
      * @param userReceived - Người nhận
      */
     void savePayChange(User userSend, Double money, User userReceived);
+
+    /**
+     * Kiểm tra User đã thanh toán Chapter Vip trong khoảng
+     *
+     * @param chapterId
+     * @param userId
+     * @param startDate
+     * @param endDate
+     * @return true - nếu đã thanh toán trong khoảng /false - nếu chưa thanh toán / hoặc thanh toán ngoài khoảng
+     */
+    boolean checkDealChapterVip(Long chapterId, Long userId, Date startDate, Date endDate);
 }
