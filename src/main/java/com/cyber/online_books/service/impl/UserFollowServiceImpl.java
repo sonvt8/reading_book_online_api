@@ -44,4 +44,9 @@ public class UserFollowServiceImpl implements UserFollowService {
     public void deleteFollow(UserFollow userFollow) {
         userFollowRepository.delete(userFollow);
     }
+
+    @Override
+    public void saveFollow(UserFollow userFollow) {
+        userFollowRepository.save(userFollow);
+    }
 }

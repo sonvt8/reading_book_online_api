@@ -24,4 +24,10 @@ public interface UserFollowService {
      * @param userFollow
      */
     void deleteFollow(UserFollow userFollow);
+
+    /**
+     *
+     * @param userFollow
+     */
+    void saveFollow(UserFollow userFollow);
 }
