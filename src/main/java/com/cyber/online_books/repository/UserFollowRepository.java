@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface UserFollowRepository extends JpaRepository<UserFollow, UserFollowPK> {
 
     /**
@@ -14,4 +16,11 @@ public interface UserFollowRepository extends JpaRepository<UserFollow, UserFoll
      * @return
      */
     Page<FollowSummary> findByUser_IdOrderByStory_UpdateDateDesc(Long id, Pageable pageable);
+
+    /**
+     * @param userId
+     * @param storyId
+     * @return
+     */
+    Optional<UserFollow> findByUser_IdAndStory_Id(Long userId, Long storyId);
 }
