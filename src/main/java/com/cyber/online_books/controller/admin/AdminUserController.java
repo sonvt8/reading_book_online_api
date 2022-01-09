@@ -7,8 +7,10 @@ import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UsernameExistException;
 import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -32,8 +35,8 @@ public class AdminUserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getUsers();
+    public ResponseEntity<Page<User>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page) {
+        Page< User > users = userService.getUsers(page, ConstantsUtils.PAGE_SIZE_DEFAULT);
         return new ResponseEntity<>(users, OK);
     }
 
@@ -43,8 +46,15 @@ public class AdminUserController {
         return new ResponseEntity<>(editedUser, OK);
     }
 
+    @PostMapping("/nap_dau")
+    public ResponseEntity<HttpResponse> submitPayDraw(@RequestParam("money") String money,
+                                              @RequestParam("reId") Long reId, Principal principal) throws UserNotFoundException, HttpMyException {
+        userService.topUp(Double.valueOf(money),reId, principal);
+        return response(OK, "User đã tăng số đậu tương ứng");
+    }
+
     @GetMapping("/xoa/{id}")
-    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long userId, Principal principal) throws HttpMyException, IOException {
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long userId, Principal principal) throws HttpMyException, IOException, UserNotFoundException {
         userService.deleteUser(principal, userId);
         return response(OK, "User đã được xoá");
     }

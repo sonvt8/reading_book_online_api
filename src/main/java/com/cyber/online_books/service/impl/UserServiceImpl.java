@@ -1,21 +1,21 @@
 package com.cyber.online_books.service.impl;
 
+import com.cyber.online_books.component.MyComponent;
 import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.Mail;
+import com.cyber.online_books.entity.PageInfo;
 import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.projections.TopConverter;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
-import com.cyber.online_books.service.CloudinaryService;
-import com.cyber.online_books.service.EmailService;
-import com.cyber.online_books.service.LoginAttemptService;
-import com.cyber.online_books.service.UserService;
-import com.cyber.online_books.utils.ConstantsRoleUtils;
+import com.cyber.online_books.service.*;
+import com.cyber.online_books.utils.*;
+
 import static com.cyber.online_books.utils.UserImplContant.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import com.cyber.online_books.utils.ConstantsUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,6 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,6 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private LoginAttemptService loginAttemptService;
     private EmailService emailService;
     private CloudinaryService cloudinaryService;
+    private PayService payService;
     private BCryptPasswordEncoder passwordEncoder;
     @Value("${Cyber.truyenonline.email.from}")
     private String emailForm;
@@ -63,22 +68,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private String emailUrl;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, LoginAttemptService loginAttemptService
-            ,EmailService emailService, CloudinaryService cloudinaryService,BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           LoginAttemptService loginAttemptService,
+                           EmailService emailService,
+                           CloudinaryService cloudinaryService,
+                           PayService payService,
+                           BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.loginAttemptService = loginAttemptService;
         this.cloudinaryService = cloudinaryService;
         this.emailService = emailService;
+        this.payService = payService;
         this.passwordEncoder = passwordEncoder;
     }
+
+    @Autowired
+    private MyComponent myComponent;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(userName);
         if (user == null) {
-            LOGGER.error(NO_USER_FOUND_BY_USERNAME + userName);
-            throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + userName);
+            LOGGER.error(NO_USER_FOUND_BY_USERNAME);
+            throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME);
         } else {
             validateLoginAttempt(user);
             user.setLastLoginDateDisplay(user.getLastLoginDate());
@@ -104,8 +118,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return List<User>
      */
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public Page< User > getUsers(int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page< User > users = userRepository.findAll(paging);
+        return users;
     }
 
     /**
@@ -143,6 +159,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .orElse(null);
     }
 
+    @Override
+    public List<TopConverter> findTopConverter(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page< TopConverter > result = userRepository
+                .getTopConverter(ConstantsListUtils.LIST_CHAPTER_DISPLAY,
+                        ConstantsListUtils.LIST_STORY_DISPLAY,
+                        ConstantsStatusUtils.USER_ACTIVED, ConstantsListUtils.LIST_ROLE_CON, pageable);
+        return result.getContent();
+    }
+
     /**
      * Kiểm tra DisplayName đã tồn tại chưa
      *
@@ -162,7 +188,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     @Override
-    public User updateDisplayName(Principal principal, String newNick) throws HttpMyException {
+    public User updateDisplayName(Principal principal, String newNick) throws HttpMyException, UserNotFoundException {
         User currentUser = validatePricipal(principal);
         if (newNick.equalsIgnoreCase(currentUser.getDisplayName()))
             throw new HttpMyException("Ngoại hiệu này bạn đang sử dụng");
@@ -188,7 +214,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     @Override
-    public User updateNotification(Principal principal, String newMess) throws HttpMyException {
+    public User updateNotification(Principal principal, String newMess) throws UserNotFoundException {
         User currentUser = validatePricipal(principal);
         currentUser.setNotification(newMess);
         userRepository.save(currentUser);
@@ -196,7 +222,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User updateAvatar(Principal principal, MultipartFile sourceFile) throws HttpMyException, NotAnImageFileException {
+    public User updateAvatar(Principal principal, MultipartFile sourceFile) throws UserNotFoundException, NotAnImageFileException {
         if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(sourceFile.getContentType())) {
             throw new NotAnImageFileException(sourceFile.getOriginalFilename() + " is not an image file");
         }
@@ -222,7 +248,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException {
+    public void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException {
+        User currentUser = validatePricipal(principal);
+        User receivedUser = findUserById(id);
+        if(receivedUser == null) {
+            throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
+        }
+        try {
+            payService.savePayChange(currentUser, money, receivedUser);
+        } catch (Exception e) {
+            throw new HttpMyException("Chưa thể nạp đậu! Vui lòng thực hiện lại sau");
+        }
+    }
+
+    @Override
+    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException {
         User currentUser = validatePricipal(principal);
         User deletedUser = findUserById(id);
         if(currentUser.getId() == id){
@@ -231,8 +271,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (deletedUser == null) {
             throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
         }
-        cloudinaryService.delete(deletedUser.getUsername());
-        userRepository.delete(deletedUser);
+        boolean checkAdminLogin = myComponent.hasRole(currentUser, ConstantsUtils.ROLE_ADMIN);
+        boolean checkAdminUser = myComponent.hasRole(deletedUser, ConstantsUtils.ROLE_ADMIN);
+        boolean checkModLogin = myComponent.hasRole(currentUser, ConstantsUtils.ROLE_SMOD);
+        boolean checkModnUser = myComponent.hasRole(deletedUser, ConstantsUtils.ROLE_SMOD);
+        if ((checkAdminLogin == true && checkAdminUser == false) || (checkModLogin == true && checkModnUser == false && checkAdminUser == false)) {
+            //Admin can not delete other Admins, Mod cannot delete Admin and other Mods
+            try {
+                cloudinaryService.delete(deletedUser.getUsername());
+                userRepository.delete(deletedUser);
+            } catch (Exception e) {
+                throw new HttpMyException("Không Thể Xóa Người Dùng Này");
+            }
+        } else
+            throw new HttpMyException("Bạn không đủ quyền xóa người dùng này");
     }
 
     /**
@@ -288,8 +340,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @param newPassword
      */
     @Override
-    public void updatePassword(String newPassword, Principal principal) throws HttpMyException {
+    public void updatePassword(String oldPassword, String newPassword, Principal principal) throws UserNotFoundException, HttpMyException {
         User currentUser = validatePricipal(principal);
+        if (oldPassword != null && !WebUtils.equalsPassword(oldPassword, currentUser.getPassword())) {
+            throw new HttpMyException("Mật khẩu đăng nhập cũ không chính xác");
+        }
         currentUser.setPassword(encodePassword(newPassword));
         userRepository.save(currentUser);
         LOGGER.info("New user password: " + newPassword);
@@ -319,11 +374,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-    private User validatePricipal(Principal principal) throws HttpMyException{
+    private User validatePricipal(Principal principal) throws UserNotFoundException {
         String currentUsername = principal.getName();
-        User currentUser = userRepository.findUserByUsername(currentUsername);
-        if (currentUser == null) {
-            throw new HttpMyException("Tài khoản không tồn tại mời liên hệ admin để biết thêm thông tin");
+        User currentUser = findUserAccount(currentUsername);
+        if(currentUser == null) {
+            throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
+        }
+        if (currentUser.getStatus() != 1){
+            throw new DisabledException("Tài khoản đã bị đóng hoặc chưa được kích hoạt");
         }
         return currentUser;
     }
@@ -334,7 +392,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if(StringUtils.isNotBlank(currentUsername)) {
             User currentUser = findUserAccount(currentUsername);
             if(currentUser == null) {
-                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
             }
             if(userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
                 throw new UsernameExistException(USERNAME_ALREADY_EXISTS);

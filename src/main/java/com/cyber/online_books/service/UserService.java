@@ -2,11 +2,14 @@ package com.cyber.online_books.service;
 
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.projections.TopConverter;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
@@ -15,7 +18,7 @@ public interface UserService {
      *
      * @return List<User>
      */
-    List<User> getUsers();
+    Page< User > getUsers(int page, int size);
 
     /**
      * Tìm kiếm User theo username
@@ -42,6 +45,13 @@ public interface UserService {
     User findUserById(Long id);
 
     /**
+     * @param page
+     * @param size
+     * @return
+     */
+    List<TopConverter> findTopConverter(int page, int size);
+
+    /**
      * Kiểm tra DisplayName đã tồn tại chưa
      *
      * @param userId
@@ -55,21 +65,21 @@ public interface UserService {
      *
      * @param newNick
      */
-    User updateDisplayName(Principal principal, String newNick) throws HttpMyException;
+    User updateDisplayName(Principal principal, String newNick) throws HttpMyException, UserNotFoundException;
 
     /**
      * Cập nhật thông báo
      *
      * @param newMess
      */
-    User updateNotification(Principal principal, String newMess) throws HttpMyException;
+    User updateNotification(Principal principal, String newMess) throws UserNotFoundException;
 
     /**
      * Cập nhật thông báo
      *
      * @param sourceFile
      */
-    User updateAvatar(Principal principal, MultipartFile sourceFile) throws HttpMyException, NotAnImageFileException;
+    User updateAvatar(Principal principal, MultipartFile sourceFile) throws UserNotFoundException, NotAnImageFileException;
 
     /**
      * Đăng ký người dùng mới
@@ -91,7 +101,7 @@ public interface UserService {
      *
      * @param newPassword
      */
-    void updatePassword(String newPassword, Principal principal) throws HttpMyException;
+    void updatePassword(String oldPassword,String newPassword, Principal principal) throws UserNotFoundException, HttpMyException;
 
     /**
      * Cập Nhật User
@@ -102,9 +112,17 @@ public interface UserService {
     User updateUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException;
 
     /**
+     * Nạp đậu cho User
+     *
+     * @param money
+     * @param id
+     */
+    void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException;
+
+    /**
      * Xoá User
      *
      * @param id
      */
-    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException;
+    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException;
 }

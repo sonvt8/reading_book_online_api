@@ -5,7 +5,9 @@ import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.projections.TopConverter;
 import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.cyber.online_books.utils.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.OK;
@@ -46,6 +50,15 @@ public class MemberUserController extends ExceptionHandling {
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
         return new ResponseEntity<>(loginUser, jwtHeader, OK);
+    }
+
+    @PostMapping("/xem_top_converter")
+    public ResponseEntity< ? > loadStoryOfConverter() {
+        // Lấy Danh Sách Top Converter
+        List<TopConverter> topConverters = userService
+                .findTopConverter(ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.RANK_SIZE);
+
+        return new ResponseEntity<>(topConverters, HttpStatus.OK);
     }
 
     @PostMapping("/quen_mat_khau")

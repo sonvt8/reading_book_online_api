@@ -4,7 +4,7 @@ public class SecurityConstant {
     public static final long EXPIRATION_TIME = 432_000_000; // 5 days expressed in milliseconds
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
-    public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
+    public static final String TOKEN_CANNOT_BE_VERIFIED = "Không thể xác thực Token";
     public static final String COMPANY  = "Cyber Ltd";
     public static final String APPLICATION_NAME  = "Read Book Online";
     public static final String AUTHORITIES = "authorities";

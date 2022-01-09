@@ -1,6 +1,8 @@
 package com.cyber.online_books.component;
 
 import com.cyber.online_books.entity.Chapter;
+import com.cyber.online_books.entity.Role;
+import com.cyber.online_books.entity.User;
 import com.cyber.online_books.response.ChapterSummary;
 import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.service.HistoryService;
@@ -54,4 +56,11 @@ public class MyComponent {
         return null;
     }
 
+    public boolean hasRole(User use, Integer id) {
+        for (Role role : use.getRoleList()) {
+            if (role.getId() == id)
+                return true;
+        }
+        return false;
+    }
 }

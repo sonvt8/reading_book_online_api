@@ -1,11 +1,14 @@
 package com.cyber.online_books.service.impl;
 
 import com.cyber.online_books.entity.Chapter;
+import com.cyber.online_books.entity.Pay;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.repository.PayRepository;
+import com.cyber.online_books.repository.UserRepository;
 import com.cyber.online_books.service.PayService;
+import com.cyber.online_books.utils.ConstantsPayTypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ public class PayServiceImpl implements PayService {
     Logger logger = LoggerFactory.getLogger(PayServiceImpl.class);
     @Autowired
     private PayRepository payRepository;
+    @Autowired
+    private UserRepository userRepository;
     
     /**
      * Lưu giao dịch
@@ -52,5 +57,31 @@ public class PayServiceImpl implements PayService {
                         storyID,
                         money, vote,
                         payType);
+    }
+
+    /**
+     * Thực Hiện Giao Dịch Nạp Tiền cho User
+     *
+     * @param userSend     - Người Nạp
+     * @param money        - Số đậu nạp
+     * @param userReceived - Người nhận
+     */
+    @Override
+    @Transactional
+    public void savePayChange(User userSend, Double money, User userReceived) {
+        Pay pay = new Pay();
+        pay.setUserSend(userSend);
+        pay.setUserReceived(userReceived);
+        pay.setMoney(money);
+        pay.setType(ConstantsPayTypeUtils.PAY_RECHARGE_TYPE);
+        savePay(pay);
+        //Lấy Thông Tin Mới Nhất của Người Thanh Toán
+        userReceived = userRepository.findById(userReceived.getId()).get();
+        userReceived.setGold(userReceived.getGold() + money);
+        userRepository.save(userReceived);
+    }
+
+    private void savePay(Pay pay) {
+        payRepository.save(pay);
     }
 }
