@@ -87,6 +87,26 @@ public class FollowController extends ExceptionHandling {
         return response(HttpStatus.OK, "Hủy theo dõi truyện thành công");
     }
 
+    @PostMapping(value = "/kiem-tra")
+    public ResponseEntity< ? > checkFollowStoryOfUser(Principal principal, @RequestParam("storyId") Long storyId)
+            throws Exception {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
+        return new ResponseEntity<>(userFollowService.existsUserFollow(user.getId(), storyId), HttpStatus.OK);
+    }
+
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
                 message), httpStatus);

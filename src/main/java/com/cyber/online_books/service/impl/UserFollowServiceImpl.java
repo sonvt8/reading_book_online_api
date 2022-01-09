@@ -49,4 +49,14 @@ public class UserFollowServiceImpl implements UserFollowService {
     public void saveFollow(UserFollow userFollow) {
         userFollowRepository.save(userFollow);
     }
+
+    /**
+     * @param userId - Id của người dùng
+     * @param storyId- Id của Truyện
+     * @return {@code true} nếu tồn tại, nếu không tồn tại thì {@code false}
+     */
+    @Override
+    public boolean existsUserFollow(Long userId, Long storyId) {
+        return userFollowRepository.existsByUser_IdAndStory_Id(userId,storyId);
+    }
 }
