@@ -32,4 +32,17 @@ public interface PayService {
      * @param userReceived - Người nhận
      */
     void savePayChange(User userSend, Double money, User userReceived);
+
+    /**
+     * Lưu đề cử truyện
+     *
+     * @param story
+     * @param userSend
+     * @param money
+     * @param payType
+     * @return false - nếu thất bại hoặc có lỗi xảy ra
+     */
+    boolean savePayAppoint(Story story,
+                           User userSend, Double money, Integer vote,
+                           Integer payType);
 }

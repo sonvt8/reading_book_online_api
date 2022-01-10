@@ -227,6 +227,20 @@ public class StoryServiceImpl implements StoryService {
                 .findTop5ByUser_IdAndStatusInOrderByCreateDateDesc(userId, listStoryDisplay);
     }
 
+    /**
+     * Tìm Truyện Theo Id và ListStatus
+     *
+     * @param storyId
+     * @param listStoryStatus
+     * @return Story - nếu tồn tại truyện thỏa mãn điều kiện
+     */
+    @Override
+    public Story findStoryByIdAndStatus(Long storyId, List< Integer > listStoryStatus) {
+        return storyRepository
+                .findStoryByIdAndStatusIn(storyId, listStoryStatus)
+                .orElse(null);
+    }
+
     @Override
     public Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
                                                  int pagenumber, int type, Integer size) {

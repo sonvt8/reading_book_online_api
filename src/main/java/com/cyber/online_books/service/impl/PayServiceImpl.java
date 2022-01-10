@@ -81,6 +81,28 @@ public class PayServiceImpl implements PayService {
         userRepository.save(userReceived);
     }
 
+    /**
+     * Lưu đề cử truyện
+     *
+     * @param story
+     * @param userSend
+     * @param money
+     * @param payType
+     * @return false - nếu thất bại hoặc có lỗi xảy ra
+     */
+    @Override
+    @Transactional(noRollbackFor = HttpMyException.class)
+    public boolean savePayAppoint(Story story, User userSend, Double money, Integer vote, Integer payType) {
+        Long storyID = null;
+        if (story != null)
+            storyID = story.getId();
+        return payRepository
+                .appointPayStory(userSend.getId(),
+                        storyID,
+                        money, vote,
+                        payType);
+    }
+
     private void savePay(Pay pay) {
         payRepository.save(pay);
     }
