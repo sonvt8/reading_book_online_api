@@ -65,3 +65,4 @@ spring-*/src/main/java/META-INF/MANIFEST.MF
 
 ### VS Code ###
 .vscode/
+src/main/resources/application.properties
