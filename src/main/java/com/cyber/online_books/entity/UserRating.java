@@ -1,5 +1,6 @@
 package com.cyber.online_books.entity;
 
+import com.cyber.online_books.utils.DateUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,4 +40,10 @@ public class UserRating implements Serializable {
     @Column(name = "locationIP", length = 50, nullable = false)
     private String locationIP;
 
+    @PrePersist
+    public void prePersist() {
+        if (createDate == null) {
+            createDate = DateUtils.getCurrentDate();
+        }
+    }
 }

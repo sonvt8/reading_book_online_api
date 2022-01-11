@@ -45,4 +45,17 @@ public interface PayService {
      * @return true - nếu đã thanh toán trong khoảng /false - nếu chưa thanh toán / hoặc thanh toán ngoài khoảng
      */
     boolean checkDealChapterVip(Long chapterId, Long userId, Date startDate, Date endDate);
+
+    /**
+     * Lưu đề cử truyện
+     *
+     * @param story
+     * @param userSend
+     * @param money
+     * @param payType
+     * @return false - nếu thất bại hoặc có lỗi xảy ra
+     */
+    boolean savePayAppoint(Story story,
+                           User userSend, Double money, Integer vote,
+                           Integer payType);
 }

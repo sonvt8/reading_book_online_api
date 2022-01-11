@@ -71,8 +71,9 @@ public class DateUtils {
     public static String betweenHours(Date createDate) {
         LocalDateTime startDate = createDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime endDate = getCurrentDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        long differentInSeconds = Duration.between(startDate, endDate).getSeconds();
-        long differentInMinutes = Duration.between(startDate, endDate).toMinutes();
+        LocalDateTime thirtyMinutesLater = startDate.plusMinutes(30);
+        long differentInSeconds = Duration.between(endDate, thirtyMinutesLater).getSeconds();
+        long differentInMinutes = Duration.between(endDate, thirtyMinutesLater).toMinutes();
         if (differentInMinutes > 0)
             return differentInMinutes + " phút";
         return differentInSeconds + " giây";

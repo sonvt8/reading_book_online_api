@@ -145,6 +145,15 @@ public interface StoryService {
     List< StorySlide > findStoryOfConverter(Long userId, List< Integer > listStoryDisplay);
 
     /**
+     * Tìm Truyện Theo Id và ListStatus
+     *
+     * @param storyId
+     * @param listStoryStatus
+     * @return Story - nếu tồn tại truyện thỏa mãn điều kiện
+     */
+    Story findStoryByIdAndStatus(Long storyId, List< Integer > listStoryStatus);
+
+    /**
      * Lấy danh sách truyện đã đăng của User
      *
      * @param userId

@@ -49,7 +49,7 @@ public class StoryController extends ExceptionHandling {
         return new ResponseEntity<>(storySummary, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{storyId}/chapterOfStory")
+    @GetMapping(value = "/{storyId}/chuong-cua-truyen")
     public ResponseEntity< ? > loadChapterOfStory(@PathVariable("storyId") Long storyId,
                                                   @RequestParam("pagenumber") Integer pagenumber,
                                                   @RequestParam("type") Integer type) {
@@ -60,14 +60,14 @@ public class StoryController extends ExceptionHandling {
     }
 
     //Lấy Top 5 Truyện mới đăng của Converter
-    @GetMapping(value = "/storyOfConverter")
+    @GetMapping(value = "/truyen-cua-converter")
     public ResponseEntity< ? > loadStoryOfConverter(@RequestParam("userId") Long userId) {
         List<StorySlide> list = storyService
                 .findStoryOfConverter(userId, ConstantsListUtils.LIST_STORY_DISPLAY);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/storyOfMember")
+    @GetMapping(value = "/truyen-cua-thanh-vien")
     public ResponseEntity< ? > loadStoryOfMember(@RequestParam("userId") Long userId,
                                                  @RequestParam("pagenumber") int pagenumber,
                                                  @RequestParam("type") int type) {
