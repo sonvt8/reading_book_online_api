@@ -1,6 +1,9 @@
 package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.Pay;
+import com.cyber.online_books.response.PaySummary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
@@ -65,4 +68,14 @@ public interface PayRepository extends JpaRepository<Pay, Long > {
                             @Param("price") Double price,
                             @Param("vote") Integer vote,
                             @Param("payType") Integer payType);
+
+    /**
+     * Lấy danh sách Giao Dịch Theo
+     *
+     * @param userReceivedId
+     * @param userSendId
+     * @param pageable
+     * @return
+     */
+    Page<PaySummary> findByUserReceived_IdOrUserSend_IdOrderByCreateDateDesc(Long userReceivedId, Long userSendId, Pageable pageable);
 }

@@ -3,6 +3,8 @@ package com.cyber.online_books.service;
 import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
+import com.cyber.online_books.response.PaySummary;
+import org.springframework.data.domain.Page;
 
 import java.util.Date;
 
@@ -58,4 +60,14 @@ public interface PayService {
     boolean savePayAppoint(Story story,
                            User userSend, Double money, Integer vote,
                            Integer payType);
+
+    /**
+     * Lấy danh sách giao dịch của User theo
+     *
+     * @param id         - id của User
+     * @param pagenumber - biến số trang
+     * @param size       - biến size
+     * @return
+     */
+    Page<PaySummary> findPageByUserId(Long id, Integer pagenumber, Integer size);
 }

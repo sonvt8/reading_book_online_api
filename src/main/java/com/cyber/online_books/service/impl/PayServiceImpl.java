@@ -7,12 +7,16 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.repository.PayRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.response.PaySummary;
 import com.cyber.online_books.service.PayService;
 import com.cyber.online_books.utils.ConstantsPayTypeUtils;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -124,5 +128,19 @@ public class PayServiceImpl implements PayService {
 
     private void savePay(Pay pay) {
         payRepository.save(pay);
+    }
+
+    /**
+     * Lấy danh sách giao dịch của User theo
+     *
+     * @param id         - id của User
+     * @param pagenumber - biến số trang
+     * @param size       - biến size
+     * @return
+     */
+    @Override
+    public Page<PaySummary> findPageByUserId(Long id, Integer pagenumber, Integer size) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        return payRepository.findByUserReceived_IdOrUserSend_IdOrderByCreateDateDesc(id, id, pageable);
     }
 }

@@ -20,16 +20,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @PropertySource(ignoreResourceNotFound = true, value = "classpath:messages.properties")
 @RestController
-@RequestMapping(value = "/api/account/pay")
+@RequestMapping(value = "/tai-khoan/thanh-toan")
 public class AccountPayController {
 
     Logger logger = LoggerFactory.getLogger(AccountPayController.class);
@@ -55,21 +52,21 @@ public class AccountPayController {
     private String emailUrl;
 
     //Danh sách Giao dịch của người dùng
-//    @PostMapping(value = "/list_pay")
-//    public ResponseEntity< ? > loadListPayWithdrawOfUser(@RequestParam("pagenumber") Integer pagenumber,
-//                                                         Principal principal) throws Exception {
-//        if (principal == null) {
-//            throw new UserNotLoginException();
-//        }
-//        User user = userService.findUserAccount(principal.getName());
-//
-//        if (user == null) {
-//            throw new UserNotFoundException("Tài khoản không tồn tại");
-//        }
-//
-//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-//        }
-//        return new ResponseEntity<>(payService.findPageByUserId(user.getId(), pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
-//    }
+    @GetMapping(value = "/danh-sach")
+    public ResponseEntity< ? > loadListPayWithdrawOfUser(@RequestParam("pagenumber") Integer pagenumber,
+                                                         Principal principal) throws Exception {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        User user = userService.findUserAccount(principal.getName());
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+        return new ResponseEntity<>(payService.findPageByUserId(user.getId(), pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
+    }
 }
