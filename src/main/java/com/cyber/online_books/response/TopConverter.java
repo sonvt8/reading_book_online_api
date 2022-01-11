@@ -1,4 +1,4 @@
-package com.cyber.online_books.projections;
+package com.cyber.online_books.response;
 
 import org.springframework.beans.factory.annotation.Value;
 

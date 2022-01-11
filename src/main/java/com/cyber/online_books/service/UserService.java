@@ -2,14 +2,13 @@ package com.cyber.online_books.service;
 
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
-import com.cyber.online_books.projections.TopConverter;
+import com.cyber.online_books.response.TopConverter;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 public interface UserService {
 

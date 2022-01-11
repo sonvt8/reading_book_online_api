@@ -5,7 +5,7 @@ import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.*;
-import com.cyber.online_books.projections.TopConverter;
+import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.JWTTokenProvider;
