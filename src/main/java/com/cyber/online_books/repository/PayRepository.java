@@ -78,4 +78,14 @@ public interface PayRepository extends JpaRepository<Pay, Long > {
      * @return
      */
     Page<PaySummary> findByUserReceived_IdOrUserSend_IdOrderByCreateDateDesc(Long userReceivedId, Long userSendId, Pageable pageable);
+
+    /**
+     * Lấy danh sách Giao Dịch Rút Tiền Theo
+     *
+     * @param type
+     * @param userSendId
+     * @param pageable
+     * @return
+     */
+    Page< PaySummary > findByTypeAndUserSend_IdOrderByCreateDateDesc(Integer type, Long userSendId, Pageable pageable);
 }

@@ -143,4 +143,18 @@ public class PayServiceImpl implements PayService {
         Pageable pageable = PageRequest.of(pagenumber - 1, size);
         return payRepository.findByUserReceived_IdOrUserSend_IdOrderByCreateDateDesc(id, id, pageable);
     }
+
+    /**
+     * Lấy danh sách giao dịch rút tiền của người dùng
+     *
+     * @param id
+     * @param pagenumber
+     * @param size
+     * @return
+     */
+    @Override
+    public Page< PaySummary > findPagePayWithdrawByUserId(Long id, Integer pagenumber, Integer size) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        return payRepository.findByTypeAndUserSend_IdOrderByCreateDateDesc(ConstantsPayTypeUtils.PAY_WITHDRAW_TYPE, id, pageable);
+    }
 }

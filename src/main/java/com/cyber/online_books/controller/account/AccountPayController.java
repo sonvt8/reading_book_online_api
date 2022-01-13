@@ -69,4 +69,23 @@ public class AccountPayController {
         }
         return new ResponseEntity<>(payService.findPageByUserId(user.getId(), pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
     }
+
+    //Danh sách giao dịch rút tiền của người dùng
+    @GetMapping(value = "/danh-sach-rut-tien")
+    public ResponseEntity< ? > loadListPayOfUser(@RequestParam("pagenumber") Integer pagenumber,
+                                                 Principal principal) throws Exception {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        User user = userService.findUserAccount(principal.getName());
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+        return new ResponseEntity<>(payService.findPagePayWithdrawByUserId(user.getId(), pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
+    }
 }
