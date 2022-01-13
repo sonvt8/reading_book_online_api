@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <title>Email Forgot Password HTML Template</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href='http://fonts.googleapis.com/css?family=Roboto'
+        rel='stylesheet' type='text/css'/>
+
+  <!-- use the font -->
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      font-size: 48px;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0;">
+
+<table align="center" border="0" cellpadding="0" cellspacing="0"
+       width="800" style="border-collapse: collapse;">
+  <tr>
+    <td bgcolor="#4285f4"
+        style="padding: 30px 30px 30px 30px; text-align: center">
+      <p th:text="${signature}"
+         style="color: white; text-transform: uppercase;"></p>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#eaeaea"
+        style="padding: 40px 30px 40px 30px; color: black;">
+      <p th:text="${'Gửi ' + name}" style="size: 18px"></p>
+      <p style="size: 18px">
+        Bạn đã đăng ký rút <b th:text="${pay.money}"></b> đậu vào lúc <b th:text="${pay.createDate}"></b>. Mã Giao dịch : <b th:text="${pay.id}"></b>
+      </p>
+      <p style="size: 18px">
+        Nếu không phải bạn đăng ký rút tiền hãy đăng nhập tài khoản và hủy giao dịch.
+      </p>
+      <p>Thanks</p>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#4285f4" style="padding: 30px 30px 30px 30px;"><a
+            th:href="${url}" th:text="${signature}" style="color: white;"></a></td>
+  </tr>
+</table>
+
+</body>
+</html>

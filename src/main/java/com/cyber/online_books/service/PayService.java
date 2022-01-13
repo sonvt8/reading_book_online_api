@@ -1,6 +1,7 @@
 package com.cyber.online_books.service;
 
 import com.cyber.online_books.entity.Chapter;
+import com.cyber.online_books.entity.Pay;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.response.PaySummary;
@@ -80,4 +81,20 @@ public interface PayService {
      * @return
      */
     Page< PaySummary > findPagePayWithdrawByUserId(Long id, Integer pagenumber, Integer size);
+
+    /**
+     * Thực hiện giao dịch đăng ký rút tiền
+     *
+     * @param user
+     * @param money
+     */
+    Long savePayDraw(User user, Double money);
+
+    /**
+     * Tìm kiếm Pay Theo id
+     *
+     * @param payId - id Pay
+     * @return
+     */
+    Pay findPayById(Long payId);
 }

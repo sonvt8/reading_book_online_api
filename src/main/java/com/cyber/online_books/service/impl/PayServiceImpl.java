@@ -157,4 +157,36 @@ public class PayServiceImpl implements PayService {
         Pageable pageable = PageRequest.of(pagenumber - 1, size);
         return payRepository.findByTypeAndUserSend_IdOrderByCreateDateDesc(ConstantsPayTypeUtils.PAY_WITHDRAW_TYPE, id, pageable);
     }
+
+    /**
+     * Thực hiện giao dịch đăng ký rút tiền
+     *
+     * @param user
+     * @param money
+     */
+    @Override
+    @Transactional
+    public Long savePayDraw(User user, Double money) {
+        Pay pay = new Pay();
+        pay.setUserSend(user);
+        pay.setMoney(money);
+        pay.setType(ConstantsPayTypeUtils.PAY_WITHDRAW_TYPE);
+        payRepository.save(pay);
+        //Lấy Thông Tin Mới Nhất của Người Thanh Toán
+        user = userRepository.findById(user.getId()).get();
+        user.setGold(user.getGold() - money);
+        userRepository.save(user);
+        return pay.getId();
+    }
+
+    /**
+     * Tìm kiếm Pay Theo id
+     *
+     * @param payId - id Pay
+     * @return
+     */
+    @Override
+    public Pay findPayById(Long payId) {
+        return payRepository.findById(payId).orElse(null);
+    }
 }
