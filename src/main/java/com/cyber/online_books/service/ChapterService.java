@@ -102,4 +102,13 @@ public interface ChapterService {
      * @return Long
      */
     Long findNextChapterID(Float serial, Long storyId);
+
+    /**
+     * Tìm kiếm Chapter theo
+     *
+     * @param chapterId  - ID của chapter
+     * @param listStatus -  List các Trạng Thái của Chapter
+     * @return chapter - nếu có dữ liệu thỏa mãn điều kiện / null - nếu không có dữ liệu thỏa mãn điều kiện
+     */
+    Chapter findChapterByIdAndStatus(Long chapterId, List< Integer > listStatus);
 }

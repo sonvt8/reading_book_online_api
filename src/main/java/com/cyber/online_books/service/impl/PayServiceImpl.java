@@ -189,4 +189,35 @@ public class PayServiceImpl implements PayService {
     public Pay findPayById(Long payId) {
         return payRepository.findById(payId).orElse(null);
     }
+
+    /**
+     * Thực Hiện giao dịch đọc chapter Vip
+     *
+     * @param userSend
+     * @param chapter
+     */
+    @Override
+    @Transactional
+    public void saveReadingVipPay(User userSend, Chapter chapter) {
+        Pay pay = new Pay();
+        pay.setUserSend(userSend);
+        pay.setChapter(chapter);
+        pay.setUserReceived(chapter.getUser());
+        pay.setMoney(chapter.getPrice());
+        pay.setType(ConstantsPayTypeUtils.PAY_CHAPTER_VIP_TYPE);
+        savePay(pay);
+        //Lấy Thông Tin Mới Nhất của Người Thanh Toán
+        userSend = userRepository.findById(userSend.getId()).get();
+        userSend.setGold(userSend.getGold() - chapter.getPrice());
+        saveUser(userSend);
+        //Lấy Thông tin mới nhất của người nhận
+        User userReceived = userRepository.findById(chapter.getUser().getId()).get();
+        userSend.setGold(userSend.getGold() - chapter.getPrice());
+        userReceived.setGold(userReceived.getGold() + chapter.getPrice());
+        saveUser(userReceived);
+    }
+
+    private void saveUser(User user) {
+        userRepository.save(user);
+    }
 }

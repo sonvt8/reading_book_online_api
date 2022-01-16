@@ -214,4 +214,17 @@ public class ChapterServiceImpl implements ChapterService {
                 .findNextChapter(serial, storyId, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
         return nextId.orElseGet(() -> valueOf(0));
     }
+
+    /**
+     * Tìm kiếm Chapter theo
+     *
+     * @param chapterId  - ID của chapter
+     * @param listStatus -  List các Trạng Thái của Chapter
+     * @return chapter - nếu có dữ liệu thỏa mãn điều kiện / null - nếu không có dữ liệu thỏa mãn điều kiện
+     */
+    @Override
+    public Chapter findChapterByIdAndStatus(Long chapterId, List< Integer > listStatus) {
+        return chapterRepository.findChapterByIdAndStatusIn(chapterId, listStatus)
+                .orElse(null);
+    }
 }

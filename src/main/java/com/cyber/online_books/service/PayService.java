@@ -8,6 +8,7 @@ import com.cyber.online_books.response.PaySummary;
 import org.springframework.data.domain.Page;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Cyber_Group
@@ -97,4 +98,14 @@ public interface PayService {
      * @return
      */
     Pay findPayById(Long payId);
+
+    /**
+     * Thực Hiện giao dịch đọc chapter Vip
+     *
+     * @param userSend
+     * @param chapter
+     */
+    void saveReadingVipPay(User userSend, Chapter chapter);
+
+
 }

@@ -2,6 +2,7 @@ package com.cyber.online_books.controller.account;
 
 
 import com.cyber.online_books.component.MyComponent;
+import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.entity.Mail;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
@@ -11,8 +12,7 @@ import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.service.EmailService;
 import com.cyber.online_books.service.PayService;
 import com.cyber.online_books.service.UserService;
-import com.cyber.online_books.utils.ConstantsStatusUtils;
-import com.cyber.online_books.utils.ConstantsUtils;
+import com.cyber.online_books.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,6 +131,56 @@ public class AccountPayController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             throw new HttpMyException("Có lỗi xảy ra! Hãy Thực hiện lai sau!");
+        }
+    }
+
+    @PostMapping(value = "/mua-chuong-vip")
+    @Transactional
+    public ResponseEntity< ? > payReadingChapter(@RequestParam(value = "chapterId") String chapterId, Principal principal)
+            throws Exception {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        User user = userService.findUserAccount(principal.getName());
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+        if (chapterId == null || WebUtils.checkLongNumber(chapterId)) {
+            throw new HttpMyException("Có lỗi xảy ra! Mong bạn quay lại sau.");
+        }
+        Chapter chapter = chapterService
+                .findChapterByIdAndStatus(Long.valueOf(chapterId), ConstantsListUtils.LIST_CHAPTER_DISPLAY);
+        if (chapter == null) {
+            throw new HttpMyException("Không tồn tại chương truyện này!");
+        }
+        if (chapter.getStatus() == 1) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        //Lấy Thời Gian Hiện Tại
+        Date now = DateUtils.getCurrentDate();
+
+        // Lấy Thời Gian 24h Trước
+        Date dayAgo = DateUtils.getHoursAgo(now, ConstantsUtils.TIME_DAY);
+        boolean check = payService.checkDealChapterVip(Long.valueOf(chapterId), user.getId(), dayAgo, now);
+        logger.info("Id chapter: " + chapterId);
+        logger.info("Thời gian kiểm tra: " + dayAgo + " - " + now);
+        logger.info("Kiểm Tra: " + check);
+        if (check) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        if (user.getGold() < chapter.getPrice()) {
+            throw new HttpMyException("Số dư trong tài khoản không đủ để thanh toán!");
+        }
+        try {
+            payService.saveReadingVipPay(user, chapter);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            throw new HttpMyException("Có lỗi xảy ra. Vui lòng thử lại sau");
         }
     }
 }
