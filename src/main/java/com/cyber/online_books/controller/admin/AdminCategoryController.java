@@ -13,6 +13,7 @@ import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.WebUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +66,12 @@ public class AdminCategoryController extends ExceptionHandling {
         categoryService.checkUnique(null, category.getName());
 
         Category newCategory = new Category();
-        newCategory.setName(category.getName());
-        newCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
+        if(StringUtils.isNotEmpty(category.getName())){
+            newCategory.setName(category.getName());
+            newCategory.setMetatitle(WebUtils.convertStringToMetaTitle(category.getName()));
+        } else {
+            throw new HttpMyException("Tên Thể Loại Không Được để trống");
+        }
 
         if (principal == null) {
             throw new UserNotLoginException();
@@ -86,6 +91,27 @@ public class AdminCategoryController extends ExceptionHandling {
 
         newCategory.setCreateBy(currentUsername);
         return new ResponseEntity<>(categoryService.save(newCategory), HttpStatus.OK);
+    }
+
+    @GetMapping("/cap-nhat/{id}")
+    public ResponseEntity<Category> getCategoryById(@PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, UserNotLoginException, UserNotFoundException, HttpMyException {
+        Category updateCategory = categoryService.findCategoryById(id);
+        if(updateCategory == null)
+            throw new CategoryNotFoundException("không tìm thấy thể loại");
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+        return new ResponseEntity<>(updateCategory, HttpStatus.OK);
     }
 
     @PostMapping("/cap-nhat/{id}")

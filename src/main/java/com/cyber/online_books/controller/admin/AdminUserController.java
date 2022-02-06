@@ -2,17 +2,16 @@ package com.cyber.online_books.controller.admin;
 
 import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.User;
-import com.cyber.online_books.exception.domain.EmailExistException;
-import com.cyber.online_books.exception.domain.HttpMyException;
-import com.cyber.online_books.exception.domain.UserNotFoundException;
-import com.cyber.online_books.exception.domain.UsernameExistException;
+import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.service.UserService;
+import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +56,28 @@ public class AdminUserController {
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long userId, Principal principal) throws HttpMyException, IOException, UserNotFoundException {
         userService.deleteUser(principal, userId);
         return response(OK, "User đã được xoá");
+    }
+
+    @GetMapping(value = "/danh-sach")
+    public ResponseEntity< ? > loadStoryOfConverter(@RequestParam(value = "search", defaultValue = "") String search,
+                                                    @RequestParam("type") Integer type,
+                                                    @RequestParam("pagenumber") Integer pagenumer,
+                                                    Principal principal) throws Exception {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+        return new ResponseEntity<>(userService.findByType(search, type, pagenumer, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {

@@ -10,6 +10,7 @@ import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.projections.TopConverter;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.response.UserAdmin;
 import com.cyber.online_books.service.*;
 import com.cyber.online_books.utils.*;
 
@@ -285,6 +286,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
         } else
             throw new HttpMyException("Bạn không đủ quyền xóa người dùng này");
+    }
+
+    @Override
+    public Page< UserAdmin > findByType(String search, Integer type, Integer pagenumber, Integer size) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        Role role = roleRepository.findById(type).orElse(null);
+        if (search.trim().length() != 0)
+            return userRepository.findByUsernameContainingAndRoleList(search, role, pageable);
+        return userRepository.findByRoleList(role, pageable);
+
     }
 
     /**
