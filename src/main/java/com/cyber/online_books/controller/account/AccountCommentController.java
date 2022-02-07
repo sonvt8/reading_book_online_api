@@ -1,4 +1,4 @@
-package com.cyber.online_books.controller.home;
+package com.cyber.online_books.controller.account;
 
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
@@ -26,7 +26,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping(value = "/binh_luan")
-public class CommentController {
+public class AccountCommentController {
     private final CommentService commentService;
 
     private final UserService userService;
@@ -34,7 +34,7 @@ public class CommentController {
     private final StoryService storyService;
 
     @Autowired
-    public CommentController(CommentService commentService, UserService userService, StoryService storyService) {
+    public AccountCommentController(CommentService commentService, UserService userService, StoryService storyService) {
         this.commentService = commentService;
         this.userService = userService;
         this.storyService = storyService;
@@ -42,8 +42,8 @@ public class CommentController {
 
     @PostMapping(value = "/xem")
     public ResponseEntity<Page<CommentSummary>> loadCommentOfStory(@RequestParam("storyId") Long storyId,
-                                                  @RequestParam("pagenumber") Integer pagenumber,
-                                                  @RequestParam("type") Integer type) {
+                                                                   @RequestParam("pagenumber") Integer pagenumber,
+                                                                   @RequestParam("type") Integer type) {
         Page<CommentSummary> commentSummaryPage = commentService.getListCommentOfStory(storyId, pagenumber, type);
         return new ResponseEntity<>(commentSummaryPage, OK);
     }
