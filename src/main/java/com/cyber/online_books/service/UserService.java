@@ -1,5 +1,6 @@
 package com.cyber.online_books.service;
 
+import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.projections.TopConverter;
@@ -128,4 +129,6 @@ public interface UserService {
     void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException;
 
     Page<UserAdmin> findByType(String search, Integer type, Integer pagenumber, Integer size);
+
+    User save(User user);
 }

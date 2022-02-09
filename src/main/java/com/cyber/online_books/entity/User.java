@@ -78,8 +78,8 @@ public class User implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "user_role", joinColumns = {
-            @JoinColumn(name = "userId", nullable = false, updatable = false)}, inverseJoinColumns = {
-            @JoinColumn(name = "roleId", nullable = false, updatable = false)})
+            @JoinColumn(name = "userId", nullable = false)}, inverseJoinColumns = {
+            @JoinColumn(name = "roleId", nullable = false)})
     private Collection< Role > roleList;
 
     @PrePersist

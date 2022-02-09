@@ -298,6 +298,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     }
 
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
     /**
      * Đăng ký người dùng mới
      *

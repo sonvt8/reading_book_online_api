@@ -45,6 +45,15 @@ public class AdminUserController {
         return new ResponseEntity<>(editedUser, OK);
     }
 
+    @PostMapping("/cap_nhat/{id}")
+    public ResponseEntity<User> saveUpdateAdminUser(@RequestBody User user, @PathVariable("id") Long id) throws UserNotFoundException, UsernameExistException, EmailExistException {
+        User editedUser = userService.findUserById(id);
+        editedUser.setRoleList(user.getRoleList());
+        editedUser.setStatus(user.getStatus());
+
+        return new ResponseEntity<>(userService.save(editedUser), OK);
+    }
+
     @PostMapping("/nap_dau")
     public ResponseEntity<HttpResponse> submitPayDraw(@RequestParam("money") String money,
                                               @RequestParam("reId") Long reId, Principal principal) throws UserNotFoundException, HttpMyException {
@@ -58,25 +67,25 @@ public class AdminUserController {
         return response(OK, "User đã được xoá");
     }
 
-    @GetMapping(value = "/danh-sach")
+    @PostMapping(value = "/danh-sach")
     public ResponseEntity< ? > loadStoryOfConverter(@RequestParam(value = "search", defaultValue = "") String search,
                                                     @RequestParam("type") Integer type,
                                                     @RequestParam("pagenumber") Integer pagenumer,
                                                     Principal principal) throws Exception {
-        if (principal == null) {
-            throw new UserNotLoginException();
-        }
-
-        String currentUsername = principal.getName();
-        User user = userService.findUserAccount(currentUsername);
-
-        if (user == null) {
-            throw new UserNotFoundException("Tài khoản không tồn tại");
-        }
-
-        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-        }
+//        if (principal == null) {
+//            throw new UserNotLoginException();
+//        }
+//
+//        String currentUsername = principal.getName();
+//        User user = userService.findUserAccount(currentUsername);
+//
+//        if (user == null) {
+//            throw new UserNotFoundException("Tài khoản không tồn tại");
+//        }
+//
+//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+//        }
         return new ResponseEntity<>(userService.findByType(search, type, pagenumer, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
     }
 
