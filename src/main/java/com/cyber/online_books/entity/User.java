@@ -14,6 +14,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -80,7 +81,7 @@ public class User implements Serializable {
     @JoinTable(name = "user_role", joinColumns = {
             @JoinColumn(name = "userId", nullable = false)}, inverseJoinColumns = {
             @JoinColumn(name = "roleId", nullable = false)})
-    private Collection< Role > roleList;
+    private Set< Role > roleList;
 
     @PrePersist
     public void prePersist() {

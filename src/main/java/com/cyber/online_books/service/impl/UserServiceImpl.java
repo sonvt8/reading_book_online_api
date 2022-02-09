@@ -289,7 +289,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Page< UserAdmin > findByType(String search, Integer type, Integer pagenumber, Integer size) {
+    public Page< User > findByType(String search, Integer type, Integer pagenumber, Integer size) {
         Pageable pageable = PageRequest.of(pagenumber - 1, size);
         Role role = roleRepository.findById(type).orElse(null);
         if (search.trim().length() != 0)
@@ -314,7 +314,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User registerUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException, HttpMyException {
         validateNewUsernameAndEmail(EMPTY, user.getUsername(), user.getEmail());
         String password = generatePassword();
-        List<Role> roleList = new ArrayList<>();
+        Set<Role> roleList = new HashSet<>();
         Role role = roleRepository.findById(ConstantsRoleUtils.ROLE_USER_ID).get();
         roleList.add(role);
         user.setRoleList(roleList);

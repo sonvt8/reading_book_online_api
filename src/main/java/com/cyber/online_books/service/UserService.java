@@ -128,7 +128,7 @@ public interface UserService {
      */
     void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException;
 
-    Page<UserAdmin> findByType(String search, Integer type, Integer pagenumber, Integer size);
+    Page<User> findByType(String search, Integer type, Integer pagenumber, Integer size);
 
     User save(User user);
 }

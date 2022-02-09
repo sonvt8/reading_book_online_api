@@ -1,8 +1,11 @@
 package com.cyber.online_books.controller.admin;
 
 import com.cyber.online_books.domain.HttpResponse;
+import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.repository.RoleRepository;
+import com.cyber.online_books.service.RoleService;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
@@ -17,8 +20,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -33,10 +39,22 @@ public class AdminUserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @GetMapping
     public ResponseEntity<Page<User>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page) {
         Page< User > users = userService.getUsers(page, ConstantsUtils.PAGE_SIZE_DEFAULT);
         return new ResponseEntity<>(users, OK);
+    }
+
+    @GetMapping("/phan_quyen")
+    public ResponseEntity<List<Role>> getlistRoles() {
+        List<Role> listRoles = roleService.getAllRole();
+        return new ResponseEntity<>(listRoles, OK);
     }
 
     @PostMapping("/cap_nhat")
@@ -46,12 +64,20 @@ public class AdminUserController {
     }
 
     @PostMapping("/cap_nhat/{id}")
-    public ResponseEntity<User> saveUpdateAdminUser(@RequestBody User user, @PathVariable("id") Long id) throws UserNotFoundException, UsernameExistException, EmailExistException {
+    public ResponseEntity<User> saveUpdateAdminUser(@RequestParam("role") Set<String> role,
+                                                    @RequestParam("status") Integer status,
+                                                    @PathVariable("id") Long id) throws UserNotFoundException, UsernameExistException, EmailExistException {
         User editedUser = userService.findUserById(id);
-        editedUser.setRoleList(user.getRoleList());
-        editedUser.setStatus(user.getStatus());
+        editedUser.setRoleList(Arrays.stream(role.toArray(new String[0])).map(r -> roleRepository.findByName(r)).collect(Collectors.toSet()));
+        editedUser.setStatus(status);
 
         return new ResponseEntity<>(userService.save(editedUser), OK);
+    }
+
+    @GetMapping("/cap_nhat/{id}")
+    public ResponseEntity<User> getAdminUser(@PathVariable("id") Long id) {
+        User user = userService.findUserById(id);
+        return new ResponseEntity<>(user, OK);
     }
 
     @PostMapping("/nap_dau")
