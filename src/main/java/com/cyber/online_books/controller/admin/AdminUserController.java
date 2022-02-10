@@ -63,13 +63,25 @@ public class AdminUserController {
         return new ResponseEntity<>(editedUser, OK);
     }
 
+//    @PostMapping("/cap_nhat/{id}")
+//    public ResponseEntity<User> saveUpdateAdminUser(@RequestParam("role") Set<String> role,
+//                                                    @RequestParam("status") Integer status,
+//                                                    @PathVariable("id") Long id) throws UserNotFoundException, UsernameExistException, EmailExistException {
+//
+//        User editedUser = userService.findUserById(id);
+//        editedUser.setRoleList(Arrays.stream(role.toArray(new String[0])).map(r -> roleRepository.findByName(r)).collect(Collectors.toSet()));
+//        editedUser.setStatus(status);
+//
+//        return new ResponseEntity<>(userService.save(editedUser), OK);
+//    }
+
     @PostMapping("/cap_nhat/{id}")
-    public ResponseEntity<User> saveUpdateAdminUser(@RequestParam("role") Set<String> role,
-                                                    @RequestParam("status") Integer status,
+    public ResponseEntity<User> saveUpdateAdminUser(@RequestBody User user,
                                                     @PathVariable("id") Long id) throws UserNotFoundException, UsernameExistException, EmailExistException {
+
         User editedUser = userService.findUserById(id);
-        editedUser.setRoleList(Arrays.stream(role.toArray(new String[0])).map(r -> roleRepository.findByName(r)).collect(Collectors.toSet()));
-        editedUser.setStatus(status);
+        editedUser.setRoleList(user.getRoleList());
+        editedUser.setStatus(user.getStatus());
 
         return new ResponseEntity<>(userService.save(editedUser), OK);
     }
