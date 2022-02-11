@@ -99,8 +99,8 @@ public class AdminUserController {
         return response(OK, "User đã tăng số đậu tương ứng");
     }
 
-    @GetMapping("/xoa/{id}")
-    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long userId, Principal principal) throws HttpMyException, IOException, UserNotFoundException {
+    @DeleteMapping("/xoa/{id}")
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long userId, Principal principal) throws HttpMyException, IOException, UserNotFoundException, UserNotLoginException {
         userService.deleteUser(principal, userId);
         return response(OK, "User đã được xoá");
     }

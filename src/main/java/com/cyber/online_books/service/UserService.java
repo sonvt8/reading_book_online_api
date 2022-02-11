@@ -126,7 +126,7 @@ public interface UserService {
      *
      * @param id
      */
-    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException;
+    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException, UserNotLoginException;
 
     Page<User> findByType(String search, Integer type, Integer pagenumber, Integer size);
 

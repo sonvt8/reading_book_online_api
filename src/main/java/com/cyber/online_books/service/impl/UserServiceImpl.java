@@ -263,7 +263,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException {
+    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException, UserNotLoginException {
+        if (principal == null) {
+           throw new UserNotLoginException();
+        }
+
         User currentUser = validatePricipal(principal);
         User deletedUser = findUserById(id);
         if(currentUser.getId() == id){
