@@ -128,4 +128,16 @@ public class WebUtils {
 
         return ipAddress;
     }
+
+    /**
+     * Kiểm tra string có phải Double number và là số dương
+     *
+     * @param number
+     * @return true - nếu sai / false - nếu đúng
+     */
+    public static boolean checkMoney(Double number) {
+        if (number <= 0)
+            return true;
+        return false;
+    }
 }

@@ -94,7 +94,7 @@ public class AdminUserController {
 
     @PostMapping("/nap_dau")
     public ResponseEntity<HttpResponse> submitPayDraw(@RequestParam("money") String money,
-                                              @RequestParam("reId") Long reId, Principal principal) throws UserNotFoundException, HttpMyException {
+                                              @RequestParam("reId") Long reId, Principal principal) throws UserNotFoundException, HttpMyException, UserNotLoginException {
         userService.topUp(Double.valueOf(money),reId, principal);
         return response(OK, "User đã tăng số đậu tương ứng");
     }

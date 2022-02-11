@@ -249,12 +249,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException {
+    public void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException, UserNotLoginException {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
         User currentUser = validatePricipal(principal);
         User receivedUser = findUserById(id);
         if(receivedUser == null) {
             throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
         }
+        if (WebUtils.checkMoney(money))
+            throw new HttpMyException("Số đậu nạp phải lớn hơn 0!");
         try {
             payService.savePayChange(currentUser, money, receivedUser);
         } catch (Exception e) {

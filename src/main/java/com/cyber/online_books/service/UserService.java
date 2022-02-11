@@ -119,7 +119,7 @@ public interface UserService {
      * @param money
      * @param id
      */
-    void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException;
+    void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException, UserNotLoginException;
 
     /**
      * Xoá User
