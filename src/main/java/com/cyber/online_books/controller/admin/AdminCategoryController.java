@@ -41,21 +41,21 @@ public class AdminCategoryController extends ExceptionHandling {
     public ResponseEntity< ? > getAllListCategories(@RequestParam(name="keyword") String keyword,
                                             @RequestParam(name="pagenumber") Integer pagenumber, Principal principal) throws Exception {
 
-//        if (principal == null) {
-//            throw new UserNotLoginException();
-//        }
-//
-//        String currentUsername = principal.getName();
-//
-//        User user = userService.findUserAccount(currentUsername);
-//
-//        if (user == null) {
-//            throw new UserNotFoundException("Tài khoản không tồn tại");
-//        }
-//
-//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-//        }
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
 
         return new ResponseEntity<>(categoryService.findCategoryBySearch(keyword
                 , pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
@@ -73,23 +73,23 @@ public class AdminCategoryController extends ExceptionHandling {
             throw new HttpMyException("Tên Thể Loại Không Được để trống");
         }
 
-//        if (principal == null) {
-//            throw new UserNotLoginException();
-//        }
-//
-//        String currentUsername = principal.getName();
-//
-//        User user = userService.findUserAccount(currentUsername);
-//
-//        if (user == null) {
-//            throw new UserNotFoundException("Tài khoản không tồn tại");
-//        }
-//
-//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-//        }
-//
-//        newCategory.setCreateBy(currentUsername);
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
+        newCategory.setCreateBy(currentUsername);
         return new ResponseEntity<>(categoryService.save(newCategory), HttpStatus.OK);
     }
 
@@ -98,19 +98,19 @@ public class AdminCategoryController extends ExceptionHandling {
         Category updateCategory = categoryService.findCategoryById(id);
         if(updateCategory == null)
             throw new CategoryNotFoundException("không tìm thấy thể loại");
-//        if (principal == null) {
-//            throw new UserNotLoginException();
-//        }
-//        String currentUsername = principal.getName();
-//        User user = userService.findUserAccount(currentUsername);
-//
-//        if (user == null) {
-//            throw new UserNotFoundException("Tài khoản không tồn tại");
-//        }
-//
-//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-//        }
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
         return new ResponseEntity<>(updateCategory, HttpStatus.OK);
     }
 
@@ -120,19 +120,19 @@ public class AdminCategoryController extends ExceptionHandling {
         if(updateCategory == null)
             throw new CategoryNotFoundException("không tìm thấy thể loại");
         categoryService.checkUnique(id, category.getName());
-//        if (principal == null) {
-//            throw new UserNotLoginException();
-//        }
-//        String currentUsername = principal.getName();
-//        User user = userService.findUserAccount(currentUsername);
-//
-//        if (user == null) {
-//            throw new UserNotFoundException("Tài khoản không tồn tại");
-//        }
-//
-//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-//        }
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
 
         updateCategory.setName(category.getName());
         updateCategory.setStatus(category.getStatus());
@@ -143,20 +143,20 @@ public class AdminCategoryController extends ExceptionHandling {
     @DeleteMapping("/xoa/{id}")
     public ResponseEntity<HttpResponse> deleteCategory(@PathVariable("id") Integer id, Principal principal) throws CategoryNotFoundException, HttpMyException, UserNotLoginException, UserNotFoundException {
         Category category = categoryService.findCategoryById(id);
-//        if (principal == null) {
-//            throw new UserNotLoginException();
-//        }
-//
-//        String currentUsername = principal.getName();
-//        User user = userService.findUserAccount(currentUsername);
-//
-//        if (user == null) {
-//            throw new UserNotFoundException("Tài khoản không tồn tại");
-//        }
-//
-//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-//        }
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
         if(category == null)
             throw new CategoryNotFoundException("không tìm thấy thể loại");
         boolean result = categoryService.deleteCategory(id);

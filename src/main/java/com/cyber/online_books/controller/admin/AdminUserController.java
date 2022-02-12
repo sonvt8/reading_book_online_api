@@ -110,20 +110,20 @@ public class AdminUserController {
                                                     @RequestParam("type") Integer type,
                                                     @RequestParam("pagenumber") Integer pagenumer,
                                                     Principal principal) throws Exception {
-//        if (principal == null) {
-//            throw new UserNotLoginException();
-//        }
-//
-//        String currentUsername = principal.getName();
-//        User user = userService.findUserAccount(currentUsername);
-//
-//        if (user == null) {
-//            throw new UserNotFoundException("Tài khoản không tồn tại");
-//        }
-//
-//        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-//            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-//        }
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
         return new ResponseEntity<>(userService.findByType(search, type, pagenumer, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
     }
 
