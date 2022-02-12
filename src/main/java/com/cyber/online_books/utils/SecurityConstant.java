@@ -18,7 +18,7 @@ public class SecurityConstant {
             "/member/image/**",
             "/the-loai/**",
             "/thong-tin",
-            "/home",
+            "/trang-chu",
             "/danh-muc/**",
             "/chuong/**",
             "/truyen/**",

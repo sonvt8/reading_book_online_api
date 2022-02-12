@@ -2,8 +2,7 @@ package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
-import com.cyber.online_books.projections.TopConverter;
-import com.cyber.online_books.response.UserAdmin;
+import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.utils.ConstantsQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -3,7 +3,7 @@ package com.cyber.online_books.service;
 import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
-import com.cyber.online_books.projections.TopConverter;
+import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.response.UserAdmin;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;

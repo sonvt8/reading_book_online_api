@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/home")
+@RequestMapping(value = "/trang-chu")
 public class HomeController {
     private final StoryService storyService;
 
