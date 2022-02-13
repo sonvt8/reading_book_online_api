@@ -61,6 +61,28 @@ public class AdminCategoryController extends ExceptionHandling {
                 , pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT), HttpStatus.OK);
     }
 
+    @GetMapping ("/danh-sach-khong-phan-trang")
+    public ResponseEntity< ? > getAllListCategoriesNoPagination(Principal principal) throws Exception {
+
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+
+        String currentUsername = principal.getName();
+
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
+        return new ResponseEntity<>(categoryService.getListCategory(), HttpStatus.OK);
+    }
+
     @PostMapping("/them")
     public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) throws UserNotLoginException, HttpMyException, UserNotFoundException {
         categoryService.checkUnique(null, category.getName());

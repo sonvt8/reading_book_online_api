@@ -36,6 +36,11 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAllByStatus(status);
     }
 
+    @Override
+    public List<Category> getListCategory() {
+        return categoryRepository.findAll();
+    }
+
     /**
      * Tìm Category theo Id và status
      *

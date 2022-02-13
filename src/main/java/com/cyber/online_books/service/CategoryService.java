@@ -18,6 +18,13 @@ public interface CategoryService {
     List<CategorySummary> getListCategoryOfMenu(Integer status);
 
     /**
+     * Lấy danh sách Thể loại
+     *
+     * @return List<Category> - danh sách thể loại
+     */
+    List<Category> getListCategory();
+
+    /**
      * Tìm Category theo Id và status
      *
      * @param id
