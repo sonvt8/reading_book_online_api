@@ -15,6 +15,7 @@ public class SecurityConstant {
             "/thanh_vien/dang_nhap",
             "/thanh_vien/dang_ky",
             "/thanh_vien/quen_mat_khau",
+            "/thanh_vien/xem_top_converter",
             "/member/image/**",
             "/the-loai/**",
             "/thong-tin",
