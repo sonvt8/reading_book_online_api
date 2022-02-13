@@ -9,6 +9,7 @@ import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.response.UserAdmin;
 import com.cyber.online_books.service.*;
 import com.cyber.online_books.utils.*;
 
@@ -247,12 +248,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException {
+    public void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException, UserNotLoginException {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
         User currentUser = validatePricipal(principal);
         User receivedUser = findUserById(id);
         if(receivedUser == null) {
             throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME);
         }
+        if (WebUtils.checkMoney(money))
+            throw new HttpMyException("Số đậu nạp phải lớn hơn 0!");
         try {
             payService.savePayChange(currentUser, money, receivedUser);
         } catch (Exception e) {
@@ -261,7 +267,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException {
+    public void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException, UserNotLoginException {
+        if (principal == null) {
+           throw new UserNotLoginException();
+        }
+
         User currentUser = validatePricipal(principal);
         User deletedUser = findUserById(id);
         if(currentUser.getId() == id){
@@ -286,6 +296,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new HttpMyException("Bạn không đủ quyền xóa người dùng này");
     }
 
+    @Override
+    public Page< User > findByType(String search, Integer type, Integer pagenumber, Integer size) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        Role role = roleRepository.findById(type).orElse(null);
+        if (search.trim().length() != 0)
+            return userRepository.findByUsernameContainingAndRoleList(search, role, pageable);
+        return userRepository.findByRoleList(role, pageable);
+
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
     /**
      * Đăng ký người dùng mới
      *
@@ -297,7 +322,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User registerUser(User user) throws UserNotFoundException, UsernameExistException, EmailExistException, HttpMyException {
         validateNewUsernameAndEmail(EMPTY, user.getUsername(), user.getEmail());
         String password = generatePassword();
-        List<Role> roleList = new ArrayList<>();
+        Set<Role> roleList = new HashSet<>();
         Role role = roleRepository.findById(ConstantsRoleUtils.ROLE_USER_ID).get();
         roleList.add(role);
         user.setRoleList(roleList);

@@ -7,12 +7,16 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.repository.PayRepository;
 import com.cyber.online_books.repository.UserRepository;
+import com.cyber.online_books.response.PaySummary;
 import com.cyber.online_books.service.PayService;
 import com.cyber.online_books.utils.ConstantsPayTypeUtils;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -124,5 +128,96 @@ public class PayServiceImpl implements PayService {
 
     private void savePay(Pay pay) {
         payRepository.save(pay);
+    }
+
+    /**
+     * Lấy danh sách giao dịch của User theo
+     *
+     * @param id         - id của User
+     * @param pagenumber - biến số trang
+     * @param size       - biến size
+     * @return
+     */
+    @Override
+    public Page<PaySummary> findPageByUserId(Long id, Integer pagenumber, Integer size) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        return payRepository.findByUserReceived_IdOrUserSend_IdOrderByCreateDateDesc(id, id, pageable);
+    }
+
+    /**
+     * Lấy danh sách giao dịch rút tiền của người dùng
+     *
+     * @param id
+     * @param pagenumber
+     * @param size
+     * @return
+     */
+    @Override
+    public Page< PaySummary > findPagePayWithdrawByUserId(Long id, Integer pagenumber, Integer size) {
+        Pageable pageable = PageRequest.of(pagenumber - 1, size);
+        return payRepository.findByTypeAndUserSend_IdOrderByCreateDateDesc(ConstantsPayTypeUtils.PAY_WITHDRAW_TYPE, id, pageable);
+    }
+
+    /**
+     * Thực hiện giao dịch đăng ký rút tiền
+     *
+     * @param user
+     * @param money
+     */
+    @Override
+    @Transactional
+    public Long savePayDraw(User user, Double money) {
+        Pay pay = new Pay();
+        pay.setUserSend(user);
+        pay.setMoney(money);
+        pay.setType(ConstantsPayTypeUtils.PAY_WITHDRAW_TYPE);
+        payRepository.save(pay);
+        //Lấy Thông Tin Mới Nhất của Người Thanh Toán
+        user = userRepository.findById(user.getId()).get();
+        user.setGold(user.getGold() - money);
+        userRepository.save(user);
+        return pay.getId();
+    }
+
+    /**
+     * Tìm kiếm Pay Theo id
+     *
+     * @param payId - id Pay
+     * @return
+     */
+    @Override
+    public Pay findPayById(Long payId) {
+        return payRepository.findById(payId).orElse(null);
+    }
+
+    /**
+     * Thực Hiện giao dịch đọc chapter Vip
+     *
+     * @param userSend
+     * @param chapter
+     */
+    @Override
+    @Transactional
+    public void saveReadingVipPay(User userSend, Chapter chapter) {
+        Pay pay = new Pay();
+        pay.setUserSend(userSend);
+        pay.setChapter(chapter);
+        pay.setUserReceived(chapter.getUser());
+        pay.setMoney(chapter.getPrice());
+        pay.setType(ConstantsPayTypeUtils.PAY_CHAPTER_VIP_TYPE);
+        savePay(pay);
+        //Lấy Thông Tin Mới Nhất của Người Thanh Toán
+        userSend = userRepository.findById(userSend.getId()).get();
+        userSend.setGold(userSend.getGold() - chapter.getPrice());
+        saveUser(userSend);
+        //Lấy Thông tin mới nhất của người nhận
+        User userReceived = userRepository.findById(chapter.getUser().getId()).get();
+        userSend.setGold(userSend.getGold() - chapter.getPrice());
+        userReceived.setGold(userReceived.getGold() + chapter.getPrice());
+        saveUser(userReceived);
+    }
+
+    private void saveUser(User user) {
+        userRepository.save(user);
     }
 }

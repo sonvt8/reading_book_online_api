@@ -1,8 +1,10 @@
 package com.cyber.online_books.service;
 
+import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.response.TopConverter;
+import com.cyber.online_books.response.UserAdmin;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -116,12 +118,16 @@ public interface UserService {
      * @param money
      * @param id
      */
-    void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException;
+    void topUp(Double money, Long id, Principal principal) throws UserNotFoundException, HttpMyException, UserNotLoginException;
 
     /**
      * Xoá User
      *
      * @param id
      */
-    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException;
+    void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException, UserNotLoginException;
+
+    Page<User> findByType(String search, Integer type, Integer pagenumber, Integer size);
+
+    User save(User user);
 }

@@ -1,5 +1,6 @@
 package com.cyber.online_books.repository;
 
+import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.utils.ConstantsQueryUtils;
@@ -52,4 +53,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<TopConverter> getTopConverter(@Param("chapterStatus") List< Integer > listChapterStatus,
                                        @Param("storyStatus") List< Integer > listStoryStatus,
                                        @Param("userStatus") Integer uStatus, @Param("roleList") List< Integer > listRole, Pageable pageable);
+
+    Page<User> findByRoleList(Role role, Pageable pageable);
+
+    Page< User > findByUsernameContainingAndRoleList(String search, Role role, Pageable pageable);
 }

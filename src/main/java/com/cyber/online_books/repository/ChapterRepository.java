@@ -109,4 +109,13 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long > {
     Optional< Long > findNextChapter(@Param("chapterSerial") float serial,
                                      @Param("storyId") Long storyId,
                                      @Param("chapterStatus") List< Integer > listStatus);
+
+    /**
+     * Tìm kiếm Chapter theo
+     *
+     * @param chapterId
+     * @param listStatus
+     * @return Optional<Chapter>
+     */
+    Optional< Chapter > findChapterByIdAndStatusIn(Long chapterId, List< Integer > listStatus);
 }

@@ -15,13 +15,14 @@ public class SecurityConstant {
             "/thanh_vien/dang_nhap",
             "/thanh_vien/dang_ky",
             "/thanh_vien/quen_mat_khau",
+            "/thanh_vien/xem_top_converter",
             "/member/image/**",
             "/the-loai/**",
             "/thong-tin",
-            "/home",
+            "/trang-chu",
             "/danh-muc/**",
             "/chuong/**",
-            "/truyen/**"
+            "/truyen/**",
     };
     //public static final String[] PUBLIC_URLS = { "**" };
     public static final String[] ROLE_USER_LINK = {"/tai_khoan",
@@ -39,5 +40,9 @@ public class SecurityConstant {
     public static final String[] ROLE_ADMIN_MOD_LINK = {"/quan_tri",
             "/quan_tri/nguoi_dung/**",
             "/quan_tri/the_loai/**",
-            "/quan_tri/truyen/**"};
+            "/quan_tri/truyen/**"
+    };
+//    public static final String[] ROLE_ADMIN_MOD_LINK = {
+//            "/quan_tri/truyen/**"
+//    };
 }

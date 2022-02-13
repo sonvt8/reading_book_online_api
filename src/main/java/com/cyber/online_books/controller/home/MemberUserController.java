@@ -52,7 +52,7 @@ public class MemberUserController extends ExceptionHandling {
         return new ResponseEntity<>(loginUser, jwtHeader, OK);
     }
 
-    @PostMapping("/xem_top_converter")
+    @GetMapping("/xem_top_converter")
     public ResponseEntity< ? > loadStoryOfConverter() {
         // Lấy Danh Sách Top Converter
         List<TopConverter> topConverters = userService

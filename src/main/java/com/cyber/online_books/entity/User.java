@@ -14,6 +14,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -78,9 +79,9 @@ public class User implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "user_role", joinColumns = {
-            @JoinColumn(name = "userId", nullable = false, updatable = false)}, inverseJoinColumns = {
-            @JoinColumn(name = "roleId", nullable = false, updatable = false)})
-    private Collection< Role > roleList;
+            @JoinColumn(name = "userId", nullable = false)}, inverseJoinColumns = {
+            @JoinColumn(name = "roleId", nullable = false)})
+    private Set< Role > roleList;
 
     @PrePersist
     public void prePersist() {
