@@ -205,15 +205,15 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
     List< StoryMember > findAllByUser_IdAndStatusInOrderByCreateDateDesc(Long userId,
                                                                          List< Integer > listStatus);
 
-    Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
+    Page<Story> findByOrderByIdDesc(Pageable pageable);
 
-    Page< StoryAdmin > findByNameContainingOrderByIdDesc(String search, Pageable pageable);
+    Page< Story > findByNameContainingOrderByIdDesc(String search, Pageable pageable);
 
-    Page< StoryAdmin > findByDealStatusOrderByIdDesc(Integer status, Pageable pageable);
+    Page< Story > findByDealStatusOrderByIdDesc(Integer status, Pageable pageable);
 
-    Page< StoryAdmin > findByDealStatusAndNameContainingOrderByIdDesc(Integer status, String search, Pageable pageable);
+    Page< Story > findByDealStatusAndNameContainingOrderByIdDesc(Integer status, String search, Pageable pageable);
 
-    Page< StoryAdmin > findByNameContainingAndStatusOrderByIdDesc(String search, Integer status, Pageable pageable);
+    Page< Story > findByNameContainingAndStatusOrderByIdDesc(String search, Integer status, Pageable pageable);
 
-    Page< StoryAdmin > findByStatusOrderByIdDesc(Integer status, Pageable pageable);
+    Page< Story > findByStatusOrderByIdDesc(Integer status, Pageable pageable);
 }

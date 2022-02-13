@@ -80,13 +80,14 @@ public class AdminStoryController extends ExceptionHandling {
                                           @RequestParam("author") String author,
                                           @RequestParam("infomation") String infomation,
                                           @RequestParam("category") Set<String> category,
-                                          @RequestParam(value="image") MultipartFile image,
+                                          @RequestParam(value="images", required = false) MultipartFile image,
                                           @RequestParam("price") Double price,
                                           @RequestParam("timeDeal") Integer timeDeal,
                                           @RequestParam("dealStatus") Integer dealStatus,
+                                          @RequestParam("status") Integer status,
                                           Principal principal,
                                           @PathVariable(value = "id") Long id) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
-        Story updateStory = storyService.updateAdminStory(id, name, author, infomation, category.toArray(new String[0]), image, price, timeDeal, dealStatus, principal);
+        Story updateStory = storyService.updateAdminStory(id, name, author, infomation, category.toArray(new String[0]), image, price, timeDeal, dealStatus, status, principal);
         return new ResponseEntity<>(updateStory, HttpStatus.OK);
     }
 

@@ -258,7 +258,7 @@ public class StoryServiceImpl implements StoryService {
 
 
     @Override
-    public Page< StoryAdmin > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {
+    public Page< Story > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {
         Pageable pageable = PageRequest.of(pagenumber-1, size);
         if (type == -1) {
             if (search.trim().isEmpty()) {
@@ -343,7 +343,7 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
+    public Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Integer status, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
             throw new HttpMyException("không tìm thấy truyện");
@@ -364,6 +364,7 @@ public class StoryServiceImpl implements StoryService {
         storyEdit.setAuthor(author);
         storyEdit.setInfomation(infomation);
         storyEdit.setUser(storyEdit.getUser());
+        storyEdit.setStatus(storyEdit.getStatus());
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
         storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(storyEdit, image, principal);
@@ -388,12 +389,8 @@ public class StoryServiceImpl implements StoryService {
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {
                 throw new NotAnImageFileException(image.getOriginalFilename() + " không phải là file hình");
             }
-            if(story.getImages() != null)
-                story.setImages(story.getImages());
-            else{
-                String url = cloudinaryService.upload(image, principal.getName() + "-" + System.nanoTime());
-                story.setImages(url);
-            }
+            String url = cloudinaryService.upload(image, principal.getName() + "-" + System.nanoTime());
+            story.setImages(url);
 
         }
     }

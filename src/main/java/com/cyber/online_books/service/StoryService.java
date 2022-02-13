@@ -166,7 +166,7 @@ public interface StoryService {
     Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
                                           int pagenumber, int type, Integer size);
 
-    Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
+    Page<Story> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);
 
@@ -174,5 +174,5 @@ public interface StoryService {
 
     Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException;
 
-    Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException;
+    Story updateAdminStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Double price, Integer timeDeal, Integer dealStatus, Integer status, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException;
 }
