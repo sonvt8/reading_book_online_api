@@ -166,7 +166,7 @@ public interface StoryService {
     Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
                                           int pagenumber, int type, Integer size);
 
-    Page<Story> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
+    Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);
 

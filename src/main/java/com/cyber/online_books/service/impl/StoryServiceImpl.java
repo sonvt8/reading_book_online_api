@@ -258,7 +258,7 @@ public class StoryServiceImpl implements StoryService {
 
 
     @Override
-    public Page< Story > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {
+    public Page< StoryAdmin > findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search) {
         Pageable pageable = PageRequest.of(pagenumber-1, size);
         if (type == -1) {
             if (search.trim().isEmpty()) {
@@ -363,8 +363,8 @@ public class StoryServiceImpl implements StoryService {
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
         storyEdit.setInfomation(infomation);
-        storyEdit.setUser(storyEdit.getUser());
-        storyEdit.setStatus(storyEdit.getStatus());
+        //storyEdit.setUser(storyEdit.getUser());
+        storyEdit.setStatus(status);
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
         storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(storyEdit, image, principal);
