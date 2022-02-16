@@ -19,6 +19,7 @@ public class SecurityConstant {
             "/thanh_vien/thong-tin_converter",
             "/member/image/**",
             "/the-loai/**",
+            "/theo-doi/**",
             "/thong-tin",
             "/trang-chu",
             "/danh-muc/**",
