@@ -2,6 +2,7 @@ package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
+import com.cyber.online_books.response.ConveterSummary;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.utils.ConstantsQueryUtils;
 import org.springframework.data.domain.Page;
@@ -57,4 +58,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByRoleList(Role role, Pageable pageable);
 
     Page< User > findByUsernameContainingAndRoleList(String search, Role role, Pageable pageable);
+
+    /**
+     * Tìm User theo id
+     *
+     * @param id
+     * @return ConveterSummary
+     */
+    ConveterSummary findUserById(Long id);
 }

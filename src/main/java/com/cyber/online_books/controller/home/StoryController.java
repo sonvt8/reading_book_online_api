@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/truyen")
+@RequestMapping("/truyen-home")
 public class StoryController extends ExceptionHandling {
 
     private final StoryService storyService;
@@ -40,13 +40,23 @@ public class StoryController extends ExceptionHandling {
     }
 
     @GetMapping(value = "/{storyId}")
-    public ResponseEntity< ? > defaultStoryController(@PathVariable("storyId") Long storyId) throws Exception {
+    public ResponseEntity< ? > defaultStoryController(@PathVariable("storyId") Long storyId, Principal principal) throws Exception {
+
 
         // lấy truyện theo id va status
-        StorySummary storySummary = storyService.findStoryByStoryIdAndStatus(storyId,
-                ConstantsListUtils.LIST_STORY_DISPLAY);
+        if (principal == null){
+            StorySummary storySummary = storyService.findStoryByStoryIdAndStatus(storyId,
+                    ConstantsListUtils.LIST_STORY_DISPLAY);
 
-        return new ResponseEntity<>(storySummary, HttpStatus.OK);
+            return new ResponseEntity<>(storySummary, HttpStatus.OK);
+        } else {
+            String currentUsername = principal.getName();
+            User user = userService.findUserAccount(currentUsername);
+            StorySummary storySummary = storyService.findStoryByStoryIdAndStatus(storyId,
+                    ConstantsListUtils.LIST_STORY_DISPLAY);
+            return new ResponseEntity<>(storySummary, HttpStatus.OK);
+        }
+
     }
 
     @GetMapping(value = "/{storyId}/chuong-cua-truyen")

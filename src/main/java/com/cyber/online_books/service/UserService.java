@@ -3,6 +3,7 @@ package com.cyber.online_books.service;
 import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.response.ConveterSummary;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.response.UserAdmin;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,14 @@ public interface UserService {
      * @return
      */
     List<TopConverter> findTopConverter(int page, int size);
+
+    /**
+     * Lấy Thông Tin Converter
+     *
+     * @param id
+     * @return ConverterSummary
+     */
+    ConveterSummary findConverterByID(Long id);
 
     /**
      * Kiểm tra DisplayName đã tồn tại chưa
