@@ -5,6 +5,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.entity.UserRating;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
+import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.RatingResponse;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserRatingService;
@@ -75,7 +76,10 @@ public class AccountRatingController {
         throw new HttpMyException("Có lỗi xảy ra khi thực hiện đánh giá");
     }
 
-    private User validatePricipal(Principal principal) throws UserNotFoundException {
+    private User validatePricipal(Principal principal) throws UserNotFoundException, UserNotLoginException {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
         String currentUsername = principal.getName();
         User currentUser = userService.findUserAccount(currentUsername);
         if(currentUser == null) {

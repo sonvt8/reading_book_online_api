@@ -93,6 +93,7 @@ public class FollowController extends ExceptionHandling {
         if (principal == null) {
             throw new UserNotLoginException();
         }
+
         String currentUsername = principal.getName();
         User user = userService.findUserAccount(currentUsername);
 
