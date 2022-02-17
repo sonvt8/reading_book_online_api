@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping(value = "quan-tri/the-loai")
+@RequestMapping(value = "quan-tri/the_loai")
 public class AdminCategoryController extends ExceptionHandling {
     private final Logger logger = LoggerFactory.getLogger(AdminCategoryController.class);
 

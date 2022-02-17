@@ -5,6 +5,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
+import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.*;
 import com.cyber.online_books.service.*;
 import com.cyber.online_books.utils.ConstantsListUtils;
@@ -25,24 +26,21 @@ import java.util.Objects;
 public class StoryController extends ExceptionHandling {
 
     private final StoryService storyService;
-    private final UserService userService;
     private final ChapterService chapterService;
     private final UserRatingService userRatingService;
-    private final HistoryService historyService;
+
 
     @Autowired
-    public StoryController(StoryService storyService, UserService userService, ChapterService chapterService, UserRatingService userRatingService, HistoryService historyService) {
+    public StoryController(StoryService storyService, ChapterService chapterService, UserRatingService userRatingService) {
         this.storyService = storyService;
-        this.userService = userService;
         this.chapterService = chapterService;
         this.userRatingService = userRatingService;
-        this.historyService = historyService;
     }
 
     @GetMapping(value = "/{storyId}")
-    public ResponseEntity< ? > defaultStoryController(@PathVariable("storyId") Long storyId, Principal principal) throws Exception {
+    public ResponseEntity< ? > defaultStoryController(@PathVariable("storyId") Long storyId) throws Exception {
 
-        return new ResponseEntity<>(getStoryDetail(storyId, principal), HttpStatus.OK);
+        return new ResponseEntity<>(getStoryDetail(storyId), HttpStatus.OK);
 
     }
 
@@ -74,44 +72,17 @@ public class StoryController extends ExceptionHandling {
         return new ResponseEntity<>(storyMembers, HttpStatus.OK);
     }
 
-    private StoryDetailResponse getStoryDetail(Long storyId, Principal principal) throws Exception {
+    private StoryDetailResponse getStoryDetail(Long storyId) throws Exception {
         StoryDetailResponse storyDetailResponse = new StoryDetailResponse();
 
         StorySummary storySummary = storyService.findStoryByStoryIdAndStatus(storyId,
                 ConstantsListUtils.LIST_STORY_DISPLAY);
 
-        boolean checkRating = false;
-        boolean checkConverter = false;
-        Chapter chapter = null;
-
-        if(principal != null){
-            String currentUsername = principal.getName();
-            User user = userService.findUserAccount(currentUsername);
-            if (user != null) {
-                chapter = historyService.findChapterReadByUser(user.getId(), storyId);
-                checkConverter = Objects.equals(user.getId(), storySummary.getUserId());
-                //Nếu người đọc là người đăng thì tính là đã đánh giá
-                if (storySummary.getUserId().equals(user.getId())) {
-                    // Người đọc là Converter
-                    checkRating = true;
-                } else {
-
-                    // Kiểm tra Người dùng đã đánh giá chưa
-                    if (userRatingService.existsRatingWithUser(storyId, user.getId())) {
-                        // Người dùng đã đánh giá
-                        checkRating = true;
-                    }
-                }
-            }
-        }
-
         Long countRating = userRatingService.countRatingStory(storyId);
 
-        storyDetailResponse.setReadChapter(chapter);
         storyDetailResponse.setStorySummary(storySummary);
         storyDetailResponse.setCountRating(countRating);
-        storyDetailResponse.setRating(checkRating);
-        storyDetailResponse.setCheckConverter(checkConverter);
+
 
         return storyDetailResponse;
     }
