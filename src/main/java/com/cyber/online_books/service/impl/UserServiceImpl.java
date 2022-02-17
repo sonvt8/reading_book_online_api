@@ -7,6 +7,7 @@ import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
 import com.cyber.online_books.response.ConveterSummary;
+import com.cyber.online_books.response.InfoSummary;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.repository.RoleRepository;
 import com.cyber.online_books.repository.UserRepository;
@@ -158,6 +159,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository
                 .findById(id)
                 .orElse(null);
+    }
+
+    /**
+     * Lấy Thông Tin Người dùng Theo id
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public InfoSummary findInfoUserById(Long id) {
+        return userRepository.findUsersById(id).orElse(null);
     }
 
     @Override

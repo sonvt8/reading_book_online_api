@@ -7,6 +7,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
+import com.cyber.online_books.response.InfoSummary;
 import com.cyber.online_books.service.CloudinaryService;
 import com.cyber.online_books.service.PayService;
 import com.cyber.online_books.service.StoryService;
@@ -43,10 +44,20 @@ public class AccountUserController {
     @Autowired
     private StoryService storyService;
 
+    @GetMapping(value = "")
+    public ResponseEntity<InfoSummary> accountInfo(Principal principal) throws Exception  {
+        User currentUser = validatePricipal(principal);
+
+        InfoSummary accInfo = userService.findInfoUserById(currentUser.getId());
+
+        return new ResponseEntity<>(accInfo, OK);
+    }
+
     @PostMapping(value = "/doi_ngoai_hieu")
     @Transactional
     public ResponseEntity<User> changeNick(@RequestParam(value = "newNick") String newNick,
                                            Principal principal) throws HttpMyException, UserNotFoundException {
+        User currentUser = validatePricipal(principal);
         User user = userService.updateDisplayName(principal,newNick);
         payService.savePay(null, null, user, null, 0,
                 ConstantsUtils.PRICE_UPDATE_NICK, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
@@ -57,12 +68,14 @@ public class AccountUserController {
     public ResponseEntity<HttpResponse> changePassword(@RequestParam("old-pass")String oldPassword,
                                                        @RequestParam("new-pass")String newPassword,
                                                        Principal principal) throws UserNotFoundException, HttpMyException {
+        User currentUser = validatePricipal(principal);
         userService.updatePassword(oldPassword, newPassword,principal);
         return response(OK, "Đã cập nhật thành công mật khẩu mới");
     }
 
     @PostMapping(value = "/doi_thong_bao")
     public ResponseEntity<User> changeNotification(@RequestParam("notification")String newMess, Principal principal) throws UserNotFoundException {
+        User currentUser = validatePricipal(principal);
         User user = userService.updateNotification(principal,newMess.trim());
         return new ResponseEntity<>(user, OK);
     }
@@ -70,6 +83,7 @@ public class AccountUserController {
     @PostMapping("/anh_dai_dien")
     @ResponseBody
     public ResponseEntity<User> changeAvatar(@RequestParam(value = "profileImage", required = false) MultipartFile profileImage, Principal principal) throws HttpMyException, NotAnImageFileException, UserNotFoundException {
+        User currentUser = validatePricipal(principal);
         if (profileImage.getSize() > (20 * 1024 * 1024)) {
             throw new HttpMyException("Kích thước ảnh upload tối đa là 20 Megabybtes!");
         }

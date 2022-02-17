@@ -154,6 +154,15 @@ public interface StoryService {
     Story findStoryByIdAndStatus(Long storyId, List< Integer > listStoryStatus);
 
     /**
+     * Lấy số lượng truyện đăng bởi User
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return Long
+     */
+    Long countStoryByUser(Long userId, List< Integer > listStoryDisplay);
+
+    /**
      * Lấy danh sách truyện đã đăng của User
      *
      * @param userId
