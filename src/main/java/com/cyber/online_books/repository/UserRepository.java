@@ -2,6 +2,7 @@ package com.cyber.online_books.repository;
 
 import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
+import com.cyber.online_books.response.InfoSummary;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.utils.ConstantsQueryUtils;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -29,6 +31,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Optional<User>
      */
     User findUserByEmail(String email);
+
+    /**
+     * Tìm User theo id
+     *
+     * @param id
+     * @return InfoSummary
+     */
+    Optional<InfoSummary> findUsersById(Long id);
 
     /**
      * Kiểm Tra Có tồn tại Display Name với điều kiện Khác userId không

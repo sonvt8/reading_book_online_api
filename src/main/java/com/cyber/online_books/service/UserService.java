@@ -3,6 +3,7 @@ package com.cyber.online_books.service;
 import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.response.InfoSummary;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.response.UserAdmin;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,14 @@ public interface UserService {
      * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     User findUserById(Long id);
+
+    /**
+     * Lấy Thông Tin Người dùng Theo id
+     *
+     * @param id
+     * @return
+     */
+    InfoSummary findInfoUserById(Long id);
 
     /**
      * @param page

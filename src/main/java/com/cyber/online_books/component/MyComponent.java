@@ -8,7 +8,9 @@ import com.cyber.online_books.service.ChapterService;
 import com.cyber.online_books.service.HistoryService;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.utils.ConstantsListUtils;
+import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.DateUtils;
+import com.cyber.online_books.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +64,35 @@ public class MyComponent {
                 return true;
         }
         return false;
+    }
+
+    public String checkAvatar(final String avatar) {
+        if (avatar == null || avatar.isEmpty()) {
+            return ConstantsUtils.AVATAR_DEFAULT;
+        }
+        return avatar;
+    }
+
+    public String maskEmail(final String email) {
+        try {
+            String[] parts = email.split("@");
+
+            if (parts[0].length() < 2)
+                return email;
+            else
+                return WebUtils.maskString(parts[0], '*') + "@" + parts[1];
+        } catch (Exception ex) {
+            return email;
+        }
+    }
+
+    public Long countStoryOfUser(Long uID) {
+        return storyService.
+                countStoryByUser(uID, ConstantsListUtils.LIST_STORY_DISPLAY);
+    }
+
+    public Long countChapterOfUser(Long uID) {
+        return chapterService.
+                countChapterByUser(uID, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
     }
 }

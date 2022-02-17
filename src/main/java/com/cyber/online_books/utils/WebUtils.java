@@ -21,6 +21,35 @@ public class WebUtils {
         }
     }
 
+    public static String maskString(String strText, char maskChar) {
+        if (strText == null || strText.equals(""))
+            return "";
+        int start;
+        int end = strText.length();
+        int length = strText.length();
+        if (length <= 3)
+            start = 1;
+        else if (length <= 5)
+            start = 2;
+        else {
+            start = 2;
+            end = length - 2;
+        }
+        int maskLength = end - start;
+
+        if (maskLength == 0)
+            return strText;
+
+        StringBuilder sbMaskString = new StringBuilder(maskLength);
+
+        for (int i = 0; i < maskLength; i++) {
+            sbMaskString.append(maskChar);
+        }
+        return strText.substring(0, start)
+                + sbMaskString.toString()
+                + strText.substring(end);
+    }
+
     public static boolean equalsPassword(String rawPassword, String encodedPassword) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);

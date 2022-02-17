@@ -241,6 +241,18 @@ public class StoryServiceImpl implements StoryService {
                 .orElse(null);
     }
 
+    /**
+     * Lấy số lượng truyện đăng bởi User
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return Long
+     */
+    @Override
+    public Long countStoryByUser(Long userId, List< Integer > listStoryDisplay) {
+        return storyRepository.countByUser_IdAndStatusIn(userId, listStoryDisplay);
+    }
+
     @Override
     public Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
                                                  int pagenumber, int type, Integer size) {
