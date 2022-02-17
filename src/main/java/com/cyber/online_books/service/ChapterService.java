@@ -111,4 +111,13 @@ public interface ChapterService {
      * @return chapter - nếu có dữ liệu thỏa mãn điều kiện / null - nếu không có dữ liệu thỏa mãn điều kiện
      */
     Chapter findChapterByIdAndStatus(Long chapterId, List< Integer > listStatus);
+
+    /**
+     * Lấy số lượng chương đã đăng thành công của User
+     *
+     * @param userId
+     * @param listChapterDisplay
+     * @return long
+     */
+    Long countChapterByUser(Long userId, List< Integer > listChapterDisplay);
 }

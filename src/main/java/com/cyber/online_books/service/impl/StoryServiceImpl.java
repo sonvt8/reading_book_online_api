@@ -384,6 +384,18 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository.save(storyEdit);
     }
 
+    /**
+     * Lấy số lượng truyện đăng bởi User
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return Long
+     */
+    @Override
+    public Long countStoryByUser(Long userId, List< Integer > listStoryDisplay) {
+        return storyRepository.countByUser_IdAndStatusIn(userId, listStoryDisplay);
+    }
+
     private void saveImage(Story story, MultipartFile image, Principal principal) throws NotAnImageFileException {
         if(image != null){
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {

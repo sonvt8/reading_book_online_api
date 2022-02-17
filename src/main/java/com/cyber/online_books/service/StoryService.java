@@ -166,6 +166,15 @@ public interface StoryService {
     Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
                                           int pagenumber, int type, Integer size);
 
+    /**
+     * Lấy số lượng truyện đăng bởi User
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return Long
+     */
+    Long countStoryByUser(Long userId, List< Integer > listStoryDisplay);
+
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);

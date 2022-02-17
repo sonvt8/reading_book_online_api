@@ -205,6 +205,15 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
     List< StoryMember > findAllByUser_IdAndStatusInOrderByCreateDateDesc(Long userId,
                                                                          List< Integer > listStatus);
 
+    /**
+     * Lấy số lượng truyện đã đăng thành công
+     *
+     * @param userId
+     * @param listStoryDisplay
+     * @return Long
+     */
+    Long countByUser_IdAndStatusIn(Long userId, List< Integer > listStoryDisplay);
+
     Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
 
     Page< StoryAdmin > findByNameContainingOrderByIdDesc(String search, Pageable pageable);

@@ -37,6 +37,16 @@ public class MyComponent {
         return DateUtils.betweenTwoDays(date);
     }
 
+    public Long countChapterOfUser(Long uID) {
+        return chapterService.
+                countChapterByUser(uID, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
+    }
+
+    public Long countStoryOfUser(Long uID) {
+        return storyService.
+                countStoryByUser(uID, ConstantsListUtils.LIST_STORY_DISPLAY);
+    }
+
     //Lấy Chapter Đầu Tiên của Truyện
     public ChapterSummary getChapterHead(Long storyId) {
         return chapterService
