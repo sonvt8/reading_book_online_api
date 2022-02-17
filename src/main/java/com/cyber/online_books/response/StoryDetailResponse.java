@@ -6,8 +6,5 @@ import lombok.Data;
 @Data
 public class StoryDetailResponse {
     private StorySummary storySummary;
-    private Chapter readChapter;
-    private boolean checkConverter;
-    private boolean rating;
     private Long countRating;
 }
