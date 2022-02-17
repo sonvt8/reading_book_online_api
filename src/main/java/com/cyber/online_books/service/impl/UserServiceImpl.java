@@ -6,6 +6,7 @@ import com.cyber.online_books.entity.Mail;
 import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.response.ConveterSummary;
 import com.cyber.online_books.response.InfoSummary;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.repository.RoleRepository;
@@ -179,6 +180,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                         ConstantsListUtils.LIST_STORY_DISPLAY,
                         ConstantsStatusUtils.USER_ACTIVED, ConstantsListUtils.LIST_ROLE_CON, pageable);
         return result.getContent();
+    }
+
+    /**
+     * Lấy Thông Tin Converter
+     *
+     * @param id
+     * @return ConverterSummary
+     */
+    @Override
+    public ConveterSummary findConverterByID(Long id) {
+        return userRepository.findUserById(id);
     }
 
     /**

@@ -6,6 +6,7 @@ import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.NotAnImageFileException;
+import com.cyber.online_books.exception.domain.UserNotFoundException;
 import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.service.StoryService;
 import com.cyber.online_books.service.UserService;
@@ -35,14 +36,17 @@ public class AdminStoryController extends ExceptionHandling {
 
     @PostMapping(value = "/danh-sach")
     public ResponseEntity< ? > loadStoryAdmin(@RequestParam("pagenumber") Integer pagenumber, @RequestParam("search") String search,
-                                              @RequestParam("type") Integer type, Principal principal) throws UserNotLoginException, HttpMyException {
+                                              @RequestParam("type") Integer type, Principal principal) throws UserNotLoginException, HttpMyException, UserNotFoundException {
 
         if (principal == null) {
             throw new UserNotLoginException();
         }
-
         String currentUsername = principal.getName();
         User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
 
         if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
             throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
@@ -51,26 +55,57 @@ public class AdminStoryController extends ExceptionHandling {
         return new ResponseEntity<>(storyService.findStoryInAdmin(pagenumber, ConstantsUtils.PAGE_SIZE_DEFAULT, type, search), HttpStatus.OK);
     }
 
+    @GetMapping("/sua-truyen/{id}")
+    public ResponseEntity< ? > getStoryAdminById(@PathVariable(value = "id") Long id, Principal principal) throws UserNotLoginException, HttpMyException, UserNotFoundException {
+
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
+        }
+
+        return new ResponseEntity<>(storyService.findStoryById(id), HttpStatus.OK);
+    }
+
     @PostMapping("/sua-truyen/{id}")
     public ResponseEntity<Story> addStory(@RequestParam("name") String name,
                                           @RequestParam("author") String author,
                                           @RequestParam("infomation") String infomation,
                                           @RequestParam("category") Set<String> category,
-                                          @RequestParam(value="image") MultipartFile image,
+                                          @RequestParam(value="images", required = false) MultipartFile image,
                                           @RequestParam("price") Double price,
                                           @RequestParam("timeDeal") Integer timeDeal,
                                           @RequestParam("dealStatus") Integer dealStatus,
+                                          @RequestParam("status") Integer status,
                                           Principal principal,
                                           @PathVariable(value = "id") Long id) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
-        Story updateStory = storyService.updateAdminStory(id, name, author, infomation, category.toArray(new String[0]), image, price, timeDeal, dealStatus, principal);
+        Story updateStory = storyService.updateAdminStory(id, name, author, infomation, category.toArray(new String[0]), image, price, timeDeal, dealStatus, status, principal);
         return new ResponseEntity<>(updateStory, HttpStatus.OK);
     }
 
     @DeleteMapping("/xoa-truyen/{id}")
-    public ResponseEntity<HttpResponse> deleteStory(@PathVariable("id") Long id, Principal principal) throws HttpMyException, UserNotLoginException {
+    public ResponseEntity<HttpResponse> deleteStory(@PathVariable("id") Long id, Principal principal) throws HttpMyException, UserNotLoginException, UserNotFoundException {
         Story story = storyService.findStoryById(id);
         if (principal == null) {
             throw new UserNotLoginException();
+        }
+        String currentUsername = principal.getName();
+        User user = userService.findUserAccount(currentUsername);
+
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại");
+        }
+
+        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
+            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
         }
         if(story == null)
             throw new HttpMyException("không tìm thấy truyện");

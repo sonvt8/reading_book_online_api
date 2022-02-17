@@ -5,6 +5,7 @@ import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.response.ConveterSummary;
 import com.cyber.online_books.response.TopConverter;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsUtils;
@@ -59,6 +60,12 @@ public class MemberUserController extends ExceptionHandling {
                 .findTopConverter(ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.RANK_SIZE);
 
         return new ResponseEntity<>(topConverters, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/thong-tin-converter")
+    public ResponseEntity< ? > loadConverter(@RequestParam("userId") Long userId) {
+        ConveterSummary conveterSummary = userService.findConverterByID(userId);
+        return new ResponseEntity<>(conveterSummary, HttpStatus.OK);
     }
 
     @PostMapping("/quen_mat_khau")
