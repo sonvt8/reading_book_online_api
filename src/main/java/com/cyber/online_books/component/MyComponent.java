@@ -95,14 +95,4 @@ public class MyComponent {
             return email;
         }
     }
-
-    public Long countStoryOfUser(Long uID) {
-        return storyService.
-                countStoryByUser(uID, ConstantsListUtils.LIST_STORY_DISPLAY);
-    }
-
-    public Long countChapterOfUser(Long uID) {
-        return chapterService.
-                countChapterByUser(uID, ConstantsListUtils.LIST_CHAPTER_DISPLAY);
-    }
 }
