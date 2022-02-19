@@ -73,10 +73,12 @@ public class ChapterController extends ExceptionHandling {
             chapter.getUser().setAvatar(ConstantsUtils.AVATAR_DEFAULT);
         }
 
+        boolean checkVip = checkVipStory(null, chapter, dayAgo, now);
+
         chapterResponse.setChapter(chapter);
         chapterResponse.setPreChapter(preChapter);
         chapterResponse.setNextChapter(nextChapter);
-        chapterResponse.setCheckVip(false);
+        chapterResponse.setCheckVip(checkVip);
 
         return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
     }
@@ -94,6 +96,21 @@ public class ChapterController extends ExceptionHandling {
         }
 
         return remoteAddr;
+    }
+
+    private boolean checkVipStory(User user,
+                                  Chapter chapter,
+                                  Date dayAgo,
+                                  Date now) {
+        boolean check = true;
+
+        //Kiểm Tra Chapter có phải tính phí hay không
+        //Chapter tính phí là chapter có chStatus = 2
+        if (chapter.getStatus() == 2) {
+
+            check = false;
+        }
+        return check;
     }
 
     private void saveFavorites(User user,

@@ -21,7 +21,7 @@ import java.security.Principal;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/tai-khoan/chuongTK")
+@RequestMapping("/tai-khoan/chapter")
 public class AccountChapterController extends ExceptionHandling {
 
     private final StoryService storyService;
@@ -39,7 +39,7 @@ public class AccountChapterController extends ExceptionHandling {
         this.historyService = historyService;
     }
 
-    @GetMapping("/{sID}/chuong-{chID}")
+    @GetMapping("/{sID}/{chID}")
     public ResponseEntity< ? > chapterPage(@PathVariable("sID") Long sid,
                                            @PathVariable("chID") Long chid,
                                            Principal principal,
