@@ -44,24 +44,9 @@ public class ChapterController extends ExceptionHandling {
     @GetMapping("/{sID}/chuong-{chID}")
     public ResponseEntity< ? > chapterPage(@PathVariable("sID") Long sid,
                                            @PathVariable("chID") Long chid,
-                                           Principal principal,
                                            HttpServletRequest request) throws Exception {
 
         ChapterResponse chapterResponse = new ChapterResponse();
-
-        if (principal == null) {
-            throw new UserNotLoginException();
-        }
-        String currentUsername = principal.getName();
-        User user = userService.findUserAccount(currentUsername);
-
-        if (user == null) {
-            throw new UserNotFoundException("Tài khoản không tồn tại");
-        }
-
-        if (user.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
-            throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
-        }
 
         //Lấy Chapter Theo sID và chID
         Chapter chapter = chapterService.findChapterByStoryIdAndChapterID(sid, ConstantsListUtils.LIST_STORY_DISPLAY,
@@ -82,10 +67,8 @@ public class ChapterController extends ExceptionHandling {
         //Lấy LocationIP Client
         String locationIP = getLocationIP(request);
 
-        boolean checkVip = checkVipStory(user, chapter, dayAgo, now);
-
         //Lưu Lịch Sử Đọc Truyện
-        saveFavorites(user, chapter, halfHourAgo, now, locationIP);
+        saveFavorites(null, chapter, halfHourAgo, now, locationIP);
         if (chapter.getUser().getAvatar() == null || chapter.getUser().getAvatar().isEmpty()) {
             chapter.getUser().setAvatar(ConstantsUtils.AVATAR_DEFAULT);
         }
@@ -93,46 +76,9 @@ public class ChapterController extends ExceptionHandling {
         chapterResponse.setChapter(chapter);
         chapterResponse.setPreChapter(preChapter);
         chapterResponse.setNextChapter(nextChapter);
-        chapterResponse.setCheckVip(checkVip);
+        chapterResponse.setCheckVip(false);
 
         return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
-    }
-
-    private boolean checkVipStory(User user,
-                               Chapter chapter,
-                               Date dayAgo,
-                               Date now) {
-        boolean check = true;
-
-        //Kiểm Tra Chapter có phải tính phí hay không
-        //Chapter tính phí là chapter có chStatus = 2
-        if (chapter.getStatus() == 2) {
-
-            // Kiểm tra người dùng đã đăng nhập chưa
-            if (user != null) {
-                //Kiểm tra người dùng có phải người đăng chapter không
-                boolean checkUser = user.equals(chapter.getUser());
-                // Kiểm tra người dùng đã thanh toán chương vip trong 24h qua không
-                // Nếu chưa thanh toán rồi thì check = false
-                if (!checkUser) {
-                    boolean checkPay = checkDealStory(chapter.getId(), user.getId(), dayAgo, now);
-                    if (!checkPay) {
-                        check = false;
-                    }
-                }
-            } else {
-                check = false;
-            }
-        }
-        return check;
-    }
-
-    private boolean checkDealStory(Long chID,
-                                   Long uID,
-                                   Date dayAgo,
-                                   Date now) {
-        boolean check = payService.checkDealChapterVip(chID, uID, dayAgo, now);
-        return check;
     }
 
     //Lấy Địa Chỉ Ip client
