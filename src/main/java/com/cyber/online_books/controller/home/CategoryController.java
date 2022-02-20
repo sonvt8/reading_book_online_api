@@ -1,5 +1,6 @@
 package com.cyber.online_books.controller.home;
 
+import com.cyber.online_books.entity.Category;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.NotFoundException;
 import com.cyber.online_books.response.CategorySummary;
@@ -42,7 +43,13 @@ public class CategoryController extends ExceptionHandling {
         return ResponseEntity.status(HttpStatus.OK).body(listCategories);
     }
 
-    @GetMapping("/{cid}")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCategoryById(@PathVariable("id") Integer id) {
+        Category category = categoryService.findCategoryById(id);
+        return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
+    @GetMapping("/danh-sach-truyen/{cid}")
     public ResponseEntity<?> getStoriesByCategoryId(@PathVariable("cid") String cid,
                                                     @RequestParam(name="pagenumber") Integer pagenumber) throws Exception {
 

@@ -5,12 +5,15 @@ import com.cyber.online_books.domain.UserPrincipal;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.ExceptionHandling;
 import com.cyber.online_books.exception.domain.*;
+import com.cyber.online_books.response.CommentSummary;
 import com.cyber.online_books.response.ConveterSummary;
 import com.cyber.online_books.response.TopConverter;
+import com.cyber.online_books.service.CommentService;
 import com.cyber.online_books.service.UserService;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +33,14 @@ public class MemberUserController extends ExceptionHandling {
     private AuthenticationManager authenticationManager;
     private UserService userService;
     private JWTTokenProvider jwtTokenProvider;
+    private final CommentService commentService;
 
     @Autowired
-    public MemberUserController(AuthenticationManager authenticationManager, UserService userService, JWTTokenProvider jwtTokenProvider) {
+    public MemberUserController(AuthenticationManager authenticationManager, UserService userService, JWTTokenProvider jwtTokenProvider, CommentService commentService) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.commentService = commentService;
     }
 
     @PostMapping("/dang_ky")
@@ -73,6 +78,14 @@ public class MemberUserController extends ExceptionHandling {
     public ResponseEntity<HttpResponse> resetPassword(@RequestParam("email") String email) throws HttpMyException, EmailNotFoundException {
         userService.resetPassword(email);
         return response(OK, EMAIL_SENT + email);
+    }
+
+    @PostMapping(value = "/binh-luan/xem")
+    public ResponseEntity<Page<CommentSummary>> loadCommentOfStory(@RequestParam("storyId") Long storyId,
+                                                                   @RequestParam("pagenumber") Integer pagenumber,
+                                                                   @RequestParam("type") Integer type) {
+        Page<CommentSummary> commentSummaryPage = commentService.getListCommentOfStory(storyId, pagenumber, type);
+        return new ResponseEntity<>(commentSummaryPage, OK);
     }
 
     private void authenticate(String username, String password) {

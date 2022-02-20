@@ -4,6 +4,7 @@ import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
 import com.cyber.online_books.exception.domain.UserNotFoundException;
+import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.CommentSummary;
 import com.cyber.online_books.service.CommentService;
 import com.cyber.online_books.service.StoryService;
@@ -25,7 +26,7 @@ import static com.cyber.online_books.utils.UserImplContant.NO_USER_FOUND_BY_USER
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping(value = "/binh_luan")
+@RequestMapping(value = "tai_khoan/binh_luan")
 public class AccountCommentController {
     private final CommentService commentService;
 
@@ -40,13 +41,6 @@ public class AccountCommentController {
         this.storyService = storyService;
     }
 
-    @PostMapping(value = "/xem")
-    public ResponseEntity<Page<CommentSummary>> loadCommentOfStory(@RequestParam("storyId") Long storyId,
-                                                                   @RequestParam("pagenumber") Integer pagenumber,
-                                                                   @RequestParam("type") Integer type) {
-        Page<CommentSummary> commentSummaryPage = commentService.getListCommentOfStory(storyId, pagenumber, type);
-        return new ResponseEntity<>(commentSummaryPage, OK);
-    }
 
     @PostMapping(value = "/them")
     public ResponseEntity< ? > newComment(@RequestParam("storyId") Long storyId,
@@ -65,7 +59,10 @@ public class AccountCommentController {
         }
     }
 
-    private User validatePricipal(Principal principal) throws UserNotFoundException {
+    private User validatePricipal(Principal principal) throws UserNotFoundException, UserNotLoginException {
+        if (principal == null) {
+            throw new UserNotLoginException();
+        }
         String currentUsername = principal.getName();
         User currentUser = userService.findUserAccount(currentUsername);
         if(currentUser == null) {
