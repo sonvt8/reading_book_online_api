@@ -15,7 +15,17 @@ public interface CloudinaryService {
      * @return String trả về đường dẫn ảnh vừa upload
      * @throws java.io.IOException trả về null
      */
-    String upload(MultipartFile sourceFile, String fileName);
+    String uploadAvatar(MultipartFile sourceFile, String fileName);
+
+    /**
+     * Upload file lên Cloudinary
+     *
+     * @param sourceFile File upload
+     * @param fileName   tên File mới
+     * @return String trả về đường dẫn ảnh vừa upload
+     * @throws java.io.IOException trả về null
+     */
+    String uploadCover(MultipartFile sourceFile, String fileName);
 
     /**
      * Delete file lên Cloudinary

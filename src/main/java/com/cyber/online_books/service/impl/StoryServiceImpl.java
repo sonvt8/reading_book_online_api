@@ -402,9 +402,8 @@ public class StoryServiceImpl implements StoryService {
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {
                 throw new NotAnImageFileException(image.getOriginalFilename() + " không phải là file hình");
             }
-            String url = cloudinaryService.upload(image, principal.getName() + "-" + System.nanoTime());
+            String url = cloudinaryService.uploadCover(image, story.getName());
             story.setImages(url);
-
         }
     }
 
