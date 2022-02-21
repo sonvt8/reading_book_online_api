@@ -176,6 +176,15 @@ public interface StoryService {
                                           int pagenumber, int type, Integer size);
 
 
+    /**
+     * Lấy List Truyện Theo searchText
+     *
+     * @param searchText
+     * @param listStatus
+     * @return
+     */
+    List< StorySlide > findListStoryBySearchKey(String searchText, List< Integer > listStatus);
+
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);

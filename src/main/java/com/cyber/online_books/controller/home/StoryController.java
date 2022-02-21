@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,6 +71,15 @@ public class StoryController extends ExceptionHandling {
                 .findStoryByUserId(userId, ConstantsListUtils.LIST_STORY_DISPLAY,
                         pagenumber, type, ConstantsUtils.PAGE_SIZE_DEFAULT);
         return new ResponseEntity<>(storyMembers, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/tim-kiem")
+    public ResponseEntity< ? > searchStory(@RequestParam("txtSearch") String txtSearch) {
+        if (txtSearch != "" && !txtSearch.isEmpty()) {
+            return new ResponseEntity<>(storyService
+                    .findListStoryBySearchKey(txtSearch, ConstantsListUtils.LIST_STORY_DISPLAY), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     private StoryDetailResponse getStoryDetail(Long storyId) throws Exception {
