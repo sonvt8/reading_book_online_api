@@ -241,6 +241,18 @@ public class StoryServiceImpl implements StoryService {
                 .orElse(null);
     }
 
+    /**
+     * Lấy List Truyện Theo searchText
+     *
+     * @param searchText
+     * @param listStatus
+     * @return
+     */
+    @Override
+    public List< StorySlide > findListStoryBySearchKey(String searchText, List< Integer > listStatus) {
+        return storyRepository
+                .findTop10ByNameContainingAndStatusInOrderByNameAsc(searchText, listStatus);
+    }
 
     @Override
     public Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
