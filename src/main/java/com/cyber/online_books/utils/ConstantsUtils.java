@@ -23,7 +23,7 @@ public class ConstantsUtils {
     public static Integer PAGE_SIZE_DEFAULT = 4;
 
     //Số Story Trong Home Page
-    public static Integer PAGE_SIZE_HOME = 18;
+    public static Integer PAGE_SIZE_HOME = 10;
 
     //Page size list comment default
     public static Integer PAGE_SIZE_COMMENT_DEFAULT = 10;
