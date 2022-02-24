@@ -32,7 +32,7 @@ public class ConstantsUtils {
     public static Integer RANK_SIZE = 10;
 
     //Page size Chapter list default
-    public static Integer PAGE_SIZE_CHAPTER_OF_STORY = 45;
+    public static Integer PAGE_SIZE_CHAPTER_OF_STORY = 5;
 
     //Page size Top View
     public static Integer PAGE_SIZE_TOP_VIEW_DEFAULT = 10;

@@ -318,7 +318,7 @@ public class StoryServiceImpl implements StoryService {
         Story story = new Story();
         story.setName(name);
         story.setAuthor(author);
-        story.setInfomation(infomation);
+        story.setInfomation(infomation.replaceAll("\n", "<br />"));
         story.setUser(userPosted);
         story.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(story, image, principal);
@@ -346,7 +346,7 @@ public class StoryServiceImpl implements StoryService {
 
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
-        storyEdit.setInfomation(infomation);
+        storyEdit.setInfomation(infomation.replaceAll("\n", "<br />"));
         storyEdit.setUser(userPosted);
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
         storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
