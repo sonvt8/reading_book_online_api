@@ -96,7 +96,7 @@ public class AccountChapterController extends ExceptionHandling {
         return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/chuong-nguoi-dung")
+    @GetMapping(value = "/chapter-nguoi-dung")
     public ResponseEntity< ? > loadChapterOfStoryWithUser(@RequestParam("storyId") String storyId,
                                                           @RequestParam("pagenumber") Integer pagenumber,
                                                           @RequestParam("type") Integer type, Principal principal) throws Exception {
