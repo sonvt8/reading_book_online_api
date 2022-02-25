@@ -2,6 +2,7 @@ package com.cyber.online_books.controller.account;
 
 
 import com.cyber.online_books.component.MyComponent;
+import com.cyber.online_books.domain.HttpResponse;
 import com.cyber.online_books.entity.Chapter;
 import com.cyber.online_books.entity.Mail;
 import com.cyber.online_books.entity.User;
@@ -136,7 +137,7 @@ public class AccountPayController {
 
     @PostMapping(value = "/mua-chuong-vip")
     @Transactional
-    public ResponseEntity< ? > payReadingChapter(@RequestParam(value = "chapterId") String chapterId, Principal principal)
+    public ResponseEntity< HttpResponse > payReadingChapter(@RequestParam(value = "chapterId") String chapterId, Principal principal)
             throws Exception {
         if (principal == null) {
             throw new UserNotLoginException();
@@ -159,7 +160,7 @@ public class AccountPayController {
             throw new HttpMyException("Không tồn tại chương truyện này!");
         }
         if (chapter.getStatus() == 1) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return response(HttpStatus.OK,"");
         }
         //Lấy Thời Gian Hiện Tại
         Date now = DateUtils.getCurrentDate();
@@ -171,16 +172,21 @@ public class AccountPayController {
         logger.info("Thời gian kiểm tra: " + dayAgo + " - " + now);
         logger.info("Kiểm Tra: " + check);
         if (check) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return response(HttpStatus.OK,"");
         }
         if (user.getGold() < chapter.getPrice()) {
             throw new HttpMyException("Số dư trong tài khoản không đủ để thanh toán!");
         }
         try {
             payService.saveReadingVipPay(user, chapter);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return response(HttpStatus.OK,"Mua chương thành công");
         } catch (Exception e) {
             throw new HttpMyException("Có lỗi xảy ra. Vui lòng thử lại sau");
         }
+    }
+
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
+                message), httpStatus);
     }
 }

@@ -253,7 +253,7 @@ public class ConstantsQueryUtils {
             " LEFT JOIN Category ca on sc.categoryId = ca.id" +
             " WHERE s.status IN :storyStatus" +
             " GROUP BY s.id" +
-            " ORDER BY d.countVote DESC, s.countAppoint DESC";
+            " ORDER BY s.countAppoint DESC";
     public static final String TOP_CONVERTER = "SELECT u.id, u.username, u.displayName, u.avatar,"
             + " COALESCE(d.cntc ,0) AS cnt, COALESCE(e.cnts ,0) AS scnt"
             + " FROM User u"
