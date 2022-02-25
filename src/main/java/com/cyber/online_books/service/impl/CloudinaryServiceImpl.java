@@ -34,14 +34,26 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public String upload(MultipartFile sourceFile, String fileName) {
+    public String uploadAvatar(MultipartFile sourceFile, String fileName) {
         try {
-
-            Map params = ObjectUtils.asMap("public_id", "truyenonline/" + fileName);
+            String publicId = Long.toString(System.nanoTime());
+            Map params = ObjectUtils.asMap("folder", "truyenonline/tai_khoan/" + fileName, "public_id", publicId);
             cloudinary.uploader().upload(sourceFile.getBytes(), params);
-
             //Lấy đường dẫn ảnh vừa upload
-            return cloudinary.url().generate("truyenonline/" + fileName);
+            return cloudinary.url().generate("truyenonline/tai_khoan/" + fileName + "/" + publicId);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String uploadCover(MultipartFile sourceFile, String fileName) {
+        try {
+            String publicId = Long.toString(System.nanoTime());
+            Map params = ObjectUtils.asMap("folder", "truyenonline/truyen/" + fileName, "public_id", publicId);
+            cloudinary.uploader().upload(sourceFile.getBytes(), params);
+            //Lấy đường dẫn ảnh vừa upload
+            return cloudinary.url().generate("truyenonline/truyen/" + fileName + "/" + publicId);
         } catch (IOException e) {
             return null;
         }

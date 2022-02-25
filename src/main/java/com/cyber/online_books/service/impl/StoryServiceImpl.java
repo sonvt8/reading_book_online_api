@@ -241,6 +241,18 @@ public class StoryServiceImpl implements StoryService {
                 .orElse(null);
     }
 
+    /**
+     * Lấy List Truyện Theo searchText
+     *
+     * @param searchText
+     * @param listStatus
+     * @return
+     */
+    @Override
+    public List< StorySlide > findListStoryBySearchKey(String searchText, List< Integer > listStatus) {
+        return storyRepository
+                .findTop10ByNameContainingAndStatusInOrderByNameAsc(searchText, listStatus);
+    }
 
     @Override
     public Page< StoryMember > findStoryByUserId(Long userId, List< Integer > listStatus,
@@ -306,7 +318,7 @@ public class StoryServiceImpl implements StoryService {
         Story story = new Story();
         story.setName(name);
         story.setAuthor(author);
-        story.setInfomation(infomation);
+        story.setInfomation(infomation.replaceAll("\n", "<br />"));
         story.setUser(userPosted);
         story.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(story, image, principal);
@@ -315,7 +327,7 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
+    public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, Integer status, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
             throw new HttpMyException("không tìm thấy truyện");
@@ -334,8 +346,9 @@ public class StoryServiceImpl implements StoryService {
 
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
-        storyEdit.setInfomation(infomation);
+        storyEdit.setInfomation(infomation.replaceAll("\n", "<br />"));
         storyEdit.setUser(userPosted);
+        storyEdit.setStatus(status);
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
         storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(storyEdit, image, principal);
@@ -402,9 +415,8 @@ public class StoryServiceImpl implements StoryService {
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {
                 throw new NotAnImageFileException(image.getOriginalFilename() + " không phải là file hình");
             }
-            String url = cloudinaryService.upload(image, principal.getName() + "-" + System.nanoTime());
+            String url = cloudinaryService.uploadCover(image, story.getName());
             story.setImages(url);
-
         }
     }
 

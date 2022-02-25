@@ -214,6 +214,15 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
      */
     Long countByUser_IdAndStatusIn(Long userId, List< Integer > listStoryDisplay);
 
+    /**
+     * Lấy danh sách truyện theo
+     *
+     * @param searchText
+     * @param listStatus
+     * @return
+     */
+    List< StorySlide > findTop10ByNameContainingAndStatusInOrderByNameAsc(String searchText, List< Integer > listStatus);
+
     Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
 
     Page< StoryAdmin > findByNameContainingOrderByIdDesc(String search, Pageable pageable);

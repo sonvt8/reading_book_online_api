@@ -83,11 +83,11 @@ public class AccountStoryController extends ExceptionHandling {
     public ResponseEntity<Story> updateStory(@RequestParam("name") String name,
                                           @RequestParam("author") String author,
                                           @RequestParam("infomation") String infomation,
-                                          @RequestParam("category") Set<String> category,
-                                          @RequestParam(value="image") MultipartFile image,
+                                          @RequestParam("category") Set<String> category, @RequestParam("status") Integer status,
+                                          @RequestParam(value="image", required = false) MultipartFile image,
                                           @PathVariable(value = "id") Long id,
                                           Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
-        Story updateStory = storyService.updateAccountStory(id, name, author, infomation, category.toArray(new String[0]), image, principal);
+        Story updateStory = storyService.updateAccountStory(id, name, author, infomation, category.toArray(new String[0]), status, image, principal);
         return new ResponseEntity<>(updateStory, HttpStatus.OK);
     }
 

@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new NotAnImageFileException(sourceFile.getOriginalFilename() + " is not an image file");
         }
         User currentUser = validatePricipal(principal);
-        String url = cloudinaryService.upload(sourceFile, currentUser.getUsername());
+        String url = cloudinaryService.uploadAvatar(sourceFile, currentUser.getUsername());
         currentUser.setAvatar(url);
         userRepository.save(currentUser);
         return currentUser;
