@@ -327,7 +327,7 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
+    public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, Integer status, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
         if(storyEdit == null){
             throw new HttpMyException("không tìm thấy truyện");
@@ -348,6 +348,7 @@ public class StoryServiceImpl implements StoryService {
         storyEdit.setAuthor(author);
         storyEdit.setInfomation(infomation.replaceAll("\n", "<br />"));
         storyEdit.setUser(userPosted);
+        storyEdit.setStatus(status);
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
         storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(storyEdit, image, principal);
