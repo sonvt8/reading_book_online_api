@@ -58,9 +58,16 @@ public class AccountUserController {
     public ResponseEntity<User> changeNick(@RequestParam(value = "newNick") String newNick,
                                            Principal principal) throws HttpMyException, UserNotFoundException {
         User currentUser = validatePricipal(principal);
+        Double money = Double.valueOf(0);
+        if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
+            money = ConstantsUtils.PRICE_UPDATE_NICK;
+        }
+        if (currentUser.getGold() < ConstantsUtils.PRICE_UPDATE_NICK) {
+            throw new HttpMyException("Số dư của bạn không đủ để thanh toán!");
+        }
         User user = userService.updateDisplayName(principal,newNick);
         payService.savePay(null, null, user, null, 0,
-                ConstantsUtils.PRICE_UPDATE_NICK, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
+                money, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
         return new ResponseEntity<>(user, OK);
     }
 
