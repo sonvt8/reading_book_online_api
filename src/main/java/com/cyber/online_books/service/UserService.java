@@ -84,7 +84,7 @@ public interface UserService {
      *
      * @param newNick
      */
-    User updateDisplayName(Principal principal, String newNick) throws HttpMyException, UserNotFoundException;
+    User updateDisplayName(Principal principal, String newNick, Double money) throws HttpMyException, UserNotFoundException;
 
     /**
      * Cập nhật thông báo
