@@ -223,6 +223,12 @@ public interface StoryRepository extends JpaRepository<Story, Long > {
      */
     List< StorySlide > findTop10ByNameContainingAndStatusInOrderByNameAsc(String searchText, List< Integer > listStatus);
 
+    /**
+     * @param date
+     * @return
+     */
+    Long countByCreateDateGreaterThanEqual(Date date);
+
     Page<StoryAdmin> findByOrderByIdDesc(Pageable pageable);
 
     Page< StoryAdmin > findByNameContainingOrderByIdDesc(String search, Pageable pageable);

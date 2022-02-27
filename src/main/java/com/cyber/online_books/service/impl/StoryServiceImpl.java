@@ -410,6 +410,15 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository.countByUser_IdAndStatusIn(userId, listStoryDisplay);
     }
 
+    /**
+     * @param date
+     * @return
+     */
+    @Override
+    public Long countNewStoryInDate(Date date) {
+        return storyRepository.countByCreateDateGreaterThanEqual(date);
+    }
+
     private void saveImage(Story story, MultipartFile image, Principal principal) throws NotAnImageFileException {
         if(image != null){
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(image.getContentType())) {
