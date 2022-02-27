@@ -62,10 +62,7 @@ public class AccountUserController {
         if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
             money = ConstantsUtils.PRICE_UPDATE_NICK;
         }
-        if (currentUser.getGold() < ConstantsUtils.PRICE_UPDATE_NICK) {
-            throw new HttpMyException("Số dư của bạn không đủ để thanh toán!");
-        }
-        User user = userService.updateDisplayName(principal,newNick);
+        User user = userService.updateDisplayName(principal,newNick,money);
         payService.savePay(null, null, user, null, 0,
                 money, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
         return new ResponseEntity<>(user, OK);
