@@ -11,6 +11,8 @@ public interface ConveterSummary {
     @Value("#{@myComponent.getDisplayName(target.username,target.displayName)}")
     String getDisplayName();
 
+    String getNotification();
+
     String getAvatar();
 
     Double getGold();
