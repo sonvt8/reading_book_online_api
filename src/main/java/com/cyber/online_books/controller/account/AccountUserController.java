@@ -58,9 +58,13 @@ public class AccountUserController {
     public ResponseEntity<User> changeNick(@RequestParam(value = "newNick") String newNick,
                                            Principal principal) throws HttpMyException, UserNotFoundException {
         User currentUser = validatePricipal(principal);
-        User user = userService.updateDisplayName(principal,newNick);
+        Double money = Double.valueOf(0);
+        if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
+            money = ConstantsUtils.PRICE_UPDATE_NICK;
+        }
+        User user = userService.updateDisplayName(principal,newNick,money);
         payService.savePay(null, null, user, null, 0,
-                ConstantsUtils.PRICE_UPDATE_NICK, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
+                money, ConstantsPayTypeUtils.PAY_DISPLAY_NAME_TYPE);
         return new ResponseEntity<>(user, OK);
     }
 

@@ -185,6 +185,12 @@ public interface StoryService {
      */
     List< StorySlide > findListStoryBySearchKey(String searchText, List< Integer > listStatus);
 
+    /**
+     * @param date
+     * @return
+     */
+    Long countNewStoryInDate(Date date);
+
     Page<StoryAdmin> findStoryInAdmin(Integer pagenumber, Integer size, Integer type, String search);
 
     boolean deleteStory(Long id);

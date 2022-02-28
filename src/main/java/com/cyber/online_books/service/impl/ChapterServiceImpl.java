@@ -16,6 +16,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -238,5 +239,14 @@ public class ChapterServiceImpl implements ChapterService {
     @Override
     public Long countChapterByUser(Long userId, List< Integer > listChapterDisplay) {
         return chapterRepository.countByUser_IdAndStatusIn(userId, listChapterDisplay);
+    }
+
+    /**
+     * @param date
+     * @return
+     */
+    @Override
+    public Long countNewChapterInDate(Date date) {
+        return chapterRepository.countByCreateDateGreaterThanEqual(date);
     }
 }
