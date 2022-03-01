@@ -193,7 +193,8 @@ public class AccountChapterController extends ExceptionHandling {
         if (chapterEdit.getStatus().equals(ConstantsStatusUtils.CHAPTER_DENIED) && chapterEdit.getStatus().equals(chapter.getStatus())){
             throw new HttpMyException("Bạn không có quyền Cập Nhật Trạng Thái Chapter bị khóa!");
         }
-        chapter.setContent(chapter.getContent().replaceAll("\n", "<br />"));
+        String content = chapter.getContent().replaceAll("\n", "\r\n");
+        chapter.setContent(content.replaceAll("\n", "<br />"));
 
         return new ResponseEntity<>(chapterService.updateChapter(chapter, id), HttpStatus.OK);
     }
