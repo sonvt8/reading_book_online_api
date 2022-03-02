@@ -329,9 +329,11 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, Integer status, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
+
         if(storyEdit == null){
             throw new HttpMyException("không tìm thấy truyện");
         }
+
         checkUnique(id, name);
         if (principal == null) {
             throw new UserNotLoginException();
@@ -339,6 +341,10 @@ public class StoryServiceImpl implements StoryService {
 
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
+
+        if (!storyEdit.getUser().getId().equals(userPosted.getId())){
+            throw new HttpMyException("Bạn không có quyền sửa truyện không do bạn đăng!");
+        }
 
         if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
             throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
