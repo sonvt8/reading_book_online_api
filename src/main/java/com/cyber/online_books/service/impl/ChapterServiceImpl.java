@@ -38,7 +38,8 @@ public class ChapterServiceImpl implements ChapterService {
     @Override
     public Chapter saveNewChapter(Chapter chapter, Long id) {
         chapter.setWordCount(WebUtils.countWords(chapter.getContent()));
-        chapter.setContent(chapter.getContent().replaceAll("\n", "<br />"));
+        String content = chapter.getContent().replaceAll("\n", "\r\n");
+        chapter.setContent(content.replaceAll("\n", "<br />"));
         chapter.setName(chapter.getName());
         Chapter newChapter = chapterRepository.save(chapter);
         if (newChapter.getId() != null) {
