@@ -8,6 +8,8 @@ import com.cyber.online_books.utils.ConstantsListUtils;
 import com.cyber.online_books.utils.ConstantsStatusUtils;
 import com.cyber.online_books.utils.ConstantsUtils;
 import com.cyber.online_books.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/trang-chu")
 public class HomeController {
     private final StoryService storyService;
+    Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
     @Autowired
     public HomeController(StoryService storyService) {
@@ -62,6 +65,7 @@ public class HomeController {
         List< StoryTop > topStory = storyService
                 .getTopStoryAppoind(ConstantsUtils.PAGE_DEFAULT, ConstantsUtils.RANK_SIZE, startDate, endDate)
                 .getContent();
+
 
         HomeResponse homeResponse = new HomeResponse();
         homeResponse.setTopStoryWeek(topStoryWeek);

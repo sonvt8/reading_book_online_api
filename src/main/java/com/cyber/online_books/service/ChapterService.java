@@ -5,6 +5,7 @@ import com.cyber.online_books.response.ChapterOfStory;
 import com.cyber.online_books.response.ChapterSummary;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ChapterService {
@@ -120,4 +121,11 @@ public interface ChapterService {
      * @return long
      */
     Long countChapterByUser(Long userId, List< Integer > listChapterDisplay);
+
+    /**
+     *
+     * @param date
+     * @return
+     */
+    Long countNewChapterInDate(Date date);
 }

@@ -318,7 +318,7 @@ public class StoryServiceImpl implements StoryService {
         Story story = new Story();
         story.setName(name);
         story.setAuthor(author);
-        story.setInfomation(infomation.replaceAll("\n", "<br />"));
+        story.setInfomation(infomation);
         story.setUser(userPosted);
         story.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(story, image, principal);
@@ -352,7 +352,7 @@ public class StoryServiceImpl implements StoryService {
 
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
-        storyEdit.setInfomation(infomation.replaceAll("\n", "<br />"));
+        storyEdit.setInfomation(infomation);
         storyEdit.setUser(userPosted);
         storyEdit.setStatus(status);
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
@@ -414,6 +414,15 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public Long countStoryByUser(Long userId, List< Integer > listStoryDisplay) {
         return storyRepository.countByUser_IdAndStatusIn(userId, listStoryDisplay);
+    }
+
+    /**
+     * @param date
+     * @return
+     */
+    @Override
+    public Long countNewStoryInDate(Date date) {
+        return storyRepository.countByCreateDateGreaterThanEqual(date);
     }
 
     private void saveImage(Story story, MultipartFile image, Principal principal) throws NotAnImageFileException {

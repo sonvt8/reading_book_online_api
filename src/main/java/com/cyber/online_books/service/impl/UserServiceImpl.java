@@ -393,6 +393,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         LOGGER.info("New user password: " + newPassword);
     }
 
+    /**
+     * @param date
+     * @return
+     */
+    @Override
+    public Long countUserNewInDate(Date date) {
+        return userRepository.countByCreateDateGreaterThanEqual(date);
+    }
+
     private String generateUserId() {
         return RandomStringUtils.randomNumeric(10);
     }
