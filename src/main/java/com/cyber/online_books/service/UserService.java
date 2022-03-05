@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 public interface UserService {
@@ -84,7 +85,7 @@ public interface UserService {
      *
      * @param newNick
      */
-    User updateDisplayName(Principal principal, String newNick) throws HttpMyException, UserNotFoundException;
+    User updateDisplayName(Principal principal, String newNick, Double money) throws HttpMyException, UserNotFoundException;
 
     /**
      * Cập nhật thông báo
@@ -144,6 +145,12 @@ public interface UserService {
      * @param id
      */
     void deleteUser(Principal principal, Long id) throws HttpMyException, IOException, UserNotFoundException, UserNotLoginException;
+
+    /**
+     * @param date
+     * @return
+     */
+    Long countUserNewInDate(Date date);
 
     Page<User> findByType(String search, Integer type, Integer pagenumber, Integer size);
 

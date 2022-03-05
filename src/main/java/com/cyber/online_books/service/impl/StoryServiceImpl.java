@@ -318,7 +318,7 @@ public class StoryServiceImpl implements StoryService {
         Story story = new Story();
         story.setName(name);
         story.setAuthor(author);
-        story.setInfomation(infomation.replaceAll("\n", "<br />"));
+        story.setInfomation(infomation);
         story.setUser(userPosted);
         story.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(story, image, principal);
@@ -327,11 +327,13 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
+    public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, Integer status, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
+
         if(storyEdit == null){
             throw new HttpMyException("không tìm thấy truyện");
         }
+
         checkUnique(id, name);
         if (principal == null) {
             throw new UserNotLoginException();
@@ -340,14 +342,19 @@ public class StoryServiceImpl implements StoryService {
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
 
+        if (!storyEdit.getUser().getId().equals(userPosted.getId())){
+            throw new HttpMyException("Bạn không có quyền sửa truyện không do bạn đăng!");
+        }
+
         if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
             throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
         }
 
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
-        storyEdit.setInfomation(infomation.replaceAll("\n", "<br />"));
+        storyEdit.setInfomation(infomation);
         storyEdit.setUser(userPosted);
+        storyEdit.setStatus(status);
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());
         storyEdit.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(storyEdit, image, principal);
@@ -407,6 +414,15 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public Long countStoryByUser(Long userId, List< Integer > listStoryDisplay) {
         return storyRepository.countByUser_IdAndStatusIn(userId, listStoryDisplay);
+    }
+
+    /**
+     * @param date
+     * @return
+     */
+    @Override
+    public Long countNewStoryInDate(Date date) {
+        return storyRepository.countByCreateDateGreaterThanEqual(date);
     }
 
     private void saveImage(Story story, MultipartFile image, Principal principal) throws NotAnImageFileException {

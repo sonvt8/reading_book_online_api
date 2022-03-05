@@ -212,19 +212,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return User - nếu tồn tại / null- nếu không tồn tại user
      */
     @Override
-    public User updateDisplayName(Principal principal, String newNick) throws HttpMyException, UserNotFoundException {
+    public User updateDisplayName(Principal principal, String newNick, Double money) throws HttpMyException, UserNotFoundException {
         User currentUser = validatePricipal(principal);
         if (newNick.equalsIgnoreCase(currentUser.getDisplayName()))
             throw new HttpMyException("Ngoại hiệu này bạn đang sử dụng");
         if (userRepository.existsByIdNotAndDisplayName(currentUser.getId(), newNick))
             throw new HttpMyException("Ngoại hiệu đã tồn tại!");
-        Double money = Double.valueOf(0);
-        if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
-            //Không trừ đậu nếu chưa có ngoại hiệu
-            money = ConstantsUtils.PRICE_UPDATE_NICK;
-            if (currentUser.getGold() < money)
-                throw new HttpMyException("Số dư của bạn không đủ để thanh toán!");
-        }
+        if (currentUser.getGold() < money)
+            throw new HttpMyException("Số dư của bạn không đủ để thanh toán!");
         currentUser.setDisplayName(newNick);
         currentUser.setGold(currentUser.getGold() - money);
         userRepository.save(currentUser);
@@ -396,6 +391,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         currentUser.setPassword(encodePassword(newPassword));
         userRepository.save(currentUser);
         LOGGER.info("New user password: " + newPassword);
+    }
+
+    /**
+     * @param date
+     * @return
+     */
+    @Override
+    public Long countUserNewInDate(Date date) {
+        return userRepository.countByCreateDateGreaterThanEqual(date);
     }
 
     private String generateUserId() {
