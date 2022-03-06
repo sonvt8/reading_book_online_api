@@ -1,5 +1,6 @@
 package com.cyber.online_books.response;
 
+import com.cyber.online_books.entity.Role;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
@@ -16,6 +17,8 @@ public interface ConveterSummary {
     String getAvatar();
 
     Double getGold();
+
+    Role[] getRoleList();
 
     Date getCreateDate();
 
