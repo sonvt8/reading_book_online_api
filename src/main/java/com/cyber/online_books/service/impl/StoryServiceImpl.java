@@ -314,10 +314,10 @@ public class StoryServiceImpl implements StoryService {
 
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
-        for (Role role : userPosted.getRoleList()) {
-            if (role.getId() == ROLE_USER)
-                throw new AccessDeniedException("Bạn không đủ quyền để thực hiện hành động này");
-        }
+//        for (Role role : userPosted.getRoleList()) {
+//            if (role.getId() == ROLE_USER)
+//                throw new AccessDeniedException("Bạn không đủ quyền để thực hiện hành động này");
+//        }
 
         if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
             throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
