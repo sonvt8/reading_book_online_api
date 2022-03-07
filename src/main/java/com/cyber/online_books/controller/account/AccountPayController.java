@@ -135,7 +135,7 @@ public class AccountPayController {
         }
     }
 
-    @PostMapping(value = "/mua-chuong-vip")
+    @PostMapping(value = "/mua-chapter-vip")
     @Transactional
     public ResponseEntity< HttpResponse > payReadingChapter(@RequestParam(value = "chapterId") String chapterId, Principal principal)
             throws Exception {
