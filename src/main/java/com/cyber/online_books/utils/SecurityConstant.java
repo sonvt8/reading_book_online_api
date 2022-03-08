@@ -27,7 +27,6 @@ public class SecurityConstant {
             "/chuong/**",
             "/truyen-home/**",
     };
-    //public static final String[] PUBLIC_URLS = { "**" };
     public static final String[] ROLE_USER_LINK = {
             "/tai_khoan/theo_doi",
             "/tai_khoan/doi_mat_khau",
@@ -37,9 +36,13 @@ public class SecurityConstant {
             "/tai_khoan/anh_dai_dien",
             "/tai_khoan/de_cu_truyen",
             "/tai_khoan/thanh-toan/danh-sach",
+            "/tai_khoan/binh_luan/**",
+            "/tai_khoan/theo-doi/**",
+            "/tai_khoan/danh_gia"
     };
     public static final String[] ROLE_CONANDMOD_LINK = {"/tai_khoan",
-            "/tai_khoan/**",
+            "/tai_khoan/chapter/**",
+            "/tai-khoan/truyen/**"
     };
 
     public static final String[] ROLE_ADMIN_LINK = {"/quan_tri",
