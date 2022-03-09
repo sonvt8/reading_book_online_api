@@ -212,7 +212,6 @@ public class PayServiceImpl implements PayService {
         saveUser(userSend);
         //Lấy Thông tin mới nhất của người nhận
         User userReceived = userRepository.findById(chapter.getUser().getId()).get();
-        userSend.setGold(userSend.getGold() - chapter.getPrice());
         userReceived.setGold(userReceived.getGold() + chapter.getPrice());
         saveUser(userReceived);
     }

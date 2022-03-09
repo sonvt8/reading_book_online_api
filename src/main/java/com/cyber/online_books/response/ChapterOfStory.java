@@ -25,4 +25,6 @@ public interface ChapterOfStory {
     String getTimeUpdate();
 
     Integer getStatus();
+
+    Double getPrice();
 }

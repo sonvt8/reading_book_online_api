@@ -50,7 +50,7 @@ public class ConstantsListUtils {
 
     public static final List< Integer > LIST_ROLE_CON = Collections.unmodifiableList(
             new ArrayList< Integer >() {{
-                add(ConstantsUtils.ROLE_ADMIN);
+//                add(ConstantsUtils.ROLE_ADMIN);
                 add(ConstantsUtils.ROLE_CONVERTER);
             }}
     );

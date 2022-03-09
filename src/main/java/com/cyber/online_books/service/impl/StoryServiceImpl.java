@@ -1,5 +1,6 @@
 package com.cyber.online_books.service.impl;
 
+import com.cyber.online_books.entity.Role;
 import com.cyber.online_books.entity.Story;
 import com.cyber.online_books.entity.User;
 import com.cyber.online_books.exception.domain.HttpMyException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +29,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.cyber.online_books.utils.ConstantsUtils.ROLE_USER;
 
 @Service
 public class StoryServiceImpl implements StoryService {
@@ -310,6 +314,10 @@ public class StoryServiceImpl implements StoryService {
 
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
+//        for (Role role : userPosted.getRoleList()) {
+//            if (role.getId() == ROLE_USER)
+//                throw new AccessDeniedException("Bạn không đủ quyền để thực hiện hành động này");
+//        }
 
         if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
             throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
@@ -318,7 +326,7 @@ public class StoryServiceImpl implements StoryService {
         Story story = new Story();
         story.setName(name);
         story.setAuthor(author);
-        story.setInfomation(infomation.replaceAll("\n", "<br />"));
+        story.setInfomation(infomation);
         story.setUser(userPosted);
         story.setCategoryList(Arrays.stream(category).map(r -> categoryRepository.findCategoryByNameAndStatus(r, ConstantsStatusUtils.CATEGORY_ACTIVED)).collect(Collectors.toSet()));
         saveImage(story, image, principal);
@@ -329,9 +337,11 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public Story updateAccountStory(Long id, String name, String author, String infomation, String[] category, Integer status, MultipartFile image, Principal principal) throws HttpMyException, UserNotLoginException, NotAnImageFileException {
         Story storyEdit = storyRepository.findById(id).orElse(null);
+
         if(storyEdit == null){
             throw new HttpMyException("không tìm thấy truyện");
         }
+
         checkUnique(id, name);
         if (principal == null) {
             throw new UserNotLoginException();
@@ -340,13 +350,17 @@ public class StoryServiceImpl implements StoryService {
         String currentUsername = principal.getName();
         User userPosted = userRepository.findUserByUsername(currentUsername);
 
+        if (!storyEdit.getUser().getId().equals(userPosted.getId())){
+            throw new HttpMyException("Bạn không có quyền sửa truyện không do bạn đăng!");
+        }
+
         if (userPosted.getStatus().equals(ConstantsStatusUtils.USER_DENIED)) {
             throw new HttpMyException("Tài khoản của bạn đã bị khóa mời liên hệ admin để biết thêm thông tin");
         }
 
         storyEdit.setName(name);
         storyEdit.setAuthor(author);
-        storyEdit.setInfomation(infomation.replaceAll("\n", "<br />"));
+        storyEdit.setInfomation(infomation);
         storyEdit.setUser(userPosted);
         storyEdit.setStatus(status);
         storyEdit.setUpdateDate(DateUtils.getCurrentDate());

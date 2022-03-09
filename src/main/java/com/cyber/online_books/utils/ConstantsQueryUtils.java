@@ -232,7 +232,7 @@ public class ConstantsQueryUtils {
             + " GROUP BY s.id"
             + " ORDER BY s.updateDate DESC";
 
-    public static final String STORY_TOP_APPOIND = "SELECT s.id, s.name, s.images, s.author, COALESCE(d.sumVote, 0) AS cnt, ca.id as categoryId, ca.name as categoryName, s.infomation , s.dealStatus" +
+    public static final String STORY_TOP_APPOIND = "SELECT s.id, s.name, s.countAppoint, s.images, s.author, COALESCE(d.sumVote, 0) AS cnt, ca.id as categoryId, ca.name as categoryName, s.infomation , s.dealStatus" +
             " FROM Story s" +
             " LEFT JOIN (SELECT pa.storyId, COALESCE(SUM(pa.vote), 0) AS sumVote FROM pay pa" +
             " WHERE pa.createDate BETWEEN :startDate AND :endDate" +

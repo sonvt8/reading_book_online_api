@@ -3,6 +3,8 @@ package com.cyber.online_books.response;
 public interface StoryTop {
     Long getId();
 
+    Long getCountAppoint();
+
     String getName();
 
     String getImages();
