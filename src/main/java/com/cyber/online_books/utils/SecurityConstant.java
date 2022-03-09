@@ -38,7 +38,9 @@ public class SecurityConstant {
             "/tai_khoan/thanh-toan/danh-sach",
             "/tai_khoan/binh_luan/**",
             "/tai_khoan/theo-doi/**",
-            "/tai_khoan/danh_gia"
+            "/tai_khoan/danh_gia",
+            "/tai_khoan/giao_dich",
+            "/tai-khoan/truyen/kiem-tra/**"
     };
     public static final String[] ROLE_CONANDMOD_LINK = {"/tai_khoan",
             "/tai_khoan/chapter/**",
