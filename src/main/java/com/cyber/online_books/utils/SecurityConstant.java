@@ -27,25 +27,34 @@ public class SecurityConstant {
             "/chuong/**",
             "/truyen-home/**",
     };
-    //public static final String[] PUBLIC_URLS = { "**" };
-    public static final String[] ROLE_USER_LINK = {"/tai_khoan",
+    public static final String[] ROLE_USER_LINK = {
             "/tai_khoan/theo_doi",
             "/tai_khoan/doi_mat_khau",
             "/tai_khoan/nap_dau",
+            "/tai_khoan/doi_ngoai_hieu",
+            "/tai_khoan/doi_thong_bao",
+            "/tai_khoan/anh_dai_dien",
+            "/tai_khoan/de_cu_truyen",
+            "/tai_khoan/thanh-toan/danh-sach",
+            "/tai_khoan/binh_luan/**",
+            "/tai_khoan/theo-doi/**",
+            "/tai_khoan/danh_gia",
             "/tai_khoan/giao_dich",
-            "/tai_khoan/quan_ly_truyen",
-            "/tai_khoan/them_truyen",
-            "/tai_khoan/list_chuong/",
-            "/tai_khoan/them_chuong/**",
+            "/tai-khoan/truyen/kiem-tra/**"
     };
-    public static final String[] ROLE_CONANDMOD_LINK = {"/tai_khoan/rut_tien"};
+    public static final String[] ROLE_CONANDMOD_LINK = {"/tai_khoan",
+            "/tai_khoan/chapter/**",
+            "/tai-khoan/truyen/**"
+    };
 
-    public static final String[] ROLE_ADMIN_MOD_LINK = {"/quan_tri",
+    public static final String[] ROLE_ADMIN_LINK = {"/quan_tri",
             "/quan_tri/nguoi_dung/**",
             "/quan_tri/the_loai/**",
             "/quan_tri/truyen/**"
     };
-//    public static final String[] ROLE_ADMIN_MOD_LINK = {
-//            "/quan_tri/truyen/**"
-//    };
+
+    public static final String[] ROLE_SMOD_LINK = {"/quan_tri",
+            "/quan_tri/the_loai/**",
+            "/quan_tri/truyen/**"
+    };
 }

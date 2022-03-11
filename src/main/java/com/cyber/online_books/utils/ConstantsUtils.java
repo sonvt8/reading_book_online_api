@@ -44,7 +44,7 @@ public class ConstantsUtils {
     public static long HALF_HOUR = valueOf(30);
 
     //Link avartar default
-    public static final String AVATAR_DEFAULT = "https://res.cloudinary.com/thang1988/image/upload/v1541176548/truyenmvc/logo.png";
+    public static final String AVATAR_DEFAULT = "https://randomuser.me/api/portraits/men/97.jpg";
 
     //Link pay MoMo default
     public static final String LINK_PAY_MOMO = "https://res.cloudinary.com/thang1988/image/upload/v1543465570/truyenmvc/momo.png";
