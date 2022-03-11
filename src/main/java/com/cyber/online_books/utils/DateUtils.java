@@ -67,6 +67,16 @@ public class DateUtils {
         return differentInSeconds + " giây trước";
     }
 
+    public static Long betweenTwoDays2(Date createDate) {
+        LocalDateTime endDate = createDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDate endLocalDate = createDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDate startLocalDate = LocalDate.now();
+        long differentInSeconds = Duration.between(startDate, endDate).getSeconds();
+
+        return differentInSeconds;
+    }
+
 
     public static String betweenHours(Date createDate) {
         LocalDateTime startDate = createDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
