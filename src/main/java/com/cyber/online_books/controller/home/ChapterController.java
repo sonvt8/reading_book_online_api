@@ -79,6 +79,7 @@ public class ChapterController extends ExceptionHandling {
         chapterResponse.setPreChapter(preChapter);
         chapterResponse.setNextChapter(nextChapter);
         chapterResponse.setCheckVip(checkVip);
+        chapterResponse.setTimeDealDay(DateUtils.betweenTwoDays2(chapter.getDealine()));
 
         return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
     }
@@ -107,8 +108,11 @@ public class ChapterController extends ExceptionHandling {
         //Kiểm Tra Chapter có phải tính phí hay không
         //Chapter tính phí là chapter có chStatus = 2
         if (chapter.getStatus() == 2) {
-
-            check = false;
+            if(DateUtils.betweenTwoDays2(chapter.getDealine())>0){
+                check = true;
+            } else {
+                check = false;
+            }
         }
         return check;
     }

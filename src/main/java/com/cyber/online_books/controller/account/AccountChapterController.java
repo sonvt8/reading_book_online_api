@@ -94,6 +94,7 @@ public class AccountChapterController extends ExceptionHandling {
         chapterResponse.setPreChapter(preChapter);
         chapterResponse.setNextChapter(nextChapter);
         chapterResponse.setCheckVip(checkVip);
+        chapterResponse.setTimeDealDay(DateUtils.betweenTwoDays2(chapter.getDealine()));
 
         return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
     }
