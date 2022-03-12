@@ -11,6 +11,8 @@ import com.cyber.online_books.exception.domain.UserNotLoginException;
 import com.cyber.online_books.response.ChapterResponse;
 import com.cyber.online_books.service.*;
 import com.cyber.online_books.utils.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/tai-khoan/chapter")
 public class AccountChapterController extends ExceptionHandling {
-
+    private final static Logger logger = LoggerFactory.getLogger(AccountChapterController.class);
     private final StoryService storyService;
     private final UserService userService;
     private final ChapterService chapterService;
@@ -92,6 +94,7 @@ public class AccountChapterController extends ExceptionHandling {
         chapterResponse.setPreChapter(preChapter);
         chapterResponse.setNextChapter(nextChapter);
         chapterResponse.setCheckVip(checkVip);
+        chapterResponse.setTimeDealDay(DateUtils.betweenTwoDays2(chapter.getDealine()));
 
         return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
     }
@@ -236,22 +239,28 @@ public class AccountChapterController extends ExceptionHandling {
         //Kiểm Tra Chapter có phải tính phí hay không
         //Chapter tính phí là chapter có chStatus = 2
         if (chapter.getStatus() == 2) {
-
-            // Kiểm tra người dùng đã đăng nhập chưa
-            if (user != null) {
-                //Kiểm tra người dùng có phải người đăng chapter không
-                boolean checkUser = user.equals(chapter.getUser());
-                // Kiểm tra người dùng đã thanh toán chương vip trong 24h qua không
-                // Nếu chưa thanh toán rồi thì check = false
-                if (!checkUser) {
-                    boolean checkPay = checkDealStory(chapter.getId(), user.getId(), dayAgo, now);
-                    if (!checkPay) {
-                        check = false;
-                    }
-                }
-            } else {
-                check = false;
+            if(DateUtils.betweenTwoDays2(chapter.getDealine())>0){
+                check = true;
             }
+            else {
+                if (user != null) {
+
+                    //Kiểm tra người dùng có phải người đăng chapter không
+                    boolean checkUser = user.equals(chapter.getUser());
+                    // Kiểm tra người dùng đã thanh toán chương vip trong 24h qua không
+                    // Nếu chưa thanh toán rồi thì check = false
+                    if (!checkUser) {
+                        boolean checkPay = checkDealStory(chapter.getId(), user.getId(), dayAgo, now);
+                        if (!checkPay) {
+                            check = false;
+                        }
+                    }
+                } else {
+                    check = false;
+                }
+            }
+            // Kiểm tra người dùng đã đăng nhập chưa
+
         }
         return check;
     }
