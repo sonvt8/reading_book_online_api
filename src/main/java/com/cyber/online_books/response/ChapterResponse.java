@@ -9,5 +9,6 @@ public class ChapterResponse {
     private Long preChapter;
     private Long nextChapter;
     private boolean checkVip;
+    private long timeDealDay;
 
 }
